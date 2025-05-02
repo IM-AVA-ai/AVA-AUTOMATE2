@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -33,8 +34,9 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     if (href === '/dashboard') {
       return pathname === href;
     }
-    return pathname === href || (href !== '/dashboard' && pathname.startsWith(href + '/'));
+    return pathname === href || (href !== '/dashboard' && pathname.startsWith(href)); // Ensure /dashboard isn't considered active for other routes
   };
+
 
   const sidebarContent = (
     <>
@@ -44,10 +46,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 text-blue-600 dark:text-blue-400">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z" />
           </svg>
-          <span className="text-lg font-semibold">AVA Automate</span>
+          <span className="text-lg font-semibold text-gray-900 dark:text-white">AVA Automate</span>
         </Link>
         {isMobile && (
-          <button onClick={() => setIsSidebarOpen(false)} className="p-1">
+          <button onClick={() => setIsSidebarOpen(false)} className="p-1 text-gray-500 dark:text-gray-400">
             <X className="h-6 w-6" />
           </button>
         )}
@@ -64,7 +66,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           { href: '/analytics', label: 'Analytics', icon: BarChart2 },
         ].map(({ href, label, icon: Icon }) => (
           <Link
-            key={href}
+            key={href} // Unique key prop using href
             href={href}
             onClick={isMobile ? () => setIsSidebarOpen(false) : undefined}
             className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -86,7 +88,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           { href: '/settings', label: 'Settings', icon: Settings },
         ].map(({ href, label, icon: Icon }) => (
            <Link
-             key={href}
+             key={href} // Unique key prop using href
              href={href}
              onClick={isMobile ? () => setIsSidebarOpen(false) : undefined}
              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -100,8 +102,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
            </Link>
         ))}
          <button
-             disabled
-             className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-500 cursor-not-allowed"
+             disabled // Currently disabled, implement logout functionality later
+             className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60"
            >
              <LogOut className="h-5 w-5" />
              <span>Logout</span>
@@ -111,27 +113,30 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black bg-opacity-50"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        ></div>
+      )}
+
       {/* Mobile Sidebar */}
       {isMobile && (
-        <div
-          className={`fixed inset-0 z-40 flex transition-transform duration-300 ease-in-out ${
+        <aside
+          className={`fixed inset-y-0 left-0 z-40 w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-lg flex flex-col transition-transform duration-300 ease-in-out ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
-            {sidebarContent}
-          </div>
-          <div
-            className="flex-1 bg-black bg-opacity-50"
-            onClick={() => setIsSidebarOpen(false)}
-          ></div>
-        </div>
+          {sidebarContent}
+        </aside>
       )}
 
       {/* Desktop Sidebar */}
       {!isMobile && (
-        <aside className="w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-md flex flex-col">
+        <aside className="w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-md flex flex-col border-r border-gray-200 dark:border-gray-700">
           {sidebarContent}
         </aside>
       )}
@@ -140,11 +145,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col">
         {/* Mobile Header */}
         {isMobile && (
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-white dark:bg-gray-800 px-4 shadow-sm">
-            <button onClick={() => setIsSidebarOpen(true)} className="p-1">
+          <header className="sticky top-0 z-20 flex h-14 items-center gap-4 border-b bg-white dark:bg-gray-800 px-4 shadow-sm">
+            <button onClick={() => setIsSidebarOpen(true)} className="p-1 text-gray-600 dark:text-gray-300">
               <PanelLeft className="h-6 w-6" />
             </button>
-            <span className="font-semibold">AVA Automate</span>
+            <span className="font-semibold text-gray-900 dark:text-white">AVA Automate</span>
+            {/* Add other header items like profile dropdown if needed */}
           </header>
         )}
 
