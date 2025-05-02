@@ -2,8 +2,8 @@
 'use client' // Error components must be Client Components
 
 import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+// Removed Shadcn Button import
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' // Assuming Card is still needed or replaced elsewhere if not
 
 export default function Error({
   error,
@@ -19,25 +19,30 @@ export default function Error({
 
   return (
     <div className="flex h-[calc(100vh-theme(spacing.16))] items-center justify-center p-4">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-destructive">Something went wrong!</CardTitle>
-          <CardDescription>An unexpected error occurred within the application.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+      {/* Use standard Card or replace with div if Card is also removed */}
+      <div className="w-full max-w-md text-center bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+         <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">Something went wrong!</h2>
+         <p className="text-gray-500 dark:text-gray-400 mt-2">An unexpected error occurred within the application.</p>
+        <div className="mt-4 space-y-4">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             {error.message || "An unknown error occurred."}
           </p>
-          <Button
+           {/* Replace Shadcn Button with standard HTML button */}
+           <button
             onClick={
               // Attempt to recover by trying to re-render the segment
               () => reset()
             }
+            className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Try again
-          </Button>
-        </CardContent>
-      </Card>
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
+
+// Remove Card component if it's part of Shadcn and not replaced
+// For simplicity, using a basic div structure instead of Card
+

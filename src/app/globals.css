@@ -3,86 +3,14 @@
 @tailwind utilities;
 
 body {
+  @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%; /* Dark Gray */
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 221.2 83.2% 53.3%; /* Blue/Purple */
-    --primary-foreground: 0 0% 98%; /* Light Text */
-    --secondary: 240 3.7% 15.9%; /* Darker Gray */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%; /* Lighter Gray */
-    --accent: 180 100% 25.1%; /* Teal (#008080) */
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 221.2 83.2% 53.3%; /* Primary Color for Ring */
-    --chart-1: 221.2 83.2% 53.3%;
-    --chart-2: 180 100% 25.1%;
-    --chart-3: 240 4.8% 95.9%;
-    --chart-4: 240 5.9% 10%;
-    --chart-5: 0 0% 63.9%;
-    --radius: 0.5rem;
-    --sidebar-background: 240 5.9% 10%; /* Slightly darker than main bg */
-    --sidebar-foreground: 0 0% 98%; /* Light Text */
-    --sidebar-primary: 221.2 83.2% 53.3%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 180 100% 25.1%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 221.2 83.2% 53.3%;
-  }
-  .dark {
-    --background: 240 10% 3.9%; /* Dark Gray */
-    --foreground: 0 0% 98%; /* Light Text */
-    --card: 240 5.9% 10%; /* Slightly darker */
-    --card-foreground: 0 0% 98%;
-    --popover: 240 5.9% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 221.2 83.2% 53.3%; /* Blue/Purple */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%; /* Darker Gray */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%; /* Lighter Gray */
-    --accent: 180 100% 25.1%; /* Teal (#008080) */
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 221.2 83.2% 53.3%; /* Primary Color for Ring */
-    --chart-1: 221.2 83.2% 53.3%;
-    --chart-2: 180 100% 25.1%;
-    --chart-3: 240 4.8% 95.9%;
-    --chart-4: 240 5.9% 10%;
-    --chart-5: 0 0% 63.9%;
-    --sidebar-background: 240 5.9% 10%; /* Slightly darker than main bg */
-    --sidebar-foreground: 0 0% 98%; /* Light Text */
-    --sidebar-primary: 221.2 83.2% 53.3%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 180 100% 25.1%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 221.2 83.2% 53.3%;
-  }
-}
+/* Remove Shadcn specific root variables */
+/* Add any HeroUI specific base styles or overrides here if needed */
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Example: Ensure links have a consistent style */
+a {
+  @apply text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300;
 }

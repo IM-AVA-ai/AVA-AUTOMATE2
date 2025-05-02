@@ -1,169 +1,160 @@
 'use client';
 
-import React from 'react';
-import { usePathname } from 'next/navigation'; // Import usePathname
+import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarTrigger,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-} from '@/components/ui/sidebar';
-import {
   LayoutDashboard,
-  Users, // Leads
-  Bot, // AI Agents
-  MessageSquare, // Messages
+  Users,
+  Bot,
+  MessageSquare,
   Settings,
-  LogOut, // Keep LogOut icon visually, but remove functionality
-  Send, // Campaigns (Using Send icon as Briefcase might be less relevant)
-  Bell, // Notifications
-  BarChart2, // Analytics/Insights (Optional)
+  LogOut,
+  Send,
+  Bell,
+  BarChart2,
+  PanelLeft,
+  X,
 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator'; // Added for visual separation
+import { useIsMobile } from '@/hooks/use-mobile'; // Keep using this hook
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname(); // Get the current pathname
+// Simplified Sidebar component using Tailwind
+function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isMobile = useIsMobile();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile); // Open by default on desktop
 
-  // Helper function to determine if a link is active
+  useEffect(() => {
+    // Adjust sidebar state when switching between mobile/desktop
+    setIsSidebarOpen(!isMobile);
+  }, [isMobile]);
+
   const isActive = (href: string) => {
-    // Handle exact match for dashboard, otherwise check startsWith for nested routes if any
     if (href === '/dashboard') {
       return pathname === href;
     }
-    // Make sure '/leads/import' doesn't activate '/leads' incorrectly if needed
     return pathname === href || (href !== '/dashboard' && pathname.startsWith(href + '/'));
   };
 
+  const sidebarContent = (
+    <>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <Link href="/dashboard" className="flex items-center gap-2" title="AVA Automate Dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 text-blue-600 dark:text-blue-400">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z" />
+          </svg>
+          <span className="text-lg font-semibold">AVA Automate</span>
+        </Link>
+        {isMobile && (
+          <button onClick={() => setIsSidebarOpen(false)} className="p-1">
+            <X className="h-6 w-6" />
+          </button>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+        {[
+          { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { href: '/leads', label: 'Leads', icon: Users },
+          { href: '/campaigns', label: 'Campaigns', icon: Send },
+          { href: '/messages', label: 'Messages', icon: MessageSquare },
+          { href: '/agents', label: 'AI Agents', icon: Bot },
+          { href: '/analytics', label: 'Analytics', icon: BarChart2 },
+        ].map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            onClick={isMobile ? () => setIsSidebarOpen(false) : undefined}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              isActive(href)
+                ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+            }`}
+          >
+            <Icon className="h-5 w-5" />
+            <span>{label}</span>
+          </Link>
+        ))}
+      </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+        {[
+          { href: '/notifications', label: 'Notifications', icon: Bell },
+          { href: '/settings', label: 'Settings', icon: Settings },
+        ].map(({ href, label, icon: Icon }) => (
+           <Link
+             key={href}
+             href={href}
+             onClick={isMobile ? () => setIsSidebarOpen(false) : undefined}
+             className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+               isActive(href)
+                 ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'
+                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+             }`}
+           >
+             <Icon className="h-5 w-5" />
+             <span>{label}</span>
+           </Link>
+        ))}
+         <button
+             disabled
+             className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-500 cursor-not-allowed"
+           >
+             <LogOut className="h-5 w-5" />
+             <span>Logout</span>
+           </button>
+      </div>
+    </>
+  );
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      {/* Using 'icon' collapsible style for desktop */}
-      <Sidebar collapsible="icon">
-        <SidebarHeader className="flex items-center justify-between p-2">
-          <Link href="/dashboard" className="flex items-center gap-2 p-2" title="AVA Automate Dashboard">
-            {/* Placeholder Logo */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 text-primary">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/>
-            </svg>
-            {/* Hide text when collapsed */}
-            <span className="text-lg font-semibold text-foreground group-data-[collapsible=icon]:hidden">AVA Automate</span>
-          </Link>
-           {/* Mobile Trigger - kept inside header for layout consistency */}
-          <SidebarTrigger className="md:hidden" />
-        </SidebarHeader>
-        <Separator className="bg-sidebar-border" /> {/* Visual separator */}
-        <SidebarContent className="p-2"> {/* Added padding to content area */}
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Dashboard" isActive={isActive('/dashboard')}>
-                <Link href="/dashboard">
-                  <LayoutDashboard />
-                  <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <Separator className="bg-sidebar-border my-1 group-data-[collapsible=icon]:hidden" /> {/* Separator for sections */}
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Leads" isActive={isActive('/leads')}>
-                <Link href="/leads">
-                  <Users />
-                  <span>Leads</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              {/* Using Send icon for Campaigns */}
-              <SidebarMenuButton asChild tooltip="Campaigns" isActive={isActive('/campaigns')}>
-                <Link href="/campaigns">
-                  <Send />
-                  <span>Campaigns</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-              <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Messages" isActive={isActive('/messages')}>
-                <Link href="/messages">
-                  <MessageSquare />
-                  <span>Messages</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <Separator className="bg-sidebar-border my-1 group-data-[collapsible=icon]:hidden" /> {/* Separator for sections */}
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="AI Agents" isActive={isActive('/agents')}>
-                <Link href="/agents">
-                  <Bot />
-                  <span>AI Agents</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             {/* Optional Analytics/Insights Page Link - Uncomment when ready */}
-
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Analytics" isActive={isActive('/analytics')}>
-                <Link href="/analytics">
-                  <BarChart2 />
-                  <span>Analytics</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-          </SidebarMenu>
-        </SidebarContent>
-         <Separator className="bg-sidebar-border" /> {/* Visual separator */}
-        <SidebarFooter className="p-2"> {/* Added padding to footer */}
-           <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Notifications" isActive={isActive('/notifications')}>
-                    <Link href="/notifications">
-                    <Bell />
-                    <span>Notifications</span>
-                    </Link>
-                </SidebarMenuButton>
-             </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings" isActive={isActive('/settings')}>
-                    <Link href="/settings">
-                    <Settings />
-                    <span>Settings</span>
-                    </Link>
-                </SidebarMenuButton>
-             </SidebarMenuItem>
-            {/* Keep logout visually but disable functionality */}
-            <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Logout" disabled>
-                <LogOut />
-                <span>Logout</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      </Sidebar>
-      {/* SidebarInset wraps the main content area */}
-      <SidebarInset>
-        <div className="flex h-full flex-col">
-           {/* Mobile Header: Only shown on small screens */}
-           <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 md:hidden">
-             <SidebarTrigger />
-              {/* You can add a smaller logo or title here for mobile if needed */}
-             <span className="font-semibold text-foreground">AVA Automate</span>
-             {/* Add User menu for mobile here if needed */}
-           </header>
-           {/* Main Content Area */}
-          <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8"> {/* Added more padding */}
-            {children}
-          </main>
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Mobile Sidebar */}
+      {isMobile && (
+        <div
+          className={`fixed inset-0 z-40 flex transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
+            {sidebarContent}
+          </div>
+          <div
+            className="flex-1 bg-black bg-opacity-50"
+            onClick={() => setIsSidebarOpen(false)}
+          ></div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      )}
+
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <aside className="w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-md flex flex-col">
+          {sidebarContent}
+        </aside>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Mobile Header */}
+        {isMobile && (
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-white dark:bg-gray-800 px-4 shadow-sm">
+            <button onClick={() => setIsSidebarOpen(true)} className="p-1">
+              <PanelLeft className="h-6 w-6" />
+            </button>
+            <span className="font-semibold">AVA Automate</span>
+          </header>
+        )}
+
+        {/* Content Area */}
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }
 
-export default AppLayout; // Ensure this is the default export
+export default AppLayout;

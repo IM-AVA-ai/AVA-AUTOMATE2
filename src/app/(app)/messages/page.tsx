@@ -1,53 +1,36 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Send, Filter } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuCheckboxItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// Removed Resizable components
+import { Search, Send, Filter, User, Bot } from 'lucide-react'; // Added User, Bot icons
 import { useToast } from '@/hooks/use-toast';
 
-// Placeholder data types - replace with actual types from Firestore
+// Placeholder data types
 interface Conversation {
-  id: string; // Firestore document ID
+  id: string;
   leadId: string;
   leadName: string;
   lastMessage: string;
-  timestamp: Date; // Firestore Timestamp converted to Date
+  timestamp: Date;
   unread?: boolean;
-  avatar?: string; // Optional avatar URL
-  campaignId?: string; // Optional link to campaign
+  avatar?: string;
+  campaignId?: string;
 }
 
 interface Message {
-  id: string; // Firestore document ID
+  id: string;
   text: string;
-  sender: 'user' | 'ai' | 'lead'; // 'user' is the app user, 'ai' is the bot, 'lead' is the contact
-  timestamp: Date; // Firestore Timestamp converted to Date
+  sender: 'user' | 'ai' | 'lead';
+  timestamp: Date;
   conversationId: string;
 }
 
-// Placeholder hooks - replace with actual Firestore interaction
+// Placeholder hooks
 const useConversations = () => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // TODO: Implement Firestore listener (onSnapshot) for the 'conversations' collection.
-        // Order by timestamp descending.
-        // Update conversations state in real-time.
         console.log("Setting up Firestore listener for conversations (placeholder)...");
         const timer = setTimeout(() => {
             setConversations([
@@ -58,22 +41,13 @@ const useConversations = () => {
             ]);
             setLoading(false);
         }, 1000);
-
-        // Cleanup listener on component unmount
-        return () => {
-            console.log("Cleaning up Firestore listener for conversations (placeholder)...");
-            clearTimeout(timer);
-            // unsubscribe(); // Actual Firestore unsubscribe function
-        };
+        return () => clearTimeout(timer);
     }, []);
 
-    // Function to mark a conversation as read (update Firestore)
     const markAsRead = async (conversationId: string) => {
         console.log(`Marking conversation ${conversationId} as read (placeholder)...`);
-        // TODO: Update the 'unread' field in the specific conversation document in Firestore.
-         setConversations(prev => prev.map(c => c.id === conversationId ? { ...c, unread: false } : c));
+        setConversations(prev => prev.map(c => c.id === conversationId ? { ...c, unread: false } : c));
     };
-
 
     return { conversations, loading, markAsRead };
 };
@@ -88,15 +62,9 @@ const useMessages = (conversationId: string | null) => {
             setMessages([]);
             return;
         }
-
         setLoading(true);
-        // TODO: Implement Firestore listener (onSnapshot) for the 'messages' subcollection
-        // within the selected 'conversation' document. Order by timestamp ascending.
-        // Update messages state in real-time.
         console.log(`Setting up Firestore listener for messages in conversation ${conversationId} (placeholder)...`);
-
         const timer = setTimeout(() => {
-             // Dummy data based on conversation ID
              if (conversationId === 'conv1') {
                  setMessages([
                     { id: 'm1', conversationId: 'conv1', text: 'Hi John, interested in saving on your energy bill with solar?', sender: 'ai', timestamp: new Date(Date.now() - 7200000) },
@@ -109,80 +77,33 @@ const useMessages = (conversationId: string | null) => {
                     { id: 'm5', conversationId: 'conv2', text: 'Hello Jane, following up on our roofing inspection offer.', sender: 'ai', timestamp: new Date(Date.now() - 90000000) },
                     { id: 'm6', conversationId: 'conv2', text: 'Not interested, please remove me.', sender: 'lead', timestamp: new Date(Date.now() - 86400000) },
                  ]);
-             } else {
-                 setMessages([]); // No messages for other convos in this example
-             }
+             } else { setMessages([]); }
             setLoading(false);
         }, 500);
-
-
-        // Cleanup listener on component unmount or when conversationId changes
-        return () => {
-            console.log(`Cleaning up Firestore listener for messages in conversation ${conversationId} (placeholder)...`);
-            clearTimeout(timer);
-            // unsubscribe(); // Actual Firestore unsubscribe function
-        };
+        return () => clearTimeout(timer);
     }, [conversationId]);
 
-     // Function to send a message (from the app user)
     const sendMessage = async (text: string) => {
         if (!conversationId || !text.trim()) return;
-
         console.log(`Sending message "${text}" to conversation ${conversationId} as 'user' (placeholder)...`);
-        // TODO: Add the new message document to the 'messages' subcollection in Firestore.
-        // TODO: Update the 'lastMessage' and 'timestamp' in the parent 'conversation' document.
-        // Optionally, handle potential AI trigger/response logic here or server-side.
-
-        // Optimistic update (add message locally immediately)
         const optimisticMessage: Message = {
-            id: `temp-${Date.now()}`,
-            conversationId: conversationId,
-            text: text,
-            sender: 'user', // Message sent by the app user
-            timestamp: new Date(),
+            id: `temp-${Date.now()}`, conversationId: conversationId, text: text,
+            sender: 'user', timestamp: new Date(),
         };
         setMessages(prev => [...prev, optimisticMessage]);
-
         try {
-            // Simulate network request
             await new Promise(resolve => setTimeout(resolve, 500));
-            // In a real scenario, you'd get the actual ID back from Firestore
-            // and potentially update the optimistic message's ID.
-             toast({ title: "Message Sent" });
-
-            // TODO: Trigger AI response if applicable based on conversation state/rules
-            // simulateAIResponse(conversationId, text);
-
+            toast({ title: "Message Sent" });
+            // simulateAIResponse(conversationId, text); // Optional AI reply simulation
         } catch (error) {
             console.error("Failed to send message:", error);
              toast({ title: "Failed to Send", description: "Could not send message.", variant: "destructive" });
-             // Revert optimistic update if needed
             setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id));
         }
     };
 
-     // Simulate AI responding after user sends a message
-     const simulateAIResponse = async (convId: string, userMessage: string) => {
-         if (!convId) return;
-         await new Promise(resolve => setTimeout(resolve, 1500)); // AI thinking time
-
-         const aiReply: Message = {
-             id: `ai-${Date.now()}`,
-             conversationId: convId,
-             text: `AI Response to: "${userMessage.substring(0, 20)}..."`,
-             sender: 'ai',
-             timestamp: new Date(),
-         };
-         // TODO: Add AI reply to Firestore
-         setMessages(prev => [...prev, aiReply]);
-         // TODO: Update conversation last message/timestamp in Firestore
-         console.log(`AI responded in conversation ${convId} (placeholder)`);
-     };
-
-
     return { messages, loading, sendMessage };
 };
-
 
 export default function MessagesPage() {
     const { conversations, loading: loadingConversations, markAsRead } = useConversations();
@@ -191,10 +112,10 @@ export default function MessagesPage() {
     const [newMessage, setNewMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [filterUnread, setFilterUnread] = useState(false);
-    const messagesEndRef = useRef<HTMLDivElement>(null); // Ref for scrolling
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false); // State for filter dropdown
 
     useEffect(() => {
-        // Select first conversation if none is selected and list is loaded
         if (!selectedConversationId && !loadingConversations && conversations.length > 0) {
             const firstUnread = conversations.find(c => c.unread);
             setSelectedConversationId(firstUnread ? firstUnread.id : conversations[0].id);
@@ -202,20 +123,15 @@ export default function MessagesPage() {
     }, [conversations, loadingConversations, selectedConversationId]);
 
      useEffect(() => {
-        // Mark conversation as read when selected
         if (selectedConversationId) {
             const selectedConv = conversations.find(c => c.id === selectedConversationId);
-            if (selectedConv?.unread) {
-                markAsRead(selectedConversationId);
-            }
+            if (selectedConv?.unread) markAsRead(selectedConversationId);
         }
     }, [selectedConversationId, conversations, markAsRead]);
 
-     // Scroll to bottom when messages load or new message is added
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
-
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
@@ -230,96 +146,119 @@ export default function MessagesPage() {
 
     const selectedConversation = conversations.find(c => c.id === selectedConversationId);
 
+    // Helper to get avatar fallback text
+    const getAvatarFallback = (name: string) => name.substring(0, 2).toUpperCase();
+
     return (
-        <div className="flex h-[calc(100vh-theme(spacing.16))] flex-col"> {/* Adjust height based on header/layout */}
-            <h1 className="text-3xl font-bold mb-6">Messages</h1>
-            <ResizablePanelGroup direction="horizontal" className="flex-1 rounded-lg border bg-card">
-                <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
-                    <div className="flex h-full flex-col">
-                        <div className="p-4 border-b flex items-center gap-2">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Search conversations..."
-                                    className="pl-8 w-full"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    disabled={loadingConversations}
-                                />
+        <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] bg-white dark:bg-gray-900"> {/* Adjust height based on header/layout */}
+            <h1 className="text-3xl font-bold mb-6 px-4 pt-4 text-gray-900 dark:text-white">Messages</h1>
+            <div className="flex flex-1 overflow-hidden border-t border-gray-200 dark:border-gray-700">
+                {/* Conversation List Panel */}
+                <div className="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-white dark:bg-gray-800">
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                        <div className="relative flex-1">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                             </div>
-                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                     <Button variant="outline" size="icon" disabled={loadingConversations}>
-                                         <Filter className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuCheckboxItem
-                                        checked={filterUnread}
-                                        onCheckedChange={setFilterUnread}
-                                    >
-                                        Unread
-                                    </DropdownMenuCheckboxItem>
-                                    {/* Add more filters later (e.g., by campaign, by agent) */}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <input
+                                type="search"
+                                placeholder="Search conversations..."
+                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                disabled={loadingConversations}
+                            />
                         </div>
-                        <ScrollArea className="flex-1">
-                            {loadingConversations ? (
-                                <p className='text-center p-4 text-muted-foreground'>Loading conversations...</p>
-                            ) : filteredConversations.length > 0 ? (
-                                filteredConversations.map((conv) => (
-                                    <Button
-                                        key={conv.id}
-                                        variant="ghost"
-                                        className={`flex h-auto w-full items-center justify-start gap-3 rounded-none p-4 text-left ${selectedConversationId === conv.id ? 'bg-accent' : ''}`}
-                                        onClick={() => setSelectedConversationId(conv.id)}
-                                    >
-                                        <Avatar className="h-10 w-10">
-                                            <AvatarImage src={conv.avatar} alt={conv.leadName} data-ai-hint="person face" />
-                                            <AvatarFallback>{conv.leadName.substring(0, 2).toUpperCase()}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1 overflow-hidden">
-                                            <p className={`truncate ${conv.unread ? 'font-bold' : ''}`}>{conv.leadName}</p>
-                                            <p className={`text-sm truncate ${conv.unread ? 'text-foreground' : 'text-muted-foreground'}`}>{conv.lastMessage}</p>
-                                        </div>
-                                        <div className="flex flex-col items-end">
-                                            {conv.unread && <Badge className="h-5 mb-1">New</Badge>}
-                                            <time className="text-xs text-muted-foreground self-start pt-1 whitespace-nowrap">
-                                                {conv.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                                            </time>
-                                        </div>
-                                    </Button>
-                                ))
-                            ) : (
-                                <p className='text-center p-4 text-muted-foreground'>
-                                    {searchTerm || filterUnread ? 'No matching conversations.' : 'No conversations found.'}
-                                </p>
-                            )}
-                        </ScrollArea>
-                    </div>
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={75}>
-                    {selectedConversation ? (
-                        <div className="flex h-full flex-col">
-                            <div className="flex items-center gap-3 border-b p-4">
-                                <Avatar className="h-10 w-10">
-                                    <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.leadName} data-ai-hint="person face" />
-                                    <AvatarFallback>{selectedConversation.leadName.substring(0, 2).toUpperCase()}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <p className="font-semibold">{selectedConversation.leadName}</p>
-                                     {/* TODO: Add lead phone or link to lead details */}
-                                     <p className="text-xs text-muted-foreground">Lead ID: {selectedConversation.leadId}</p>
+                        {/* Filter Dropdown */}
+                         <div className="relative">
+                            <button
+                                onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
+                                className="p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                                disabled={loadingConversations}
+                            >
+                                 <Filter className="h-4 w-4" />
+                            </button>
+                            {isFilterMenuOpen && (
+                                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                    <div className="py-1" role="menu" aria-orientation="vertical">
+                                        <label className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2"
+                                                checked={filterUnread}
+                                                onChange={(e) => setFilterUnread(e.target.checked)}
+                                            />
+                                            Unread
+                                        </label>
+                                        {/* Add more filters here */}
+                                    </div>
                                 </div>
-                                {/* TODO: Add actions like 'Mark Unread', 'Assign Agent', 'View Lead Details' */}
+                            )}
+                         </div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto">
+                        {loadingConversations ? (
+                            <p className='text-center p-4 text-gray-500 dark:text-gray-400'>Loading conversations...</p>
+                        ) : filteredConversations.length > 0 ? (
+                            filteredConversations.map((conv) => (
+                                <button
+                                    key={conv.id}
+                                    className={`flex w-full items-center gap-3 p-4 text-left border-b border-gray-200 dark:border-gray-700 transition-colors ${
+                                        selectedConversationId === conv.id ? 'bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => setSelectedConversationId(conv.id)}
+                                >
+                                    {/* HeroUI style Avatar */}
+                                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden">
+                                        {conv.avatar ? (
+                                            <img className="h-full w-full object-cover" src={conv.avatar} alt={conv.leadName} data-ai-hint="person face" />
+                                        ) : (
+                                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{getAvatarFallback(conv.leadName)}</span>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 overflow-hidden">
+                                        <p className={`truncate text-sm font-medium ${conv.unread ? 'text-gray-900 dark:text-white font-semibold' : 'text-gray-700 dark:text-gray-300'}`}>{conv.leadName}</p>
+                                        <p className={`text-xs truncate ${conv.unread ? 'text-gray-700 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'}`}>{conv.lastMessage}</p>
+                                    </div>
+                                    <div className="flex flex-col items-end self-start">
+                                        {conv.unread && <span className="px-1.5 py-0.5 text-xs font-medium bg-blue-500 text-white rounded-full mb-1">New</span>}
+                                        <time className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap mt-0.5">
+                                            {conv.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                                        </time>
+                                    </div>
+                                </button>
+                            ))
+                        ) : (
+                            <p className='text-center p-4 text-gray-500 dark:text-gray-400'>
+                                {searchTerm || filterUnread ? 'No matching conversations.' : 'No conversations found.'}
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Message Panel */}
+                 <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
+                    {selectedConversation ? (
+                        <>
+                            {/* Message Header */}
+                            <div className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
+                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden">
+                                    {selectedConversation.avatar ? (
+                                        <img className="h-full w-full object-cover" src={selectedConversation.avatar} alt={selectedConversation.leadName} data-ai-hint="person face"/>
+                                    ) : (
+                                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{getAvatarFallback(selectedConversation.leadName)}</span>
+                                    )}
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-900 dark:text-white">{selectedConversation.leadName}</p>
+                                     <p className="text-xs text-gray-500 dark:text-gray-400">Lead ID: {selectedConversation.leadId}</p>
+                                </div>
+                                {/* TODO: Add actions */}
                             </div>
-                            <ScrollArea className="flex-1 p-4 space-y-4 bg-background/50">
+                            {/* Messages Area */}
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
                                 {loadingMessages ? (
-                                    <p className="text-center text-muted-foreground">Loading messages...</p>
+                                    <p className="text-center text-gray-500 dark:text-gray-400">Loading messages...</p>
                                 ) : messages.length > 0 ? (
                                     messages.map((msg) => (
                                         <div
@@ -327,58 +266,53 @@ export default function MessagesPage() {
                                             className={`flex ${msg.sender === 'user' || msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}
                                         >
                                             <div
-                                                className={`max-w-[75%] rounded-lg px-4 py-2 shadow-sm ${msg.sender === 'user'
-                                                        ? 'bg-primary text-primary-foreground'
-                                                        : msg.sender === 'ai'
-                                                        ? 'bg-secondary text-secondary-foreground' // Different style for AI
-                                                        : 'bg-muted text-muted-foreground' // Lead's messages
-                                                    }`}
+                                                className={`max-w-[75%] rounded-lg px-4 py-2 shadow-sm ${
+                                                    msg.sender === 'user' ? 'bg-blue-600 text-white' :
+                                                    msg.sender === 'ai' ? 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200' :
+                                                    'bg-white text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                                }`}
                                             >
-                                                <p>{msg.text}</p>
-                                                <time className="text-xs opacity-70 block text-right mt-1">
-                                                     {msg.sender === 'ai' && '(AI) '}
-                                                    {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-
-                                                </time>
+                                                <p className="text-sm">{msg.text}</p>
+                                                <div className="flex items-center justify-end mt-1 text-xs opacity-70">
+                                                     {msg.sender === 'ai' && <Bot className="h-3 w-3 mr-1 inline"/>}
+                                                     {msg.sender === 'user' && <User className="h-3 w-3 mr-1 inline"/>}
+                                                    <time>
+                                                        {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                                                    </time>
+                                                </div>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                     <p className="text-center text-muted-foreground">No messages in this conversation yet.</p>
+                                     <p className="text-center text-gray-500 dark:text-gray-400">No messages in this conversation yet.</p>
                                 )}
                                  <div ref={messagesEndRef} /> {/* Anchor for scrolling */}
-                            </ScrollArea>
-                            <div className="border-t p-4 bg-card">
+                            </div>
+                            {/* Message Input Area */}
+                            <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
                                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                                    <Input
+                                    <input
+                                        type="text"
                                         placeholder="Type your message..."
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
-                                        className="flex-1"
+                                        className="flex-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
                                         disabled={loadingMessages}
                                         autoComplete="off"
                                     />
-                                    <Button type="submit" size="icon" disabled={loadingMessages || !newMessage.trim()}>
-                                        <Send className="h-4 w-4" />
-                                    </Button>
-                                    {/* TODO: Add button to trigger AI response manually if needed */}
-                                    {/* <Button variant="outline" size="sm" disabled>Ask AI</Button> */}
+                                    <button type="submit" className="inline-flex items-center justify-center p-2 border border-transparent rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50" disabled={loadingMessages || !newMessage.trim()}>
+                                        <Send className="h-5 w-5" />
+                                    </button>
                                 </form>
                             </div>
-                        </div>
+                        </>
                     ) : (
-                        <div className="flex h-full items-center justify-center text-muted-foreground">
+                        <div className="flex h-full items-center justify-center text-gray-500 dark:text-gray-400">
                             {loadingConversations ? 'Loading...' : 'Select a conversation to view messages'}
                         </div>
                     )}
-                </ResizablePanel>
-            </ResizablePanelGroup>
+                </div>
+            </div>
         </div>
     );
 }
-
-// TODO: Implement robust Firestore listeners with error handling.
-// TODO: Implement marking conversations as read/unread in Firestore.
-// TODO: Implement sending messages (user and AI) to Firestore.
-// TODO: Add pagination for conversations and messages if needed.
-// TODO: Connect AI response generation logic.

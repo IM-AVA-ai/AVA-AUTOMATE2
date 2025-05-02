@@ -1,8 +1,17 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+'use client'; // Still needed for client-side interactions and hooks if used later
+
 import { Activity, BarChartHorizontal, Bot, MessageSquare, Users } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+
+// Helper for badge variant styles (Tailwind based)
+const getStatusBadgeClasses = (status: string): string => {
+    switch (status.toLowerCase()) {
+      case 'active': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'paused': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'; // Changed outline to green
+      default: return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'; // Default to yellow for draft/other
+    }
+  };
+
 
 export default function DashboardPage() {
   // Placeholder data - replace with actual data fetching
@@ -19,132 +28,103 @@ export default function DashboardPage() {
       { id: 'a4', type: 'agent', text: 'Agent "Roofing Lead Qualifier" created.', time: '1d ago' },
   ];
 
-   const getStatusBadgeVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status.toLowerCase()) {
-      case 'active': return 'default';
-      case 'paused': return 'secondary';
-      case 'completed': return 'outline';
-      default: return 'secondary';
-    }
-  };
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Campaigns</CardTitle>
-            <Bot className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1</div> {/* Placeholder */}
-            <p className="text-xs text-muted-foreground">+1 since last week</p> {/* Placeholder */}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
-             <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">205</div> {/* Placeholder */}
-            <p className="text-xs text-muted-foreground">+10 this month</p> {/* Placeholder */}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages Sent (Today)</CardTitle>
-             <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">85</div> {/* Placeholder */}
-             <p className="text-xs text-muted-foreground">Updated 5 mins ago</p> {/* Placeholder */}
-          </CardContent>
-        </Card>
-         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Reply Rate (Overall)</CardTitle>
-             <BarChartHorizontal className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12%</div> {/* Placeholder */}
-             <p className="text-xs text-muted-foreground">Based on all campaigns</p> {/* Placeholder */}
-          </CardContent>
-        </Card>
+        {[
+            { title: 'Active Campaigns', value: '1', change: '+1 since last week', icon: Bot },
+            { title: 'Total Leads', value: '205', change: '+10 this month', icon: Users },
+            { title: 'Messages Sent (Today)', value: '85', change: 'Updated 5 mins ago', icon: MessageSquare },
+            { title: 'Reply Rate (Overall)', value: '12%', change: 'Based on all campaigns', icon: BarChartHorizontal },
+        ].map((stat, index) => (
+            <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.title}</h3>
+                <stat.icon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                </div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stat.change}</p>
+            </div>
+        ))}
       </div>
 
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
-         <Card className="lg:col-span-3">
-           <CardHeader>
-              <CardTitle>Recent Campaigns Summary</CardTitle>
-              <CardDescription>Quick overview of your latest SMS campaigns.</CardDescription>
-           </CardHeader>
-           <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Sent</TableHead>
-                    <TableHead>Replies</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+         {/* Recent Campaigns */}
+         <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Campaigns Summary</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Quick overview of your latest SMS campaigns.</p>
+           </div>
+           <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Sent</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Replies</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {recentCampaigns.length > 0 ? (
                     recentCampaigns.map((campaign) => (
-                      <TableRow key={campaign.id}>
-                        <TableCell className="font-medium">{campaign.name}</TableCell>
-                        <TableCell><Badge variant={getStatusBadgeVariant(campaign.status)}>{campaign.status}</Badge></TableCell>
-                        <TableCell>{campaign.sent}</TableCell>
-                        <TableCell>{campaign.replies}</TableCell>
-                      </TableRow>
+                      <tr key={campaign.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{campaign.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(campaign.status)}`}>
+                                {campaign.status}
+                            </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{campaign.sent}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{campaign.replies}</td>
+                      </tr>
                     ))
                   ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center">No recent campaigns.</TableCell>
-                    </TableRow>
+                    <tr>
+                      <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No recent campaigns.</td>
+                    </tr>
                   )}
-                </TableBody>
-              </Table>
-           </CardContent>
-         </Card>
+                </tbody>
+              </table>
+           </div>
+         </div>
 
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Activity Feed</CardTitle>
-              <CardDescription>Latest updates and notifications.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          {/* Activity Feed */}
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Activity Feed</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Latest updates and notifications.</p>
+            </div>
+            <div className="p-4 space-y-4">
              {activityFeed.length > 0 ? (
                  activityFeed.map((activity) => (
                     <div key={activity.id} className="flex items-start gap-3">
-                        <div className="pt-1">
-                            <Activity className="h-4 w-4 text-muted-foreground" />
+                        <div className="pt-1 flex-shrink-0">
+                            <Activity className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                         </div>
                         <div className="flex-1">
-                            <p className="text-sm">{activity.text}</p>
-                            <p className="text-xs text-muted-foreground">{activity.time}</p>
+                            <p className="text-sm text-gray-900 dark:text-white">{activity.text}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
                         </div>
                     </div>
                  ))
              ) : (
-                <p className="text-center text-muted-foreground">No recent activity.</p>
+                <p className="text-center text-sm text-gray-500 dark:text-gray-400">No recent activity.</p>
              )}
-
-            </CardContent>
-          </Card>
+            </div>
+          </div>
        </div>
 
-       <Card>
-         <CardHeader>
-            <CardTitle>Welcome to AVA Automate!</CardTitle>
-         </CardHeader>
-         <CardContent>
-            <p className="text-muted-foreground">Manage your leads, configure AI agents, launch SMS campaigns, and monitor conversations all from this dashboard. Use the sidebar to navigate between sections.</p>
-            {/* Could add quick action buttons here */}
-         </CardContent>
-       </Card>
+       {/* Welcome Card */}
+       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Welcome to AVA Automate!</h2>
+          <p className="text-gray-600 dark:text-gray-400">Manage your leads, configure AI agents, launch SMS campaigns, and monitor conversations all from this dashboard. Use the sidebar to navigate between sections.</p>
+          {/* Could add quick action buttons here */}
+       </div>
     </div>
   );
 }

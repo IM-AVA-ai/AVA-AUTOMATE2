@@ -1,9 +1,10 @@
+// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
-// No longer importing FirebaseAuthProvider
+// Removed Toaster import from Shadcn
 import { QueryProvider } from '@/components/Providers/QueryProvider';
+import BasicToaster from '@/components/BasicToaster'; // Import the new basic toaster
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,10 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} antialiased`}>
-        {/* Removed FirebaseAuthProvider */}
-        <QueryProvider> {/* Use the QueryProvider client component */}
+        <QueryProvider>
           {children}
-          <Toaster />
+          <BasicToaster /> {/* Use the new basic toaster */}
         </QueryProvider>
       </body>
     </html>
