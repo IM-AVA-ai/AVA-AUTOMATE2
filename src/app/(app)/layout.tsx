@@ -105,7 +105,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              {/* Optional Analytics/Insights Page Link - Uncomment when ready */}
-            {/*
+
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Analytics" isActive={isActive('/analytics')}>
                 <Link href="/analytics">
@@ -114,7 +114,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            */}
+
           </SidebarMenu>
         </SidebarContent>
          <Separator className="bg-sidebar-border" /> {/* Visual separator */}
@@ -165,3 +165,5 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     </SidebarProvider>
   );
 }
+
+export default AppLayout; // Ensure this is the default export
