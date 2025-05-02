@@ -15,7 +15,7 @@ export default function Home() {
     // Directly redirect to the dashboard since authentication is removed
     console.log('Home Page Effect: Redirecting to /dashboard');
     router.replace('/dashboard');
-  }, [router]);
+  }, [router]); // Ensure dependency array is correct
 
   // Render loading indicator while redirecting
   return (

@@ -1,10 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation'; // Keep useRouter if needed for navigation checks
-import { Button } from '@/components/ui/button';
-// Removed firebase/auth imports: signOut, auth
-// Removed useToast
+import { usePathname } from 'next/navigation'; // Import usePathname
 import Link from 'next/link';
 import {
   SidebarProvider,
@@ -28,18 +25,19 @@ import {
   Briefcase,
   Bell,
 } from 'lucide-react';
-// Removed useAuth hook
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  // Removed useAuth hook usage
-  const router = useRouter(); // Keep for checking active routes
-  // Removed useToast
+  const pathname = usePathname(); // Get the current pathname
 
-  // Removed handleLogout function
+  // Helper function to determine if a link is active
+  const isActive = (href: string) => {
+    // Handle exact match for dashboard, otherwise check startsWith for nested routes if any
+    if (href === '/dashboard') {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
 
-  // Removed useEffect for checking auth state
-
-  // Removed loading check, always render the layout now
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -58,9 +56,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-               {/* TODO: Fix pathname usage - useRouter doesn't provide pathname directly in App Router */}
-               {/* For now, remove isActive prop or implement pathname logic correctly */}
-              <SidebarMenuButton asChild tooltip="Dashboard">
+              <SidebarMenuButton asChild tooltip="Dashboard" isActive={isActive('/dashboard')}>
                 <Link href="/dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
@@ -68,7 +64,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Leads">
+              <SidebarMenuButton asChild tooltip="Leads" isActive={isActive('/leads')}>
                 <Link href="/leads">
                   <Users />
                   <span>Leads</span>
@@ -76,7 +72,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="AI Agents">
+              <SidebarMenuButton asChild tooltip="AI Agents" isActive={isActive('/agents')}>
                 <Link href="/agents">
                   <Bot />
                   <span>AI Agents</span>
@@ -84,7 +80,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Campaigns">
+              <SidebarMenuButton asChild tooltip="Campaigns" isActive={isActive('/campaigns')}>
                 <Link href="/campaigns">
                   <Briefcase />
                   <span>Campaigns</span>
@@ -92,7 +88,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Messages">
+              <SidebarMenuButton asChild tooltip="Messages" isActive={isActive('/messages')}>
                 <Link href="/messages">
                   <MessageSquare />
                   <span>Messages</span>
@@ -100,7 +96,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Notifications">
+              <SidebarMenuButton asChild tooltip="Notifications" isActive={isActive('/notifications')}>
                 <Link href="/notifications">
                   <Bell />
                   <span>Notifications</span>
@@ -112,7 +108,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings">
+                <SidebarMenuButton asChild tooltip="Settings" isActive={isActive('/settings')}>
                     <Link href="/settings">
                     <Settings />
                     <span>Settings</span>
