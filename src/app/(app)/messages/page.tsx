@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // Removed Resizable components
 import { Search, Send, Filter, User, Bot } from 'lucide-react'; // Added User, Bot icons
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/BasicToaster'; // Corrected import path
 
 // Placeholder data types
 interface Conversation {

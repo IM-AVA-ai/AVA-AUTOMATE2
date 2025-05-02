@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { BellRing, MessageSquare, CheckCircle, XCircle, Rocket, UserPlus } from "lucide-react";
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/BasicToaster'; // Corrected import path
 
 // Placeholder Notification type
 interface Notification {

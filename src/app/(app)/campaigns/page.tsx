@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Play, Pause, BarChart, Trash2, Bot, Send, MoreVertical } from "lucide-react"; // Added MoreVertical
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/BasicToaster'; // Corrected import path
 
 // Placeholder types
 interface Campaign {
