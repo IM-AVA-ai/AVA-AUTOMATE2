@@ -22,17 +22,22 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log('Attempting login for:', email);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login successful:', userCredential.user.uid);
       toast({ title: 'Login successful!' });
-      router.push('/dashboard');
+      console.log('Redirecting to /dashboard...');
+      router.push('/dashboard'); // Keep the redirection for UX
     } catch (error: any) {
+      console.error('Login failed:', error);
       toast({
         title: 'Login failed',
-        description: error.message,
+        description: error.message || 'An unknown error occurred during login.',
         variant: 'destructive',
       });
     } finally {
+      console.log('Login attempt finished.');
       setLoading(false);
     }
   };
@@ -55,6 +60,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -70,6 +76,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
