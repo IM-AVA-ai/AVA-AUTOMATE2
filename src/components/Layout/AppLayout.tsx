@@ -1,12 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'; // Keep useRouter if needed for navigation checks
 import { Button } from '@/components/ui/button';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/firebase/config';
-import { useToast } from '@/hooks/use-toast';
+// Removed firebase/auth imports: signOut, auth
+// Removed useToast
 import Link from 'next/link';
 import {
   SidebarProvider,
@@ -26,41 +24,22 @@ import {
   Bot,
   MessageSquare,
   Settings,
-  LogOut,
+  LogOut, // Keep LogOut icon visually, but remove functionality
   Briefcase,
   Bell,
 } from 'lucide-react';
+// Removed useAuth hook
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-  const { toast } = useToast();
+  // Removed useAuth hook usage
+  const router = useRouter(); // Keep for checking active routes
+  // Removed useToast
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      toast({ title: 'Logged out successfully' });
-      router.push('/login');
-    } catch (error: any) {
-      toast({
-        title: 'Logout failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    }
-  };
+  // Removed handleLogout function
 
-  // Redirect to login if not authenticated and not loading
-  React.useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login');
-    }
-  }, [user, loading, router]);
+  // Removed useEffect for checking auth state
 
-  // Render nothing or a loading indicator while checking auth state
-  if (loading || !user) {
-    return null; // Or a loading spinner
-  }
+  // Removed loading check, always render the layout now
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -79,7 +58,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={router.pathname === '/dashboard'} tooltip="Dashboard">
+               {/* TODO: Fix pathname usage - useRouter doesn't provide pathname directly in App Router */}
+               {/* For now, remove isActive prop or implement pathname logic correctly */}
+              <SidebarMenuButton asChild tooltip="Dashboard">
                 <Link href="/dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
@@ -87,7 +68,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={router.pathname === '/leads'} tooltip="Leads">
+              <SidebarMenuButton asChild tooltip="Leads">
                 <Link href="/leads">
                   <Users />
                   <span>Leads</span>
@@ -95,7 +76,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={router.pathname === '/agents'} tooltip="AI Agents">
+              <SidebarMenuButton asChild tooltip="AI Agents">
                 <Link href="/agents">
                   <Bot />
                   <span>AI Agents</span>
@@ -103,7 +84,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={router.pathname === '/campaigns'} tooltip="Campaigns">
+              <SidebarMenuButton asChild tooltip="Campaigns">
                 <Link href="/campaigns">
                   <Briefcase />
                   <span>Campaigns</span>
@@ -111,7 +92,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={router.pathname === '/messages'} tooltip="Messages">
+              <SidebarMenuButton asChild tooltip="Messages">
                 <Link href="/messages">
                   <MessageSquare />
                   <span>Messages</span>
@@ -119,7 +100,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={router.pathname === '/notifications'} tooltip="Notifications">
+              <SidebarMenuButton asChild tooltip="Notifications">
                 <Link href="/notifications">
                   <Bell />
                   <span>Notifications</span>
@@ -131,15 +112,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={router.pathname === '/settings'} tooltip="Settings">
+                <SidebarMenuButton asChild tooltip="Settings">
                     <Link href="/settings">
                     <Settings />
                     <span>Settings</span>
                     </Link>
                 </SidebarMenuButton>
              </SidebarMenuItem>
+            {/* Keep logout visually but disable functionality */}
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
+              <SidebarMenuButton tooltip="Logout" disabled>
                 <LogOut />
                 <span>Logout</span>
               </SidebarMenuButton>

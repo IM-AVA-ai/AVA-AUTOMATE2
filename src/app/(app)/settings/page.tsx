@@ -6,15 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 export default function SettingsPage() {
-  // Placeholder state - replace with actual user settings fetching and saving
-  const userSettings = {
-    name: 'Admin User',
-    email: 'admin@ava.com', // Typically fetched from auth context
-    twilioAccountSid: 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+  // Placeholder state - remove user-specific data fetched from auth
+  const settingsData = {
+    name: 'Admin User', // Keep name or make it configurable differently
+    // email: 'admin@ava.com', // Removed email from display
+    twilioAccountSid: 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // Keep integration settings
     twilioAuthToken: '••••••••••••••••••••••••••••',
     twilioPhoneNumber: '+15551234567',
     enableEmailNotifications: true,
-    defaultAgentId: '1', // Example default agent
+    defaultAgentId: '1',
   };
 
   // TODO: Implement form handling (react-hook-form?) and saving settings logic
@@ -34,18 +34,15 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Profile Settings</CardTitle>
-              <CardDescription>Manage your account information.</CardDescription>
+              <CardDescription>Manage your application settings.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" defaultValue={userSettings.name} />
+                <Input id="name" defaultValue={settingsData.name} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" defaultValue={userSettings.email} disabled />
-              </div>
-              {/* Add password change functionality here */}
+              {/* Removed email display as it depends on auth */}
+              {/* Removed password change functionality */}
                <Button>Update Profile</Button>
             </CardContent>
           </Card>
@@ -60,15 +57,15 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="twilioSid">Account SID</Label>
-                <Input id="twilioSid" defaultValue={userSettings.twilioAccountSid} placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+                <Input id="twilioSid" defaultValue={settingsData.twilioAccountSid} placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="twilioToken">Auth Token</Label>
-                <Input id="twilioToken" type="password" defaultValue={userSettings.twilioAuthToken} />
+                <Input id="twilioToken" type="password" defaultValue={settingsData.twilioAuthToken} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="twilioPhone">Twilio Phone Number</Label>
-                <Input id="twilioPhone" defaultValue={userSettings.twilioPhoneNumber} placeholder="+1xxxxxxxxxx" />
+                <Input id="twilioPhone" defaultValue={settingsData.twilioPhoneNumber} placeholder="+1xxxxxxxxxx" />
               </div>
               <Button>Save Twilio Settings</Button>
                {/* Add validation/testing for Twilio credentials */}
@@ -88,12 +85,12 @@ export default function SettingsPage() {
                  <div>
                    <Label htmlFor="emailNotifications" className="font-medium">Email Notifications</Label>
                    <p className="text-sm text-muted-foreground">
-                     Receive important updates via email.
+                     Receive important updates via email (requires email configuration elsewhere).
                    </p>
                  </div>
                  <Switch
                    id="emailNotifications"
-                   checked={userSettings.enableEmailNotifications}
+                   checked={settingsData.enableEmailNotifications}
                    // onCheckedChange={handleSwitchChange} // TODO: Implement handler
                  />
                </div>
