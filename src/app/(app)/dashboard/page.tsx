@@ -1,6 +1,18 @@
-'use client'; // Still needed for client-side interactions and hooks if used later
+"use client";
 
-import { Activity, BarChartHorizontal, Bot, MessageSquare, Users } from "lucide-react";
+import { Conversation, getRecentConversations } from '@/services/conversations';
+import Link from 'next/link';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@heroui/react';
+import { currentUser } from '@clerk/nextjs';
+import { getCampaigns } from '@/services/campaigns';
+
+import {  getLeads } from '@/services/leads';
+import { Activity, UserPlus, Rocket, MessagesSquare, Brain } from "lucide-react";
+
+
+
+import { Icon } from "@iconify/react";
+import MetricsCard from "@/components/MetricsCard";
 
 // Helper for badge variant styles (Tailwind based)
 const getStatusBadgeClasses = (status: string): string => {
@@ -13,16 +25,25 @@ const getStatusBadgeClasses = (status: string): string => {
   };
 
 
-export default function DashboardPage() {
-  // Placeholder data - replace with actual data fetching
-  const recentCampaigns = [
-    { id: '1', name: 'Summer Solar Promo', status: 'Active', sent: 120, replies: 15 },
-    { id: '2', name: 'Roof Inspection Offer', status: 'Paused', sent: 180, replies: 25 },
-    { id: '3', name: 'Q3 Follow-up', status: 'Completed', sent: 100, replies: 8 },
-  ];
+export default async function DashboardPage() {
+  const user = await currentUser();
+  if (!user) return null;
+  const userId = user.id
+  const recentConversations: Conversation[] = await getRecentConversations(userId);
+  
+  const campaigns = await getCampaigns(userId);
+  
+  const leads = await getLeads(userId);
+
+  const recentCampaigns = campaigns.map(campaign => ({
+    id: campaign.id,
+    name: campaign.name,
+    status: campaign.status,
+    sent: 0, // Placeholder - replace with actual data
+    replies: 0, // Placeholder - replace with actual data
+  }));
 
   const activityFeed = [
-      { id: 'a1', type: 'lead', text: 'New lead "Alice Green" added.', time: '2m ago' },
       { id: 'a2', type: 'campaign', text: 'Campaign "Summer Solar Promo" started.', time: '1h ago' },
       { id: 'a3', type: 'message', text: 'New reply received from John Doe.', time: '3h ago' },
       { id: 'a4', type: 'agent', text: 'Agent "Roofing Lead Qualifier" created.', time: '1d ago' },
@@ -31,26 +52,60 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[
-            { title: 'Active Campaigns', value: '1', change: '+1 since last week', icon: Bot },
-            { title: 'Total Leads', value: '205', change: '+10 this month', icon: Users },
-            { title: 'Messages Sent (Today)', value: '85', change: 'Updated 5 mins ago', icon: MessageSquare },
-            { title: 'Reply Rate (Overall)', value: '12%', change: 'Based on all campaigns', icon: BarChartHorizontal },
-        ].map((stat, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-                <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.title}</h3>
-                <stat.icon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                </div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stat.change}</p>
-            </div>
-        ))}
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        {/* Add Lead */}
+        <Card className="dark">
+          <CardHeader>
+            <Link href="/leads/create"><Button><UserPlus className="mr-2 h-4 w-4" /> Add Lead</Button></Link>
+          </CardHeader>
+        </Card>
+        {/* Start Campaign */}
+        <Card className="dark">
+        <CardHeader>
+            <Link href="/campaigns/create"><Button><Rocket className="mr-2 h-4 w-4" /> Start Campaign</Button></Link>
+          </CardHeader>
+        </Card>
+        {/* View Conversations */}
+        <Card className="dark">
+        <CardHeader>
+            <Link href="/conversations"><Button><MessagesSquare className="mr-2 h-4 w-4" /> View Conversations</Button></Link>
+          </CardHeader>
+        </Card>
+        {/* Create Agent */}
+        <Card className="dark">
+        <CardHeader>
+            <Link href="/agents/create"><Button><Brain className="mr-2 h-4 w-4" /> Create Agent</Button></Link>
+          </CardHeader>
+        </Card>
       </div>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+      {/* Recent Conversations */}
+      <Card className="dark mb-4">
+        <CardHeader>
+          <CardTitle>Recent Conversations</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {recentConversations.length > 0 ? (
+              recentConversations.map((conversation) => (
+                <div key={conversation.id} className="p-4 border rounded-lg">
+                  <p className="text-sm font-medium">Lead ID: {conversation.leadId}</p>
+                  <p className="text-sm">{conversation.lastMessage}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {conversation.createdAt.toDate().toLocaleString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>No recent conversations.</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Stats Cards */}
+        <MetricsCard leads={leads} campaigns={campaigns}/>
 
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
          {/* Recent Campaigns */}
@@ -103,10 +158,10 @@ export default function DashboardPage() {
              {activityFeed.length > 0 ? (
                  activityFeed.map((activity) => (
                     <div key={activity.id} className="flex items-start gap-3">
-                        <div className="pt-1 flex-shrink-0">
-                            <Activity className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                        </div>
-                        <div className="flex-1">
+                      <div className="pt-1 flex-shrink-0">
+                        <Activity className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <div className="flex-1">
                             <p className="text-sm text-gray-900 dark:text-white">{activity.text}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
                         </div>

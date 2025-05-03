@@ -1,43 +1,67 @@
-'use client'; // Needed for state management
+'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Label, Input, Button } from '@heroui/react';
+import { currentUser } from '@clerk/nextjs';
+import { saveTwilioCredentials, getTwilioCredentials, UserTwilioCredentials } from '@/services/users';
+import { addToast } from '@heroui/toast';
 
 export default function SettingsPage() {
-  // Placeholder state - remove user-specific data fetched from auth
-  const [settingsData, setSettingsData] = useState({
-    name: 'Admin User', // Keep name or make it configurable differently
-    twilioAccountSid: 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // Keep integration settings
-    twilioAuthToken: '••••••••••••••••••••••••••••', // Use password type for input
-    twilioPhoneNumber: '+15551234567',
-    enableEmailNotifications: true,
-    defaultAgentId: '1',
-  });
-
+  const [userId, setUserId] = useState<string | null>(null);
+  const [accountSid, setAccountSid] = useState<string>('');
+  const [authToken, setAuthToken] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [activeTab, setActiveTab] = useState('profile');
-  const [isLoading, setIsLoading] = useState(false); // Example loading state
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { id, value, type } = e.target;
-    if (type === 'checkbox') {
-        // Handle checkbox toggle specifically for Switch replacement
-        const { checked } = e.target as HTMLInputElement;
-        setSettingsData(prev => ({ ...prev, [id]: checked }));
-    } else {
-        setSettingsData(prev => ({ ...prev, [id]: value }));
-    }
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await currentUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchTwilioCredentials = async () => {
+      if (userId) {
+        const credentials: UserTwilioCredentials | null = await getTwilioCredentials(userId);
+        if (credentials) {
+          setAccountSid(credentials.accountSid);
+          setAuthToken(credentials.authToken);
+          setPhoneNumber(credentials.phoneNumber);
+        }
+      }
+    };
+    fetchTwilioCredentials();
+  }, [userId]);
+
+  const handleAccountSidChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAccountSid(e.target.value);
   };
 
-  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSettingsData(prev => ({...prev, enableEmailNotifications: e.target.checked}));
-  }
+  const handleAuthTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthToken(e.target.value);
+  };
 
-  const handleSave = async (section: string) => {
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.target.value);
+  };
+
+  const handleSaveTwilioCredentials = async () => {
     setIsLoading(true);
-    console.log(`Saving ${section} settings:`, settingsData);
-    // TODO: Implement actual saving logic (e.g., API call, Firestore update)
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate save
+    try {
+      if (!userId) return;
+      await saveTwilioCredentials(userId, accountSid, authToken, phoneNumber);
+      addToast({ message: 'Twilio credentials saved successfully!' });
+    } catch (error) {
+      addToast({ message: 'Error saving Twilio credentials.', type: 'danger' });
+    }
+
     setIsLoading(false);
-    alert(`${section.charAt(0).toUpperCase() + section.slice(1)} settings saved!`); // Simple feedback
   };
 
   const tabButtonStyle = (tabName: string) => `
@@ -45,9 +69,10 @@ export default function SettingsPage() {
     ${activeTab === tabName
       ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200'
       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'}
-  `;
+  `;    
 
   return (
+
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
 
@@ -78,19 +103,7 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  value={settingsData.name}
-                  onChange={handleInputChange}
-                  className="block w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <button
-                onClick={() => handleSave('profile')}
-                disabled={isLoading}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-              >
+              </div><button disabled={isLoading}  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
                 {isLoading ? 'Saving...' : 'Update Profile'}
               </button>
             </div>
