@@ -2,8 +2,8 @@
 
 import { Conversation, getRecentConversations } from '@/services/conversations';
 import Link from 'next/link';
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@heroui/react';
-import { currentUser } from '@clerk/nextjs';
+import { Button, Card, CardHeader, Chip } from '@heroui/react';
+import { currentUser } from '@clerk/nextjs/server';
 import { getCampaigns } from '@/services/campaigns';
 
 import {  getLeads } from '@/services/leads';
@@ -83,9 +83,11 @@ export default async function DashboardPage() {
       {/* Recent Conversations */}
       <Card className="dark mb-4">
         <CardHeader>
-          <CardTitle>Recent Conversations</CardTitle>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Recent Conversations
+            </h2>
         </CardHeader>
-        <CardContent>
+        <div className="p-6">
           <div className="space-y-4">
             {recentConversations.length > 0 ? (
               recentConversations.map((conversation) => (
@@ -101,7 +103,7 @@ export default async function DashboardPage() {
               <p>No recent conversations.</p>
             )}
           </div>
-        </CardContent>
+        </div>
       </Card>
       
       {/* Stats Cards */}

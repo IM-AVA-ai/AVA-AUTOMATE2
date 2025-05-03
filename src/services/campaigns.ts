@@ -11,11 +11,10 @@ import {
   getDoc,
   Timestamp, deleteDoc,
 } from 'firebase/firestore';
-import { createMessage, sendMessage, getMessageUserId } from './messages';
+import { createMessage, } from './messages';
 import { sendNotification } from './notifications';
-import { getLead } from './leads';
 import { createChat } from './chats';
-import { sendNotification } from './notifications';
+import { db } from '@/firebase/config';
 
 export interface NewCampaign {
   name: string;
@@ -75,7 +74,7 @@ export const getCampaigns = async (userId: string) => {
   try {
     const q = query(collection(db, `users/${userId}/campaigns`));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Campaign));
   } catch (error: any) {
     console.error('Error getting campaigns:', error);
     return [];
@@ -130,13 +129,20 @@ export const sendCampaign = async (
   try {
 
     const campaign = await getCampaign(userId, campaignId);
-    if (!campaign) {
+     if (!campaign) {
       throw new Error('Campaign not found');
     }
     const { name, message, id } = campaign;
-
+    await updateCampaign(userId, campaignId, {
+      status: 'Active'
+    })
+      //send notification
+    await sendNotification(userId, 'Campaign sent', `The campaign ${name} has been sent`);
+    
     await Promise.all(
       leadIds.map(async (leadId) => {
+
+
         const messageUserId = userId;
         // Create and send the message
         const { id: messageId } = await createMessage(
@@ -153,11 +159,64 @@ export const sendCampaign = async (
       })
     );
 
-    // Update the campaign status to Active
-    await updateCampaignStatus(campaignId, 'Active', userId);
-    //send notification
-    await sendNotification(userId, 'Campaign sent', `The campaign ${name} has been sent`);
     return true;
+  } catch (error: any) {
+    console.error('Error sending campaign:', error);
+    return false;
+  }
+};
+
+export const addLeadsToCampaign = async (
+  userId: string,
+  campaignId: string,
+  leadIds: string[]
+) => {
+  try {
+
+    const campaignLeadsCollection = collection(db, `users/${userId}/campaigns/${campaignId}/leads`);
+
+    const docRef = doc(db, `users/${userId}/campaigns`, campaignId);
+    const campaign = await getDoc(docRef);
+    if (!campaign.exists() || !('name' in campaign.data() as Campaign) || !('message' in campaign.data() as Campaign)) {
+      return;
+    }
+    const campaignData = campaign.data() as Campaign;
+
+    const batch = [];
+
+    for (const leadId of leadIds) {
+        if(!campaignData){
+            return
+        }
+        if(campaignData){
+            
+            batch.push(
+        addDoc(campaignLeadsCollection, {
+            leadId,
+            campaignId,
+            status: 'pending',
+          })
+      );
+        }
+      
+    }
+
+    await Promise.all(batch);
+    await Promise.all(
+      batch.map(async () => {
+        const campaignLeads = await getDocs(campaignLeadsCollection);
+
+          campaignLeads.forEach(async (campaignLead) => {
+
+          const messageId = await createMessage(
+            campaignLead.data().leadId,
+            campaignData.name,
+            campaignData.message,
+            userId
+          );
+
+        });})
+    );
   } catch (error: any) {
     console.error('Error sending campaign:', error);
     return false;
@@ -175,3 +234,4 @@ export const deleteCampaign = async (userId: string, campaignId: string) => {
     return false;
   }
 };
+

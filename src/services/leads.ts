@@ -1,7 +1,6 @@
 // src/services/leads.ts
 import {
   getFirestore,
-  collection,
   addDoc,
   doc,
   updateDoc,
@@ -11,11 +10,9 @@ import {
   query,
   where,
   WhereFilterOp,
-} from 'firebase/firestore';
-import { app } from '@/firebase/config';
-import { db } from '@/lib/firebase';
-import { Message } from './messages';
+} from 'firebase/firestore'; 
 import Papa from 'papaparse';
+import { collection } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 
 export interface Lead {
@@ -28,21 +25,24 @@ export interface Lead {
   state?: string;
   country?: string;
   source?: string;
+  createdAt: Date;
+
   notes?: string;
   [key: string]: any;
-  messages?: Message[];
 }
 
 
 interface LeadData {
+  
   [key: string]: any;
 }
 
 
 export const createLead = async (userId: string, newLead: NewLead) => {
+  const db = getFirestore();
   try {
     const docRef = await addDoc(collection(db, `users/${userId}/leads`), { ...newLead, createdAt: Timestamp.now() });
-    return { id: docRef.id, ...newLead };
+    return { id: docRef.id, ...newLead }; 
   } catch (error: any) {
     console.error('Error creating lead:', error);
     throw error;
@@ -51,6 +51,7 @@ export const createLead = async (userId: string, newLead: NewLead) => {
 
 export const createLeadsFromCSV = async (userId: string, csvData: string) => {
   try {
+    const db = getFirestore();
     const parsedData = Papa.parse(csvData, {
       header: true, // Assumes the first row contains column headers
       skipEmptyLines: true,
@@ -86,7 +87,8 @@ export const createLeadsFromCSV = async (userId: string, csvData: string) => {
 
 export const updateLead = async (leadId: string, updatedData: LeadData, userId: string) => {
   try {
-    await updateDoc(doc(db, `users/${userId}/leads`, leadId), updatedData);
+    const db = getFirestore();
+    await updateDoc(doc(db, `users/${userId}/leads`, leadId), updatedData); 
     return { ...updatedData, id: leadId};
   } catch (error: any) {
     return null;
@@ -95,6 +97,7 @@ export const updateLead = async (leadId: string, updatedData: LeadData, userId: 
 
 export const getLead = async (userId:string, leadId: string) => {
   try {
+    const db = getFirestore();
     const docSnap = await getDoc(doc(db, `users/${userId}/leads`, leadId));
       if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() };
@@ -122,6 +125,7 @@ export const getLeads = async (
   filter?: { field: string; operator: WhereFilterOp; value: any }[]
 ) => {
   try {
+    const db = getFirestore();
     let q = query(collection(db, `users/${userId}/leads`));
 
     if (filter && filter.length > 0) {
@@ -132,7 +136,7 @@ export const getLeads = async (
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), createdAt: (doc.data().createdAt as Timestamp).toDate() })) as Lead[];
   } catch (error: any) {
     return [];
   }
@@ -140,6 +144,7 @@ export const getLeads = async (
 
 export const deleteLead = async (userId: string, leadId: string) => {
   try {
+    const db = getFirestore();
     await deleteDoc(doc(db, `users/${userId}/leads`, leadId));
     return true; // Indicate successful deletion
   } catch (error: any) {
