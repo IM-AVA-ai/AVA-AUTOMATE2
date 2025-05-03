@@ -11,7 +11,7 @@ import {
   getDoc,
   Timestamp, deleteDoc,
 } from 'firebase/firestore';
-import { createMessage, } from './messages';
+import { createMessage, sendMessage } from './messages';
 import { sendNotification } from './notifications';
 import { createChat } from './chats';
 import { db } from '@/firebase/config';
@@ -29,6 +29,7 @@ export interface Campaign {
   name: string;
   message: string;
   status: string;
+  createdAt: Date; // Added createdAt property
   [key: string]: any;
 }
 export interface CampaignLead {
@@ -54,13 +55,21 @@ export const createCampaign = async (
   }
 };
 
-export const getCampaign = async (userId: string, campaignId: string) => {
+export const getCampaign = async (userId: string, campaignId: string): Promise<Campaign | null> => {
   try {
     const docSnap = await getDoc(
       doc(db, `users/${userId}/campaigns`, campaignId)
     );
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() };
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        name: data.name,
+        message: data.message,
+        status: data.status,
+        createdAt: data.createdAt.toDate(), // Convert Timestamp to Date
+        ...data, // Include any other properties
+      } as Campaign;
     } else {
       return null;
     }
@@ -71,10 +80,21 @@ export const getCampaign = async (userId: string, campaignId: string) => {
 };
 
 export const getCampaigns = async (userId: string) => {
+  console.log('Fetching campaigns for userId:', userId); // Log userId
   try {
     const q = query(collection(db, `users/${userId}/campaigns`));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Campaign));
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name,
+        message: data.message,
+        status: data.status,
+        createdAt: data.createdAt.toDate(), // Convert Timestamp to Date
+        ...data, // Include any other properties
+      } as Campaign;
+    });
   } catch (error: any) {
     console.error('Error getting campaigns:', error);
     return [];
@@ -172,54 +192,30 @@ export const addLeadsToCampaign = async (
   leadIds: string[]
 ) => {
   try {
-
     const campaignLeadsCollection = collection(db, `users/${userId}/campaigns/${campaignId}/leads`);
-
-    const docRef = doc(db, `users/${userId}/campaigns`, campaignId);
-    const campaign = await getDoc(docRef);
-    if (!campaign.exists() || !('name' in campaign.data() as Campaign) || !('message' in campaign.data() as Campaign)) {
-      return;
-    }
-    const campaignData = campaign.data() as Campaign;
-
     const batch = [];
 
     for (const leadId of leadIds) {
-        if(!campaignData){
-            return
-        }
-        if(campaignData){
-            
-            batch.push(
+      batch.push(
         addDoc(campaignLeadsCollection, {
-            leadId,
-            campaignId,
-            status: 'pending',
-          })
+          leadId,
+          campaignId,
+          status: 'pending', // Initial status when adding lead to campaign
+        })
       );
-        }
-      
     }
 
     await Promise.all(batch);
-    await Promise.all(
-      batch.map(async () => {
-        const campaignLeads = await getDocs(campaignLeadsCollection);
 
-          campaignLeads.forEach(async (campaignLead) => {
+    // Note: The logic for sending initial messages to leads added to a campaign
+    // should be handled separately, potentially triggered after successfully
+    // adding leads to the campaign or as a separate process.
+    // The previous implementation had logical issues in this part.
 
-          const messageId = await createMessage(
-            campaignLead.data().leadId,
-            campaignData.name,
-            campaignData.message,
-            userId
-          );
-
-        });})
-    );
+    return true; // Indicate successful addition of leads
   } catch (error: any) {
-    console.error('Error sending campaign:', error);
-    return false;
+    console.error('Error adding leads to campaign:', error);
+    return false; // Indicate failure
   }
 };
 
@@ -234,4 +230,3 @@ export const deleteCampaign = async (userId: string, campaignId: string) => {
     return false;
   }
 };
-

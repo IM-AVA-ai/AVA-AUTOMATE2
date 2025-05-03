@@ -1,30 +1,12 @@
-
 "use client";
 
 import React from "react";
 import {Button, Card, Chip, cn} from "@heroui/react";
 import {Icon} from "@iconify/react";
 import { collection, doc, getDocs } from 'firebase/firestore';
+import { Campaign } from '@/services/campaigns'; // Import Campaign type
+import { Lead } from '@/services/leads'; // Import Lead type
 
-enum CampaignStatus {
-  Active = 'active',
-  Paused = 'paused',
-  Completed = 'completed',
-}
-
-interface Campaign {
-  id: string;
-  name: string;
-  status: CampaignStatus;
-  createdAt: Date;
-}
-
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
-}
 
 interface MetricData {
   title: string;
@@ -40,11 +22,11 @@ interface MetricsCardProps {
   campaigns: Campaign[];
 }
 export default function MetricsCard({ leads, campaigns }: MetricsCardProps) {
-  const activeCampaigns = campaigns.filter((campaign) => campaign.status === CampaignStatus.Active);
+  const activeCampaigns = campaigns.filter((campaign) => campaign.status === 'active'); // Use string literal 'active'
   const data: MetricData[] = [
     {
       title: "Active Campaigns",
-      value: activeCampaigns.length.toString(), 
+      value: activeCampaigns.length.toString(),
       change: "+1 since last week",
       changeType: "positive",
       trendChipPosition: "top",

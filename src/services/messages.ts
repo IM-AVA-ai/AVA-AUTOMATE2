@@ -1,3 +1,5 @@
+'use server';
+
 import {
   addDoc,
   collection,
@@ -9,7 +11,7 @@ import {
   updateDoc,
   doc,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/firebase/config';
 import { getTwilioCredentials } from './users';
 import twilio, { Twilio } from 'twilio';
 
@@ -29,7 +31,7 @@ export const createMessage = async (
   message: string
 ): Promise<{ id: string; campaignId: string; message: string }> => {
   try {
-    const docRef = await addDoc( 
+    const docRef = await addDoc(
       collection(db, `users/${userId}/leads/${leadId}/messages`),
       {
         campaignId,

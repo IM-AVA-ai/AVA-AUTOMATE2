@@ -5,7 +5,7 @@ import {
   collection,
   Timestamp
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/firebase/config';
 
 export const sendNotification = async (userId: string, title: string, body: string) => {
   try {

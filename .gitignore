@@ -39,3 +39,6 @@ next-env.d.ts
 
 .genkit/*
 .env*
+
+# clerk configuration (can include secrets)
+/.clerk/

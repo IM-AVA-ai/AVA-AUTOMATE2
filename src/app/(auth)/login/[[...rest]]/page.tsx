@@ -1,4 +1,3 @@
-tsx
 import { GoogleOneTap, SignIn } from "@clerk/nextjs";
 
 export default function LoginPage() {

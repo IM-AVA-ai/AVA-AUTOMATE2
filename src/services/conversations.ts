@@ -86,6 +86,7 @@ export const subscribeToConversation = (conversationId: string, callback: (messa
 };
 
 export const getRecentConversations = async (userId: string): Promise<Conversation[]> => {
+  console.log('Fetching recent conversations for userId:', userId); // Log userId
   try {
     const q = query(
       collection(db, `users/${userId}/conversations`),

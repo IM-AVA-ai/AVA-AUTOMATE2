@@ -124,6 +124,7 @@ export const getLeads = async (
   userId: string,
   filter?: { field: string; operator: WhereFilterOp; value: any }[]
 ) => {
+  console.log('Fetching leads for userId:', userId); // Log userId
   try {
     const db = getFirestore();
     let q = query(collection(db, `users/${userId}/leads`));
