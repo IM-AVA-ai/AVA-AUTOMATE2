@@ -1,0 +1,11 @@
+{
+  "projects": {
+    "default": "ava-sms"
+  },
+  "targets": {},
+  "etags": {
+    "ava-sms": {
+      "extensionInstances": {}
+    }
+  }
+}

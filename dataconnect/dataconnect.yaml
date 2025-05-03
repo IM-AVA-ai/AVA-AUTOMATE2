@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "ava-automate"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "793843621161"
+      cloudSql:
+        instanceId: "ava-automate"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

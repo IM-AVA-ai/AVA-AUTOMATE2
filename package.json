@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.18.5",
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@genkit-ai/googleai": "^1.6.2",
     "@genkit-ai/next": "^1.6.2",
     "@heroui/react": "^2.7.8",
