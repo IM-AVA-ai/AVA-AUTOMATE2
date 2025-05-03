@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, orderBy, limit } from 'firebase/firestore';
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
-import { firebaseConfig } from '../../../firebase/config';
+import { getFirestore, doc, getDoc, collection, query, getDocs, addDoc, orderBy } from '@firebase/firestore';
+import { app } from '@/firebase/config';
 import { Twilio } from 'twilio';
+import '@/firebase/firestore';
+import { AIService } from '@/services/ai-service';
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,18 +68,11 @@ export async function POST(req: NextRequest) {
     const userPreferencesDocRef = doc(db, 'clients', clientId, 'ai_settings', 'user_preferences');
     const userPreferencesDocSnap = await getDoc(userPreferencesDocRef);
     const userPreferences = userPreferencesDocSnap.data()?.content || '';
-    const gemini = new GoogleGenerativeAI(activeApiKey);
-    const model = gemini.getGenerativeModel({ model: "gemini-pro" });
-    const chat = model.startChat({
-      generationConfig: {
-        maxOutputTokens: 200,
-      },
-    });
-    const history = messagesHistory.map(message=> ({
-        role: message.direction === 'inbound' ? 'user' : 'model',
-        parts: message.body
-    }))
-    const result = await chat.sendMessageStream([systemPrompt, userPreferences, ...history]);
+
+    const aiService = new AIService('openai', activeApiKey);
+    const response = await aiService.generateResponse(systemPrompt, messagesHistory);
+
+    /*
     let response = "";
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
@@ -100,6 +94,11 @@ export async function POST(req: NextRequest) {
     }).catch(error=>{
         console.error(error)
     })
+    */
+
+    if(response.success){
+        console.log(response.message)
+    }
 
     return new NextResponse(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {

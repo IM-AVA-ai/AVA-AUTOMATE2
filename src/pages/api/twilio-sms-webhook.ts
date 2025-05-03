@@ -1,32 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, where, getDocs, addDoc, orderBy, limit } from 'firebase/firestore';
-import { twiml } from 'twilio';
-import { firebaseConfig } from '../../../firebase/config';
-import { validateTwilioRequest } from '../../../services/twilio';
+import { getFirestore, collection, query, where, getDocs, addDoc } from '@firebase/firestore';
+import { twiml, validateRequest } from 'twilio';
+import { app as firebaseApp } from '@/firebase/config';
+import { TwilioService } from '@/services/twilio';
+import { createConversation, getConversation } from '@/services/conversations';
 
-const app = initializeApp(firebaseConfig);
+const twilioService = new TwilioService(process.env.TWILIO_ACCOUNT_SID || '', process.env.TWILIO_AUTH_TOKEN || '', process.env.TWILIO_PHONE_NUMBER || '');
+const app = firebaseApp;
 const db = getFirestore(app);
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.formData();
     const twilioSignature = req.headers.get('x-twilio-signature') || '';
+
+    // Extract Twilio SMS data
+    const messageSid = body.get('MessageSid') as string;
+    const from = body.get('From') as string;
+    const to = body.get('To') as string;
+    const message = body.get('Body') as string;
+    
+    if (!messageSid || !from || !to || !message) {
+      return NextResponse.json(
+        { error: 'Missing required parameters' },
+        { 
+          status: 400,
+        }
+      );
+    }
+
     const url = new URL(req.url);
     const fullUrl = `${url.protocol}//${url.host}${url.pathname}`;
     
-    const isValidRequest = validateTwilioRequest(
-      twilioSignature,
-      fullUrl,
-      Object.fromEntries(body)
-    );
+    const isValidRequest = validateRequest(
+        process.env.TWILIO_AUTH_TOKEN || '',
+        twilioSignature,
+        fullUrl,
+        Object.fromEntries(body)
+      );
 
-    if (!isValidRequest) {
+        if (!isValidRequest) {
       console.error('Invalid Twilio request');
       return new NextResponse('Unauthorized', { status: 401 });
     }
-    const from = body.get('From') as string;
-    const message = body.get('Body') as string;
     const mediaUrl = body.get('MediaUrl0') as string | null;
     const mediaContentType = body.get('MediaContentType0') as string | null;
 
@@ -47,33 +63,41 @@ export async function POST(req: NextRequest) {
     });
 
     const conversationRef = collection(db, `leads/${leadId}/conversations`);
-    const conversationsQuery = query(conversationRef, orderBy('timestamp', 'desc'), limit(1))
-    const conversationSnapshot = await getDocs(conversationsQuery);
-    let currentConversation = '';
-    if(!conversationSnapshot.empty){
-        conversationSnapshot.forEach(doc=>{
-            currentConversation = doc.id
-        })
-    } else {
-        const newConversationRef = await addDoc(conversationRef,{
-            timestamp: new Date(),
-            created_at: new Date()
-        })
-        currentConversation = newConversationRef.id
+    let currentConversation = await getConversation(conversationRef);
+    
+    if (currentConversation === undefined) {
+      currentConversation = await createConversation(conversationRef);
     }
-
-    const messagesRef = collection(db, `leads/${leadId}/conversations/${currentConversation}/messages`);
-    await addDoc(messagesRef, {
-        body: message,
-        from,
-        mediaUrl: mediaUrl || null,
-        mediaContentType: mediaContentType || null,
-        timestamp: new Date(),
-        direction: 'inbound',
+    
+    // Log the incoming message
+    const smsMessagesRef = collection(db, 'sms_messages');
+    await addDoc(smsMessagesRef, {
+      lead_id: leadId,
+      from,
+      to: process.env.TWILIO_PHONE_NUMBER,
+      direction: 'inbound',
+      content: message,
+      twilio_message_sid: messageSid,
+      status: 'received',
+      timestamp: new Date()
     });
 
-    const response = new twiml.MessagingResponse();
-    response.message('Message received!');
+    const messagesRef = collection(db, `leads/${leadId}/conversations/${currentConversation}/messages`);  
+    await addDoc(messagesRef, {      
+      body: message,
+      from,
+      mediaUrl: mediaUrl || null,
+      mediaContentType: mediaContentType || null,
+      timestamp: new Date(),
+      direction: 'inbound',
+    });
+
+        // Send a TwiML response
+        const response = new twiml.MessagingResponse();
+        response.message('Message received!');
+        await twilioService.sendSMS(from, 'Message received!');
+
+
 
     return new NextResponse(response.toString(), {
       headers: { 'Content-Type': 'text/xml' },

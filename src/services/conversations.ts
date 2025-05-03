@@ -1,9 +1,8 @@
 // src/services/conversations.ts
-import { getFirestore, collection, addDoc, doc, updateDoc, getDocs, query, where, onSnapshot, orderBy, limit, Timestamp } from 'firebase/firestore';
-import { app } from '@/firebase/config';
-import { BasicToaster } from '@/components/BasicToaster';
+import { getFirestore, collection, addDoc, doc, updateDoc, getDocs, query, where, onSnapshot, orderBy, limit, Timestamp, QueryConstraint, CollectionReference } from 'firebase/firestore';
+import { app, db } from '@/firebase/config';
 import { addRealtimeMessage } from './realtime-conversations';
-import { db } from '@/lib/firebase';
+
 
 
 interface MessageData {
@@ -18,6 +17,27 @@ export interface Conversation {
   [key: string]: any;
 }
 
+export const getConversation = async (conversationRef: CollectionReference, ...queryConstraints: QueryConstraint[]): Promise<string | null> => {
+  const q = query(conversationRef, ...queryConstraints);
+  const querySnapshot = await getDocs(q);
+  if (querySnapshot.empty) {
+    return null;
+  }
+  // Assuming there's only one conversation document
+  return querySnapshot.docs[0].id;
+}
+
+export const createConversation = async (conversationRef: CollectionReference): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(conversationRef, { createdAt: Timestamp.now() });
+    return docRef.id;
+  } catch (error: any) {
+    console.error("Error creating new conversation: ", error);
+    return null;
+  }
+
+}
+
 export const addMessage = async (conversationId: string, messageData: MessageData) => {
   addRealtimeMessage(conversationId, messageData)
   try {
@@ -25,7 +45,7 @@ export const addMessage = async (conversationId: string, messageData: MessageDat
 
     return { id: docRef.id, ...messageData };
   } catch (error: any) {
-    BasicToaster({ type: 'error', message: error.message });
+    console.error("Error adding message: ", error);
     return null;
   }
 };
@@ -37,17 +57,18 @@ export const getConversationHistory = async (conversationId: string, userId: str
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error: any) {
-    BasicToaster({ type: 'error', message: error.message });
+    console.error("Error getting conversation history: ", error);
     return [];
   }
 };
 
 export const updateMessageStatus = async (conversationId: string, messageId: string, status: string) => {
   try {
-    await updateDoc(doc(db, `conversations/${conversationId}/messages`, messageId), { status });
+    const messageRef = doc(db, `conversations/${conversationId}/messages/${messageId}`);
+    await updateDoc(messageRef, { status });
     return true;
   } catch (error: any) {
-    BasicToaster({ type: 'error', message: error.message });
+    console.error("Error updating message status: ", error);
     return false;
   }
 };
@@ -58,7 +79,7 @@ export const subscribeToConversation = (conversationId: string, callback: (messa
     const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     callback(messages);
   }, (error) => {
-    BasicToaster({ type: 'error', message: error.message });
+    console.error("Error subscribing to conversation: ", error);
   });
 
   return unsubscribe;

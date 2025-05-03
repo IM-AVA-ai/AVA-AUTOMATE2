@@ -1,11 +1,13 @@
-tsx
+
+"use client";
+
 import { useEffect } from 'react';
 import { getMessaging, onMessage, getToken } from 'firebase/messaging';
 import { app } from '@/firebase/config';
-import { BasicToaster } from './BasicToaster';
+import { addToast } from '@heroui/react';
 
-export const NotificationHandler = () => {
-  useEffect(() => {
+export const NotificationHandler = () => {    
+    useEffect(() => {
     const messaging = getMessaging(app);
 
     getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY })
@@ -19,13 +21,15 @@ export const NotificationHandler = () => {
       .catch((error) => {
         console.error('Error during token generation', error);
       });
+    
+      const unsubscribe = onMessage(messaging, (payload) => {
+        const { title = '', body = '' } = payload.notification ?? {};
+        if (title || body) {
+          addToast({title, description:body});
+        }
+      });
 
-    const unsubscribe = onMessage(messaging, (payload) => {
-      const { title, body } = payload.notification || {};
-      if (title && body) {
-        BasicToaster({ type: 'success', message: `${title}: ${body}` });
-      }
-    });
+      
 
     return () => unsubscribe();
   }, []);
