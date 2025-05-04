@@ -1,7 +1,7 @@
 
 export const connectorConfig = {
   connector: 'default',
-  service: 'ava-automate',
+  service: 'AVA-AUTOMATE2',
   location: 'us-central1'
 };
 
