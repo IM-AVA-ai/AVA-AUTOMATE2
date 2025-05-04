@@ -6,6 +6,7 @@ import { getFirestore } from "firebase/firestore"; // Import getFirestore
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+let analytics;
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBh3HZGNsMwhJ2xnqeBQwIg_EBKLXH_s68",
@@ -19,7 +20,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getFirestore(app); // Initialize Firestore
 
-export { app, db }; // Export app and db
+if (typeof window !== 'undefined') {
+  analytics = getAnalytics(app);
+}
+
+export { app, db, analytics }; // Export app, db, and analytics

@@ -288,3 +288,51 @@
 
 Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
  
+[debug] [2025-05-04T21:01:06.039Z] File /Users/merandafreiner/ava-automate/AVA-AUTOMATE/functions/src/genkit-sample.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/merandafreiner/ava-automate/AVA-AUTOMATE/functions/src/genkit-sample.ts changed, reloading triggers"}}
+[debug] [2025-05-04T21:01:07.073Z] Validating nodejs source
+[debug] [2025-05-04T21:01:07.793Z] > [functions] package.json contents: {
+  "main": "lib/index.js",
+  "scripts": {
+    "genkit:start": "genkit start -- tsx --watch src/genkit-sample.ts",
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "name": "functions",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@genkit-ai/firebase": "^1.7.0",
+    "@genkit-ai/vertexai": "^1.7.0",
+    "express": "^5.1.0",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.0.1",
+    "genkit": "^1.7.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "tsx": "^4.19.4",
+    "typescript": "^4.9.5"
+  },
+  "private": true
+}
+[debug] [2025-05-04T21:01:07.794Z] Building nodejs source
+[debug] [2025-05-04T21:01:07.794Z] Failed to find version of module node: reached end of search path /Users/merandafreiner/ava-automate/AVA-AUTOMATE/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "22" doesn't match your global version "23". Using node@23 from host. 
+[debug] [2025-05-04T21:01:07.800Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-05-04T21:01:07.806Z] Found firebase-functions binary at '/Users/merandafreiner/ava-automate/AVA-AUTOMATE/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8350
+
+[debug] [2025-05-04T21:01:07.983Z] Got response from /__/functions.yaml {"endpoints":{},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] ✔  functions: Loaded functions definitions from source: . {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: ."}}

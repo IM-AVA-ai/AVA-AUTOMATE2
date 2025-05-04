@@ -1,15 +1,15 @@
-tsx
 "use client";
 
 import { addToast } from "@heroui/toast";
-import { Button, Card, Input, Label, Select } from "@heroui/react";
+import { Button, Card, Input, Label, Select } from "@heroui/react"; // Revert Label import
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { currentUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs"; // Using useUser hook for client component
 import { createLead, NewLead } from "@/services/leads";
 
 export default function CreateLeadPage() {
   const router = useRouter();
+  const { user } = useUser(); // Get user from the hook
   const [newLead, setNewLead] = useState<NewLead>({
     name: "",
     phone: "",
@@ -30,18 +30,15 @@ export default function CreateLeadPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const user = await currentUser();
-    if (!user) return;
+    if (!user) return; // Check if user is loaded
 
     try {
       await createLead(user.id, newLead);
-      addToast({ message: "Lead created successfully!" });
+      addToast({ message: "Lead created successfully!" }); // Revert addToast to object
       router.push("/leads");
     } catch (error) {
-      addToast({
-        message: "Error creating lead",
-        type: "danger",
-      });
+      console.error("Error creating lead:", error); // Log the error for debugging
+      addToast({ message: "Error creating lead", type: "danger" }); // Revert addToast to object with type
     }
   };
 
