@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, addDoc, collection } from 'firebase/firestore';
-import { firebaseConfig } from '../../../firebase/config';
-import { sendSMS } from '../../../services/twilio';
+import { firebaseConfig } from '../../firebase/config';
+import { TwilioService } from '../../services/twilio'; // Import TwilioService
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     const leadData = leadDocSnap.data();
-    const phone = leadData?.phone
+    const phone = leadData?.phone as string; // Explicitly cast phone to string
 
     const twilioCredentialsDocRef = doc(db, 'clients', clientId, 'settings', 'twilio');
     const twilioCredentialsDocSnap = await getDoc(twilioCredentialsDocRef);
@@ -33,16 +33,18 @@ export async function POST(req: NextRequest) {
     }
 
     const twilioCredentials = twilioCredentialsDocSnap.data();
-    const accountSid = twilioCredentials?.account_sid;
-    const authToken = twilioCredentials?.auth_token;
-    const twilioNumber = twilioCredentials?.phone_number
+    const accountSid = twilioCredentials?.account_sid as string; // Explicitly cast
+    const authToken = twilioCredentials?.auth_token as string; // Explicitly cast
+    const twilioNumber = twilioCredentials?.phone_number as string; // Explicitly cast
 
     if (!accountSid || !authToken || !twilioNumber) {
         return new NextResponse(JSON.stringify({ error: 'Incomplete Twilio credentials' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
-    const smsResult = await sendSMS({to: phone, body: message, accountSid, authToken, from: twilioNumber });
-    
+    // Create TwilioService instance and call sendSMS method
+    const twilioService = new TwilioService(accountSid, authToken, twilioNumber);
+    const smsResult = await twilioService.sendSMS(phone, message);
+
     if (!smsResult.success) {
       console.error('Error sending SMS:', smsResult.error);
       return new NextResponse(JSON.stringify({ error: 'Failed to send SMS' }), { status: 500, headers: { 'Content-Type': 'application/json' } });

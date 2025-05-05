@@ -3,7 +3,6 @@
 
 import { useEffect } from 'react'
 // Removed Shadcn Button import
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' // Assuming Card is still needed or replaced elsewhere if not
 
 export default function Error({
   error,
@@ -19,10 +18,16 @@ export default function Error({
 
   return (
     <div className="flex h-[calc(100vh-theme(spacing.16))] items-center justify-center p-4">
-      {/* Use standard Card or replace with div if Card is also removed */}
+      {/* Replaced Card with div */}
       <div className="w-full max-w-md text-center bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-         <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">Something went wrong!</h2>
-         <p className="text-gray-500 dark:text-gray-400 mt-2">An unexpected error occurred within the application.</p>
+         {/* Replaced CardHeader with div */}
+         <div>
+           {/* Replaced CardTitle with h2 */}
+           <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">Something went wrong!</h2>
+           {/* Replaced CardDescription with p */}
+           <p className="text-gray-500 dark:text-gray-400 mt-2">An unexpected error occurred within the application.</p>
+         </div>
+         {/* Replaced CardContent with div */}
         <div className="mt-4 space-y-4">
           <p className="text-sm text-gray-600 dark:text-gray-300">
             {error.message || "An unknown error occurred."}
@@ -45,4 +50,3 @@ export default function Error({
 
 // Remove Card component if it's part of Shadcn and not replaced
 // For simplicity, using a basic div structure instead of Card
-

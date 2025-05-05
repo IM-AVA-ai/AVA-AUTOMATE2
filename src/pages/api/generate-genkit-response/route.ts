@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = userData?.systemPrompt;
 
     if(!systemPrompt){
-        return new NextResponse(JSON.stringify({ error: 'System Prompt not found' }), { status: 404, headers: { 'Content-Type\': \'application/json\' } });
+        return new NextResponse(JSON.stringify({ error: 'System Prompt not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
 
     const response = await getGenkitResponse(prompt, systemPrompt);

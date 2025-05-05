@@ -34,7 +34,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     if (href === '/dashboard') {
       return pathname === href;
     }
-    return pathname === href || (href !== '/dashboard' && pathname.startsWith(href)); // Ensure /dashboard isn't considered active for other routes
+    return pathname === href || (href !== '/dashboard' && pathname && pathname.startsWith(href)); // Ensure /dashboard isn't considered active for other routes and check if pathname is not null
   };
 
 

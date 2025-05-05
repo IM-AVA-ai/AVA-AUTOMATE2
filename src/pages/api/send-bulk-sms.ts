@@ -2,11 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { firebaseConfig } from '../../../firebase/config';
-import { sendSMS } from '../../../services/twilio';
+import { firebaseConfig } from '../../firebase/config';
+import { TwilioService } from '../../services/twilio'; // Import TwilioService
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Define interface for Lead data
+interface LeadData {
+    id: string;
+    phone: string;
+    // Add other lead properties if needed
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -34,7 +41,8 @@ export async function POST(req: NextRequest) {
             return new NextResponse(JSON.stringify({ error: 'No leads found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
         }
 
-        const leads = leadsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Type the leads array
+        const leads: LeadData[] = leadsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LeadData));
 
         const apiKeyDocRef = doc(db, 'clients', clientId, 'api_keys', 'active');
         const apiKeyDocSnap = await getDoc(apiKeyDocRef);
@@ -73,7 +81,9 @@ export async function POST(req: NextRequest) {
                     response = response.concat(chunkText)
                 }
 
-                const smsResult = await sendSMS({ to: lead.phone, body: response, accountSid, authToken, from: twilioNumber });
+                // Create TwilioService instance and call sendSMS method
+                const twilioService = new TwilioService(accountSid, authToken, twilioNumber);
+                const smsResult = await twilioService.sendSMS(lead.phone, response);
 
                 if (smsResult.success) {
                     await addDoc(collection(db, 'sms_messages'), {

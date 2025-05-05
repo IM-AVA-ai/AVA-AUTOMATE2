@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getFirestore, doc, getDoc, collection, query, getDocs, addDoc, orderBy } from '@firebase/firestore';
 import { app } from '@/firebase/config';
 import { Twilio } from 'twilio';
-import '@/firebase/firestore';
+import { getFirestore as getFirestoreFromFirebase } from 'firebase/firestore'; // Corrected import
 import { AIService } from '@/services/ai-service';
 
 const db = getFirestore(app);

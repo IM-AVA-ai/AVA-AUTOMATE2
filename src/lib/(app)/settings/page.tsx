@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Label, Input, Button } from '@heroui/react';
-import { currentUser } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs'; // Use useUser hook
 import { saveTwilioCredentials, getTwilioCredentials, UserTwilioCredentials } from '@/services/users';
-import { addToast } from '@heroui/toast';
+
+// Placeholder for addToast - Replace with actual toast notification logic
+const addToast = ({ message, type }: { message: string; type?: string }) => {
+  console.log(`Toast: ${type || 'info'} - ${message}`);
+};
 
 export default function SettingsPage() {
+  const { user } = useUser(); // Get user from hook
   const [userId, setUserId] = useState<string | null>(null);
   const [accountSid, setAccountSid] = useState<string>('');
   const [authToken, setAuthToken] = useState<string>('');
@@ -14,16 +18,36 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Placeholder state and handlers - Replace with actual implementation
+  const [settingsData, setSettingsData] = useState({
+    twilioAccountSid: '',
+    twilioAuthToken: '',
+    twilioPhoneNumber: '',
+    enableEmailNotifications: true,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setSettingsData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = e.target;
+    setSettingsData(prev => ({ ...prev, [id]: checked }));
+  };
+
+  const handleSave = (tab: string) => {
+    console.log(`Saving settings for tab: ${tab}`, settingsData);
+    // Add actual save logic here
+    addToast({ message: `${tab} settings saved (placeholder)!` });
+  };
+  // End Placeholder
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const user = await currentUser();
-      if (user) {
-        setUserId(user.id);
-      }
-    };
-    fetchUser();
-  }, []);
+    if (user) {
+      setUserId(user.id);
+    }
+  }, [user]); // Depend on user from the hook
 
   useEffect(() => {
     const fetchTwilioCredentials = async () => {
@@ -33,6 +57,13 @@ export default function SettingsPage() {
           setAccountSid(credentials.accountSid);
           setAuthToken(credentials.authToken);
           setPhoneNumber(credentials.phoneNumber);
+          // Update placeholder state with fetched data
+          setSettingsData(prev => ({
+            ...prev,
+            twilioAccountSid: credentials.accountSid,
+            twilioAuthToken: credentials.authToken,
+            twilioPhoneNumber: credentials.phoneNumber,
+          }));
         }
       }
     };
@@ -69,7 +100,7 @@ export default function SettingsPage() {
     ${activeTab === tabName
       ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200'
       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'}
-  `;    
+  `;
 
   return (
 
@@ -173,7 +204,7 @@ export default function SettingsPage() {
                <div className="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg">
                  <div>
                    <label htmlFor="enableEmailNotifications" className="font-medium text-gray-900 dark:text-white cursor-pointer">Email Notifications</label>
-                   <p className="text-sm text-gray-500 dark:text-gray-400">
+                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                      Receive important updates via email (requires configuration).
                    </p>
                  </div>

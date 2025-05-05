@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { firebaseConfig } from '../../../firebase/config';
+import { firebaseConfig } from '../../firebase/config';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

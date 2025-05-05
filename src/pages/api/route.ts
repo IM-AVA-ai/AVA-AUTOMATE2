@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/app';
+import { NextRequest, NextResponse } from 'next/server';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, addDoc, collection, updateDoc, setDoc } from 'firebase/firestore';
-import { firebaseConfig } from '../../../firebase/config';
-import { sendEmail } from '../../../services/email';
+import { firebaseConfig } from '../../firebase/config';
+import { sendEmail } from '../../services/email'; // Corrected relative path for email service as well
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

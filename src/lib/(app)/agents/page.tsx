@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit, Settings, MoreVertical } from "lucide-react"; // Added MoreVertical
-import { useToast } from '@/components/BasicToaster'; // Corrected import path
+import { useToast } from '@/components/BasicToaster';
 import { customizeAgent, CustomizeAgentInput } from '@/ai/flows/agent-customization';
 
 // Placeholder Agent type
@@ -94,7 +94,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
                 {children}
             </div>
              {/* Add simple keyframes for animation */}
-            <style jsx>{`
+            <style>{`
                 @keyframes modal-in {
                     from { opacity: 0; transform: scale(0.95); }
                     to { opacity: 1; transform: scale(1); }
