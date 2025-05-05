@@ -4,7 +4,6 @@ import { MutableRefObject } from 'react';
 
 import Image from "next/image"
 import FeatureItem from "@src/components/FeatureItem"
-import FeatureCard from "@src/components/FeatureCard"
 import WorkflowStep from "@src/components/WorkflowStep"
 import UseCaseCard from "@src/components/UseCaseCard"
 import SocialIcon from "@src/components/SocialIcon"
@@ -23,7 +22,7 @@ import {
   ArrowUpRight,
   Twitter,
   Instagram,
-  Link: LinkIcon,
+  LinkIcon
 } from "lucide-react"
 import { Button } from "@src/landing-page(s)/components/ui/button"
 import { Card, CardContent } from "@src/landing-page(s)/components/ui/card"
