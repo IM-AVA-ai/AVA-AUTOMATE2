@@ -4,9 +4,10 @@
 import '../globals.css';
 // Update the path below if your providers file is located elsewhere
 // import { Providers } from './providers';
-import { Providers } from '@src/providers'; // Ensure this path is correct
+import { Providers } from '@/providers'; // Ensure this path is correct
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs'; // Ensure this path is correct
+import { dark } from '@clerk/themes'
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
@@ -24,7 +25,7 @@ import {
   PanelLeft,
   X,
 } from 'lucide-react';
-import { useIsMobile } from '@src/hooks/use-mobile'; // Ensure this path is correct
+import { useIsMobile } from '@/hooks/use-mobile'; // Ensure this path is correct
 
 // Metadata for the application
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
 
   // Define routes where the sidebar should NOT be shown
-  const noSidebarRoutes = ['/login', '/signup', '/notifications', '/'];
+  const noSidebarRoutes = ['/sign-in', '/sign-up', '/notifications', '/'];
   const shouldShowSidebar = !noSidebarRoutes.includes(pathname);
 
   useEffect(() => {
@@ -71,26 +72,25 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       <nav className="flex-1 overflow-y-auto p-4 space-y-2">
         {[ // Navigation links
           { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { href: '/leads', label: 'Leads', icon: Users },
-          { href: '/campaigns', label: 'Campaigns', icon: Send },
-          { href: '/messages', label: 'Messages', icon: MessageSquare },
-          { href: '/agents', label: 'AI Agents', icon: Bot },
-          { href: '/analytics', label: 'Analytics', icon: BarChart2 },
+          { href: '/dashboard/leads', label: 'Leads', icon: Users },
+          { href: '/dashboard/campaigns', label: 'Campaigns', icon: Send },
+          { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
+          { href: '/dashboard/agents', label: 'AI Agents', icon: Bot },
+          { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
         ].map(({ href, label, icon: Icon }) => ( // Map over nav items
           <Link
             key={href}
             href={href}
             onClick={isMobile ? () => setIsSidebarOpen(false) : undefined}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-              isActive(href) ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-            }`}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(href) ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+              }`}
           >
             <Icon className="h-5 w-5" />
             <span>{label}</span>
           </Link>
         ))}
       </nav>
-       {/* Sidebar Footer */}
+      {/* Sidebar Footer */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
         {[ // Additional links in the sidebar footer
           { href: '/notifications', label: 'Notifications', icon: Bell },
@@ -155,14 +155,23 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 };
 
+const appearance = {
+  baseTheme: dark,
+  layout: {
+    logoImageUrl: '/images/im-ava-logo.png',
+    logoLinkUrl: '/',
+  },
+};
+
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-        <html lang="en">
-            <body >
-                <AppLayout>{children}</AppLayout>
-            </body>
-        </html>
+    <ClerkProvider appearance={appearance}>
+      <html lang="en">
+        <body >
+          <AppLayout>{children}</AppLayout>
+        </body>
+      </html>
     </ClerkProvider>
-    );
+  );
 }

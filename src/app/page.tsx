@@ -3,12 +3,12 @@
 import { MutableRefObject } from 'react';
 
 import Image from "next/image"
-import FeatureItem from "@src/components/FeatureItem"
-import WorkflowStep from "@src/components/WorkflowStep"
-import UseCaseCard from "@src/components/UseCaseCard"
-import SocialIcon from "@src/components/SocialIcon"
-import FooterLink from "@src/components/FooterLink"
-import FeatureItemEnhanced from "@src/components/FeatureItemEnhanced"
+import FeatureItem from "@/components/FeatureItem"
+import WorkflowStep from "@/components/WorkflowStep"
+import UseCaseCard from "@/components/UseCaseCard"
+import SocialIcon from "@/components/SocialIcon"
+import FooterLink from "@/components/FooterLink"
+import FeatureItemEnhanced from "@/components/FeatureItemEnhanced"
 import NextLink from "next/link"
 import {
   ArrowRight,
@@ -24,9 +24,9 @@ import {
   Instagram,
   LinkIcon
 } from "lucide-react"
-import { Button } from "@src/landing-page(s)/components/ui/button"
-import { Card, CardContent } from "@src/landing-page(s)/components/ui/card"
-import { useInView } from "@src/landing-page(s)/hooks/use-in-view"
+import { Button } from "@/landing-page(s)/components/ui/button"
+import { Card, CardContent } from "@/landing-page(s)/components/ui/card"
+import { useInView } from "@/landing-page(s)/hooks/use-in-view"
 
 export default function Home() {
   const [titleRef, titleInView] = useInView({ threshold: 0.3 }) as [MutableRefObject<HTMLDivElement | null>, boolean];
@@ -73,11 +73,11 @@ export default function Home() {
             </nav>
 
             <div className="flex items-center gap-4">
-                <NextLink href="/login">
-                    <Button variant="ghost" className="hidden md:flex text-gray-400 hover:text-white hover:bg-transparent">
-                        Login
-                    </Button>
-                </NextLink>
+              <NextLink href="/sign-in">
+                <Button variant="ghost" className="hidden md:flex text-gray-400 hover:text-white hover:bg-transparent">
+                  Sign In
+                </Button>
+              </NextLink>
               <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full">Sign Up</Button>
             </div>
           </div>
@@ -96,17 +96,17 @@ export default function Home() {
               <span className="gradient-text">Effortless Lead Qualification with AI</span>
             </h1>
             <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
-            Automate personalized conversations and get instant responses.
-            Ava helps you scale your outreach while keeping leads engaged and qualified.
+              Automate personalized conversations and get instant responses.
+              Ava helps you scale your outreach while keeping leads engaged and qualified.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <NextLink href="/signup">
-                    <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full text-base py-6 px-8">
-                        Sign Up
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                </NextLink>
+              <NextLink href="/signup">
+                <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full text-base py-6 px-8">
+                  Sign Up
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </NextLink>
               <Button
                 variant="outline"
                 className="border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white rounded-full text-base py-6 px-8"
@@ -313,14 +313,14 @@ export default function Home() {
             <UseCaseCard
               industry="Roofing Services"
               description="Roofing contractors use IM AVA to follow up with leads after estimates, provide information about materials, and coordinate project timelines."
-              />
+            />
 
             <UseCaseCard
               industry="Real Estate"
               description="Real estate agents use IM AVA to engage with potential buyers and sellers, answer property questions, and schedule viewings."
-              />
-            </div>
-          </section>
+            />
+          </div>
+        </section>
 
         {/* CTA Section */}
         <section className="container mx-auto py-24 px-4 md:px-6">
@@ -346,66 +346,66 @@ export default function Home() {
           </div>
         </section>
 
-    {/* Footer */}
-    <footer className="bg-black py-12 px-4 md:px-6 border-t border-gray-900">
-      <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Image
-                src="/images/im-ava-logo.png"
-                alt="IM AVA.ai Logo"
-                width={24}
-                height={24}
-                className="h-5 w-auto"
-              />
-              <span className="text-lg font-normal">
-                IM AVA<span className="text-ava-purple5">.ai</span>
-              </span>
-            </div>
-            <p className="text-gray-400 mb-4">AI-powered SMS communication platform for businesses.</p>
+        {/* Footer */}
+        <footer className="bg-black py-12 px-4 md:px-6 border-t border-gray-900">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Image
+                    src="/images/im-ava-logo.png"
+                    alt="IM AVA.ai Logo"
+                    width={24}
+                    height={24}
+                    className="h-5 w-auto"
+                  />
+                  <span className="text-lg font-normal">
+                    IM AVA<span className="text-ava-purple5">.ai</span>
+                  </span>
+                </div>
+                <p className="text-gray-400 mb-4">AI-powered SMS communication platform for businesses.</p>
                 <div className="flex space-x-4">
                   <Twitter className="h-6 w-6 text-gray-400 hover:text-white" />
                   <Instagram className="h-6 w-6 text-gray-400 hover:text-white" />
                   <LinkIcon className="h-6 w-6 text-gray-400 hover:text-white" /> {/* Using Link icon as a generic example */}
                 </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-normal mb-4">Product</h3>
+                <ul className="space-y-2">
+                  <NextLink href="#features">Features</NextLink>
+                  <NextLink href="#pricing">Pricing</NextLink>
+                  <NextLink href="#">Integrations</NextLink>
+                  <NextLink href="#">Case Studies</NextLink>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-normal mb-4">Resources</h3>
+                <ul className="space-y-2">
+                  <NextLink href="#">Documentation</NextLink>
+                  <NextLink href="#">Blog</NextLink>
+                  <NextLink href="#">Tutorials</NextLink>
+                  <NextLink href="#">Support</NextLink>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-normal mb-4">Company</h3>
+                <ul className="space-y-2">
+                  <NextLink href="#">About Us</NextLink>
+                  <NextLink href="#">Careers</NextLink>
+                  <NextLink href="#">Contact</NextLink>
+                  <NextLink href="#">Privacy Policy</NextLink>
+                  <NextLink href="#">Terms of Service</NextLink>
+                </ul>
+              </div>
+            </div>
+            <div className="border-t border-gray-900 pt-8">
+              <p className="text-center text-gray-500">
+                &copy; {new Date().getFullYear()} IM AVA.ai. All rights reserved.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-normal mb-4">Product</h3>
-            <ul className="space-y-2">
-              <NextLink href="#features">Features</NextLink>
-              <NextLink href="#pricing">Pricing</NextLink>
-              <NextLink href="#">Integrations</NextLink>
-              <NextLink href="#">Case Studies</NextLink>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-lg font-normal mb-4">Resources</h3>
-            <ul className="space-y-2">
-              <NextLink href="#">Documentation</NextLink>
-              <NextLink href="#">Blog</NextLink>
-              <NextLink href="#">Tutorials</NextLink>
-              <NextLink href="#">Support</NextLink>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-lg font-normal mb-4">Company</h3>
-            <ul className="space-y-2">
-              <NextLink href="#">About Us</NextLink>
-              <NextLink href="#">Careers</NextLink>
-              <NextLink href="#">Contact</NextLink>
-              <NextLink href="#">Privacy Policy</NextLink>
-              <NextLink href="#">Terms of Service</NextLink>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-gray-900 pt-8">
-          <p className="text-center text-gray-500">
-            &copy; {new Date().getFullYear()} IM AVA.ai. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
+        </footer>
       </div>
     </main>
   )

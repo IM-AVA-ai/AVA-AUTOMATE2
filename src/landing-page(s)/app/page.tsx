@@ -62,7 +62,7 @@ export default function Home() {
 
           <div className="flex items-center gap-4">
             <Button variant="ghost" className="hidden md:flex text-gray-400 hover:text-white hover:bg-transparent">
-              Login
+              Sign In
             </Button>
             <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full">Sign Up</Button>
           </div>
@@ -82,8 +82,8 @@ export default function Home() {
             <span className="gradient-text">Effortless Lead Qualification with AI</span>
           </h1>
           <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
-          Automate personalized conversations and get instant responses.
-          Ava helps you scale your outreach while keeping leads engaged and qualified.
+            Automate personalized conversations and get instant responses.
+            Ava helps you scale your outreach while keeping leads engaged and qualified.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
