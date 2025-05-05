@@ -1,3 +1,4 @@
+import React from 'react';
 import { GoogleOneTap, SignUp } from '@clerk/nextjs';
 
 export default function SignUpPage() {

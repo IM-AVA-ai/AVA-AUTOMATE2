@@ -1,3 +1,4 @@
+import React from 'react';
 import { GoogleOneTap, SignIn } from "@clerk/nextjs";
 
 export default function LoginPage() {

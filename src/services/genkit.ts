@@ -1,9 +1,9 @@
 // src/services/genkit.ts
-import { generate } from 'genkit';
+import { ai } from '../ai/ai-instance';
 
 export const getGenkitResponse = async (prompt: string, systemPrompt: string): Promise<string | null> => {
   try {
-    const result = await generate({
+    const result = await ai.generate({
       prompt: `${systemPrompt}\n${prompt}`,
       tools: [],
       model: "gemini-pro"

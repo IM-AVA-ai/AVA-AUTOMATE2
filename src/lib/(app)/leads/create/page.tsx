@@ -3,12 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs"; // Using useUser hook for client component
-import { createLead, NewLead } from '@/services/leads'; // Corrected import path
-
-// Placeholder for addToast - Replace with actual toast notification logic
-const addToast = ({ message, type }: { message: string; type?: string }) => {
-  console.log(`Toast: ${type || 'info'} - ${message}`);
-};
+import { createLead, NewLead } from '../../../../services/leads'; // Corrected import path
+import { addToast } from '@heroui/react';
 
 export default function CreateLeadPage() {
   const router = useRouter();
@@ -37,11 +33,11 @@ export default function CreateLeadPage() {
 
     try {
       await createLead(user.id, newLead);
-      addToast({ message: "Lead created successfully!" });
+      addToast({ description: "Lead created successfully!" });
       router.push("/leads");
     } catch (error) {
       console.error("Error creating lead:", error); // Log the error for debugging
-      addToast({ message: "Error creating lead", type: "danger" });
+      addToast({ description: "Error creating lead", color: "danger" });
     }
   };
 

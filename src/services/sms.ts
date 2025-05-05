@@ -1,6 +1,5 @@
-ts
+// Description: This file contains the function to send SMS messages.
 import { app } from '@/firebase/config';
-import { db } from '@/lib/firebase';
 
 export const sendSMS = async (to: string, message: string): Promise<boolean> => {
   try {

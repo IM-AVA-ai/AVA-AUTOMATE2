@@ -24,7 +24,7 @@ export const sendEmail = async ({ to, subject, body }: EmailParams): Promise<Ema
       html: body
     });
 
-    console.log("Message sent: ", data.id);
+    console.log("Message sent: ", data);
 
     return { success: true };
   } catch (error) {

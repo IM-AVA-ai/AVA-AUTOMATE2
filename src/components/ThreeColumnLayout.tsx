@@ -1,4 +1,3 @@
-tsx
 import React, { ReactNode } from 'react';
 
 interface ThreeColumnLayoutProps {

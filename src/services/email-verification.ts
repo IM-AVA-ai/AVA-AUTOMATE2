@@ -1,7 +1,7 @@
 // src/services/email-verification.ts
 import { getAuth, sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { app } from '@/firebase/config';
-import { BasicToaster } from '@/components/BasicToaster';
+import BasicToaster from '@/components/BasicToaster';
 
 export const sendEmailVerification = async () => {
   const auth = getAuth(app);
@@ -10,11 +10,11 @@ export const sendEmailVerification = async () => {
   if (user) {
     try {
       await firebaseSendEmailVerification(user);
-      BasicToaster({ type: 'success', message: 'Verification email sent. Please check your inbox.' });
+      // Toast notification should be handled by the calling component
     } catch (error: any) {
-      BasicToaster({ type: 'error', message: error.message });
+      // Error handling and toast notification should be handled by the calling component
     }
   } else {
-    BasicToaster({ type: 'error', message: 'No user is currently logged in.' });
+    // Toast notification should be handled by the calling component
   }
 };
