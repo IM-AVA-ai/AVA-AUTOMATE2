@@ -1,6 +1,6 @@
 // src/app/layout.tsx
-import '@/lib/globals.css';
-import { Providers } from '@/lib/providers';
+import '../globals.css';
+import { Providers } from '@src/providers';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import AppLayout from './app-layout';

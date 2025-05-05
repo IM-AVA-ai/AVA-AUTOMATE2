@@ -1,8 +1,10 @@
 // src/app/layout.tsx
 'use client';
 
-import '@/lib/globals.css';
-import { Providers } from '@/lib/providers'; // Ensure this path is correct
+import '../globals.css';
+// Update the path below if your providers file is located elsewhere
+// import { Providers } from './providers';
+import { Providers } from '@src/providers'; // Ensure this path is correct
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs'; // Ensure this path is correct
 
@@ -22,7 +24,7 @@ import {
   PanelLeft,
   X,
 } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile'; // Ensure this path is correct
+import { useIsMobile } from '@src/hooks/use-mobile'; // Ensure this path is correct
 
 // Metadata for the application
 export const metadata: Metadata = {
@@ -158,10 +160,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
         <html lang="en">
             <body >
-                <Providers> <AppLayout>{children}</AppLayout> </Providers>
+                <AppLayout>{children}</AppLayout>
             </body>
         </html>
     </ClerkProvider>
     );
 }
-
