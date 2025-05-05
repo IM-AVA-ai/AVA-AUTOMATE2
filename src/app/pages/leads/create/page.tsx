@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs"; // Using useUser hook for client component
-import { createLead, NewLead } from '../../../../services/leads'; // Corrected import path
+import { createLead, NewLead } from '@/services/leads'; // Corrected import path
 import { addToast } from '@heroui/react';
 
 export default function CreateLeadPage() {

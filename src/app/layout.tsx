@@ -1,9 +1,9 @@
 // src/app/layout.tsx
-import '../lib/globals.css';
+import '@/lib/globals.css';
 import { Providers } from '@/lib/providers';
-import Header from '@/components/Header';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
+import AppLayout from './app-layout';
 
 
 export const metadata: Metadata = {
@@ -15,14 +15,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en">
-        <body >
+        <body>
           <Providers>
-
-            <Header className="container mx-auto" />
-            <main className="container mx-auto">{children}</main>
+             <AppLayout>{children}</AppLayout>
           </Providers>
         </body>
       </html>
     </ClerkProvider>
   );
-};
+}
