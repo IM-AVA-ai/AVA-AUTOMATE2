@@ -24,9 +24,9 @@ import {
   Instagram,
   LinkIcon
 } from "lucide-react"
-import { Button } from "@/landing-page(s)/components/ui/button"
-import { Card, CardContent } from "@/landing-page(s)/components/ui/card"
-import { useInView } from "@/landing-page(s)/hooks/use-in-view"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { useInView } from "@/hooks/use-in-view"
 
 export default function Home() {
   const [titleRef, titleInView] = useInView({ threshold: 0.3 }) as [MutableRefObject<HTMLDivElement | null>, boolean];

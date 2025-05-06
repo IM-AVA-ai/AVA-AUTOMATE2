@@ -31,16 +31,16 @@ const appearance = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider appearance={appearance}>
-      <html lang="en">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <body className={`${inter.variable} font-sans bg-black text-white overflow-x-hidden`}>
+      <html lang="en" className={`${inter.variable} font-sans overflow-x-hidden`} suppressHydrationWarning>
+        <body>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
             <Providers>
               <AppLayout>
                 {children}
               </AppLayout>
             </Providers>
-          </body>
-        </ThemeProvider>
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
