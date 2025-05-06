@@ -7,7 +7,7 @@ import '../globals.css';
 import { Providers } from '@/providers'; // Ensure this path is correct
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs'; // Ensure this path is correct
-import { dark } from '@clerk/themes'
+import { darkMode } from '@/tailwind.config'; // Ensure this path is correct
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
@@ -40,7 +40,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
 
   // Define routes where the sidebar should NOT be shown
-  const noSidebarRoutes = ['/sign-in', '/sign-up', '/notifications', '/home-old', '/'];
+  const noSidebarRoutes = ['/sign-in', '/sign-up', '/notifications', '/'];
   const shouldShowSidebar = !noSidebarRoutes.includes(pathname);
 
   useEffect(() => {
@@ -147,7 +147,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Add other header items like profile dropdown if needed */}
           </header>
         )}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>
@@ -156,7 +156,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 };
 
 const appearance = {
-  baseTheme: dark,
+  baseTheme: darkMode,
   layout: {
     logoImageUrl: '/images/im-ava-logo.png',
     logoLinkUrl: '/',
