@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import '../globals.css';
+import '@/app/globals.css';
 import { Providers } from '@/providers';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
@@ -31,9 +31,9 @@ const appearance = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider appearance={appearance}>
-      <html lang="en" className={`${inter.variable} font-sans overflow-x-hidden`} suppressHydrationWarning>
-        <body>
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${inter.variable} font-sans overflow-x-hidden`}>
+          <ThemeProvider defaultTheme="dark" enableSystem disableTransitionOnChange>
             <Providers>
               <AppLayout>
                 {children}

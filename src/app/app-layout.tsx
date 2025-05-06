@@ -40,7 +40,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
 
   // Define routes where the sidebar should NOT be shown
-  const noSidebarRoutes = ['/sign-in', '/sign-up', '/notifications', '/'];
+  const noSidebarRoutes = ['/sign-in', '/sign-up', '/notifications', '/home-old', '/'];
   const shouldShowSidebar = !noSidebarRoutes.includes(pathname);
 
   useEffect(() => {
@@ -147,7 +147,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Add other header items like profile dropdown if needed */}
           </header>
         )}
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-auto">
           {children}
         </main>
       </div>
