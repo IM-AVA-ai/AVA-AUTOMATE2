@@ -4,9 +4,9 @@
 import '../globals.css';
 
 // import { Providers } from './providers';
-import { Providers } from '@/providers'; 
+import { Providers } from '@/providers';
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs'; 
+import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes'
 
 import React, { useState, useEffect } from 'react';
@@ -26,6 +26,7 @@ import {
   X,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile'; // Ensure this path is correct
+import Image from 'next/image';
 
 // Metadata for the application
 export const metadata: Metadata = {
@@ -55,10 +56,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     <>
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <Link href="/dashboard" className="flex items-center gap-2" title="AVA Automate Dashboard">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 text-blue-600 dark:text-blue-400">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z" />
-          </svg>
+        <Link href="/" className="flex items-center gap-2" title="AVA Automate Dashboard">
+          <Image src="/images/favicon.png" alt="AVA Automate Logo" width={32} height={32} />
           <span className="text-lg font-semibold text-gray-900 dark:text-white">AVA Automate</span> {/* Brand Name */}
         </Link>
         {isMobile && ( // Close button for mobile view

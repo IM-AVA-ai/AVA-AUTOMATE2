@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useInView } from "@/hooks/use-in-view"
 import { useUser } from '@clerk/nextjs';
+import { Spinner } from "@heroui/spinner";
 
 export default function Home() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -66,7 +67,7 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {!isLoaded ? (<div></div>) : (isSignedIn ? (
+            {!isLoaded ? (<Spinner size="sm" variant="wave" />) : (isSignedIn ? (
               <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full" onClick={() => router.push('/dashboard')}>Dashboard</Button>
             ) : (
               <>
