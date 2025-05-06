@@ -97,7 +97,7 @@ const useMessages = (conversationId: string | null) => {
             // simulateAIResponse(conversationId, text); // Optional AI reply simulation
         } catch (error) {
             console.error("Failed to send message:", error);
-            addToast({ title: "Failed to Send", description: "Could not send message.", variant: "destructive" });
+            addToast({ title: "Failed to Send", description: "Could not send message.", variant: "flat" /* TODO: Apply destructive styling if needed */ });
             setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id));
         }
     };

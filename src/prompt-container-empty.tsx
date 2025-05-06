@@ -1,5 +1,6 @@
 import PromptContainerEmptyBase from "./components/prompt-container-empty-base";
-import AIPlayground from "./app/dashboard/playground/ai-playground";
+import { Providers } from "@/providers";
+import AIPlayground from "./app/dashboard/playground/page";
 
 export default function App() {
   return (

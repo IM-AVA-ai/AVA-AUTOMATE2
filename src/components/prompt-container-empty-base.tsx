@@ -4,7 +4,13 @@ import React from "react";
 import {Avatar, Tab, Tabs} from "@heroui/react";
 
 import FeaturesCards from "../features-cards";
-import PromptInputWithBottomActions from "../prompt-input-with-bottom-actions";
+import {Icon} from "@iconify/react";
+
+import {Card} from "@heroui/react";
+import {CardHeader} from "@heroui/react";
+import {CardBody} from "@heroui/react";
+import {CardProps} from "@heroui/react";
+import { PlaygroundInterface } from "./PlaygroundInterface";
 import TopNavigation from "../top-navigation";
 
 export default function Component() {
@@ -28,7 +34,7 @@ export default function Component() {
           <FeaturesCards />
         </div>
         <div className="flex flex-col gap-2">
-          <PromptInputWithBottomActions />
+          <PlaygroundInterface />
           <p className="px-2 text-tiny text-default-400">
             Acme AI can make mistakes. Consider checking important information.
           </p>

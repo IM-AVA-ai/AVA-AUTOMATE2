@@ -75,6 +75,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           { href: '/dashboard/campaigns', label: 'Campaigns', icon: Send },
           { href: '/dashboard/conversations', label: 'Conversations', icon: MessageSquare },
           { href: '/dashboard/agents', label: 'AI Agents', icon: Bot },
+          { href: '/dashboard/playground', label: 'Playground', icon: MessageSquare }, // Added Playground link
           { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
         ].map(({ href, label, icon: Icon }) => ( // Map over nav items
           <Link
