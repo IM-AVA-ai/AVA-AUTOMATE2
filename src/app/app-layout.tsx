@@ -114,7 +114,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="flex min-h-screen">
       {/* Conditionally render sidebar */}
       {shouldShowSidebar && (
         <>
@@ -146,7 +146,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Add other header items like profile dropdown if needed */}
           </header>
         )}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto px-8 max-w-7xl mx-auto w-full">
           {children}
         </main>
       </div>
