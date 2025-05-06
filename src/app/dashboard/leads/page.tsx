@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { FileUp, Plus, Search, Trash2, Send, MoreVertical } from "lucide-react"; // Added MoreVertical for dropdown trigger
-import { useToast } from '@heroui/toast'; // Corrected import path
+import { addToast } from '@heroui/toast'; // Corrected import path
 
 // Placeholder Lead type
 interface Lead {
@@ -22,31 +22,31 @@ const useLeads = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
-         setLeads([
-           { id: '1', name: 'John Doe', phone: '+15551234567', status: 'New', added: '2024-07-28' },
-           { id: '2', name: 'Jane Smith', phone: '+15559876543', status: 'Contacted', added: '2024-07-27' },
-           { id: '3', name: 'Bob Johnson', phone: '+15551112233', status: 'Qualified', added: '2024-07-26' },
-         ]);
-         setLoading(false);
+        setLeads([
+          { id: '1', name: 'John Doe', phone: '+15551234567', status: 'New', added: '2024-07-28' },
+          { id: '2', name: 'Jane Smith', phone: '+15559876543', status: 'Contacted', added: '2024-07-27' },
+          { id: '3', name: 'Bob Johnson', phone: '+15551112233', status: 'Qualified', added: '2024-07-26' },
+        ]);
+        setLoading(false);
       } catch (err) {
-         setError(err instanceof Error ? err : new Error('Failed to fetch leads'));
-         setLoading(false);
+        setError(err instanceof Error ? err : new Error('Failed to fetch leads'));
+        setLoading(false);
       }
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
   const addLead = async (newLeadData: Omit<Lead, 'id' | 'added' | 'status'>): Promise<Lead> => {
-     console.log("Adding lead (placeholder):", newLeadData);
-     await new Promise(resolve => setTimeout(resolve, 500));
-     const newLead: Lead = {
-         id: `lead-${Date.now()}`,
-         ...newLeadData,
-         status: 'New',
-         added: new Date().toISOString().split('T')[0],
-     };
-     setLeads(prev => [newLead, ...prev]);
-     return newLead;
+    console.log("Adding lead (placeholder):", newLeadData);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const newLead: Lead = {
+      id: `lead-${Date.now()}`,
+      ...newLeadData,
+      status: 'New',
+      added: new Date().toISOString().split('T')[0],
+    };
+    setLeads(prev => [newLead, ...prev]);
+    return newLead;
   };
 
   return { leads, loading, error, addLead };
@@ -54,23 +54,23 @@ const useLeads = () => {
 
 // Basic Modal Component (HeroUI style)
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300" onClick={onClose}>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6 transform transition-all duration-300 scale-95 opacity-0 animate-modal-in" onClick={(e) => e.stopPropagation()}>
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                {children}
-            </div>
-             {/* Add simple keyframes for animation */}
-            <style jsx>{`
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6 transform transition-all duration-300 scale-95 opacity-0 animate-modal-in" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        {children}
+      </div>
+      {/* Add simple keyframes for animation */}
+      <style jsx>{`
                 @keyframes modal-in {
                     from { opacity: 0; transform: scale(0.95); }
                     to { opacity: 1; transform: scale(1); }
@@ -79,8 +79,8 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
                     animation: modal-in 0.2s ease-out forwards;
                 }
             `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 
@@ -91,7 +91,6 @@ export default function LeadsPage() {
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadPhone, setNewLeadPhone] = useState('');
-  const { toast } = useToast();
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null); // For individual row actions
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,52 +123,52 @@ export default function LeadsPage() {
   const isAllSelected = filteredLeads.length > 0 && selectedLeads.size === filteredLeads.length;
   const isIndeterminate = selectedLeads.size > 0 && selectedLeads.size < filteredLeads.length;
 
-   const handleAddLeadSubmit = async (e: React.FormEvent) => {
-       e.preventDefault();
-       if (!newLeadName || !newLeadPhone) {
-           toast({ title: "Missing Information", description: "Please enter both name and phone number.", variant: "destructive" });
-           return;
-       }
-       if (!/^\+?[1-9]\d{1,14}$/.test(newLeadPhone)) {
-            toast({ title: "Invalid Phone Number", description: "Please enter a valid phone number (e.g., +15551234567).", variant: "destructive" });
-           return;
-       }
+  const handleAddLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newLeadName || !newLeadPhone) {
+      addToast({ title: "Missing Information", description: "Please enter both name and phone number.", variant: "destructive" });
+      return;
+    }
+    if (!/^\+?[1-9]\d{1,14}$/.test(newLeadPhone)) {
+      addToast({ title: "Invalid Phone Number", description: "Please enter a valid phone number (e.g., +15551234567).", variant: "destructive" });
+      return;
+    }
 
-       try {
-           await addLead({ name: newLeadName, phone: newLeadPhone });
-           toast({ title: "Lead Added", description: `${newLeadName} has been added successfully.` });
-           setNewLeadName('');
-           setNewLeadPhone('');
-           setIsAddLeadOpen(false);
-       } catch (err) {
-           toast({ title: "Failed to Add Lead", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "destructive" });
-       }
-   };
+    try {
+      await addLead({ name: newLeadName, phone: newLeadPhone });
+      addToast({ title: "Lead Added", description: `${newLeadName} has been added successfully.` });
+      setNewLeadName('');
+      setNewLeadPhone('');
+      setIsAddLeadOpen(false);
+    } catch (err) {
+      addToast({ title: "Failed to Add Lead", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "destructive" });
+    }
+  };
 
-   const handleImportCsv = () => {
-     console.log("Import CSV clicked");
-     toast({ title: "Import CSV", description: "CSV import functionality is not yet implemented." });
-   };
+  const handleImportCsv = () => {
+    console.log("Import CSV clicked");
+    addToast({ title: "Import CSV", description: "CSV import functionality is not yet implemented." });
+  };
 
-   const handleBulkDelete = () => {
-     console.log("Deleting selected leads:", Array.from(selectedLeads));
-      toast({ title: "Bulk Delete", description: `Delete functionality for ${selectedLeads.size} leads is not yet implemented.`, variant: "destructive" });
-   };
+  const handleBulkDelete = () => {
+    console.log("Deleting selected leads:", Array.from(selectedLeads));
+    addToast({ title: "Bulk Delete", description: `Delete functionality for ${selectedLeads.size} leads is not yet implemented.`, variant: "destructive" });
+  };
 
-    const handleBulkAddToCampaign = () => {
-     console.log("Adding selected leads to campaign:", Array.from(selectedLeads));
-      toast({ title: "Add to Campaign", description: `Functionality to add ${selectedLeads.size} leads to a campaign is not yet implemented.` });
-   };
+  const handleBulkAddToCampaign = () => {
+    console.log("Adding selected leads to campaign:", Array.from(selectedLeads));
+    addToast({ title: "Add to Campaign", description: `Functionality to add ${selectedLeads.size} leads to a campaign is not yet implemented.` });
+  };
 
-   // Helper for badge variant styles (Tailwind based)
-   const getStatusBadgeClasses = (status: string): string => {
-        switch (status.toLowerCase()) {
-        case 'new': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-        case 'contacted': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-        case 'qualified': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-        default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-        }
-   };
+  // Helper for badge variant styles (Tailwind based)
+  const getStatusBadgeClasses = (status: string): string => {
+    switch (status.toLowerCase()) {
+      case 'new': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'contacted': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'qualified': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -177,8 +176,8 @@ export default function LeadsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Leads</h1>
         <div className="flex items-center gap-2 flex-wrap">
-         {selectedLeads.size > 0 && (
-             <>
+          {selectedLeads.size > 0 && (
+            <>
               {/* HeroUI Style Buttons */}
               <button
                 onClick={handleBulkAddToCampaign}
@@ -214,42 +213,42 @@ export default function LeadsPage() {
       </div>
 
       {/* Add Lead Modal */}
-       <Modal isOpen={isAddLeadOpen} onClose={() => setIsAddLeadOpen(false)} title="Add New Lead">
-           <form onSubmit={handleAddLeadSubmit} className="space-y-4">
-               <div>
-                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                   <input
-                       id="name"
-                       type="text"
-                       value={newLeadName}
-                       onChange={(e) => setNewLeadName(e.target.value)}
-                       className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                       placeholder="John Doe"
-                       required
-                   />
-               </div>
-               <div>
-                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
-                   <input
-                       id="phone"
-                       type="tel"
-                       value={newLeadPhone}
-                       onChange={(e) => setNewLeadPhone(e.target.value)}
-                       className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                       placeholder="+15551234567"
-                       required
-                   />
-               </div>
-               <div className="flex justify-end space-x-3 pt-2">
-                   <button type="button" onClick={() => setIsAddLeadOpen(false)} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                       Cancel
-                   </button>
-                   <button type="submit" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                       Save Lead
-                   </button>
-               </div>
-           </form>
-       </Modal>
+      <Modal isOpen={isAddLeadOpen} onClose={() => setIsAddLeadOpen(false)} title="Add New Lead">
+        <form onSubmit={handleAddLeadSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+            <input
+              id="name"
+              type="text"
+              value={newLeadName}
+              onChange={(e) => setNewLeadName(e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+            <input
+              id="phone"
+              type="tel"
+              value={newLeadPhone}
+              onChange={(e) => setNewLeadPhone(e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              placeholder="+15551234567"
+              required
+            />
+          </div>
+          <div className="flex justify-end space-x-3 pt-2">
+            <button type="button" onClick={() => setIsAddLeadOpen(false)} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Cancel
+            </button>
+            <button type="submit" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Save Lead
+            </button>
+          </div>
+        </form>
+      </Modal>
 
 
       {/* Leads Table Card */}
@@ -284,9 +283,9 @@ export default function LeadsPage() {
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
                     checked={!loading && isAllSelected}
                     ref={input => { // Handle indeterminate state
-                        if (input) {
-                            input.indeterminate = !loading && isIndeterminate;
-                        }
+                      if (input) {
+                        input.indeterminate = !loading && isIndeterminate;
+                      }
                     }}
                     onChange={handleSelectAll}
                     aria-label="Select all leads"
@@ -311,61 +310,61 @@ export default function LeadsPage() {
                 filteredLeads.map((lead) => (
                   <tr key={lead.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${selectedLeads.has(lead.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
                     <td className="px-6 py-4">
-                       <input
-                         type="checkbox"
-                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
-                         checked={selectedLeads.has(lead.id)}
-                         onChange={(e) => handleSelectLead(lead.id, e)}
-                         aria-label={`Select lead ${lead.name}`}
-                       />
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
+                        checked={selectedLeads.has(lead.id)}
+                        onChange={(e) => handleSelectLead(lead.id, e)}
+                        aria-label={`Select lead ${lead.name}`}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{lead.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{lead.phone}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(lead.status)}`}>
-                           {lead.status}
-                       </span>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(lead.status)}`}>
+                        {lead.status}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{lead.added}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium relative">
-                       {/* Basic Dropdown (HeroUI style) */}
-                       <button
-                         onClick={() => setOpenDropdownId(openDropdownId === lead.id ? null : lead.id)}
-                         className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none"
-                         aria-haspopup="true"
-                         aria-expanded={openDropdownId === lead.id}
-                         disabled={loading}
-                       >
-                         <MoreVertical className="h-5 w-5" />
-                       </button>
-                       {openDropdownId === lead.id && (
-                           <div
-                             className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
-                             role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex={-1}
-                             onBlur={() => setTimeout(() => setOpenDropdownId(null), 100)} // Close on blur with delay
-                             >
-                             <div className="py-1" role="none">
-                               <button className="text-gray-700 dark:text-gray-200 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50" role="menuitem" tabIndex={-1} disabled>Edit</button>
-                               <button className="text-gray-700 dark:text-gray-200 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50" role="menuitem" tabIndex={-1} disabled>View Details</button>
-                               <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                               <button className="text-red-600 dark:text-red-400 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50" role="menuitem" tabIndex={-1} disabled>Delete</button>
-                             </div>
-                           </div>
-                       )}
+                      {/* Basic Dropdown (HeroUI style) */}
+                      <button
+                        onClick={() => setOpenDropdownId(openDropdownId === lead.id ? null : lead.id)}
+                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none"
+                        aria-haspopup="true"
+                        aria-expanded={openDropdownId === lead.id}
+                        disabled={loading}
+                      >
+                        <MoreVertical className="h-5 w-5" />
+                      </button>
+                      {openDropdownId === lead.id && (
+                        <div
+                          className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+                          role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex={-1}
+                          onBlur={() => setTimeout(() => setOpenDropdownId(null), 100)} // Close on blur with delay
+                        >
+                          <div className="py-1" role="none">
+                            <button className="text-gray-700 dark:text-gray-200 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50" role="menuitem" tabIndex={-1} disabled>Edit</button>
+                            <button className="text-gray-700 dark:text-gray-200 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50" role="menuitem" tabIndex={-1} disabled>View Details</button>
+                            <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                            <button className="text-red-600 dark:text-red-400 block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50" role="menuitem" tabIndex={-1} disabled>Delete</button>
+                          </div>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
-                      {searchTerm ? 'No leads match your search.' : 'No leads found.'}
+                    {searchTerm ? 'No leads match your search.' : 'No leads found.'}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-           {/* TODO: Add Pagination controls here if needed */}
+        {/* TODO: Add Pagination controls here if needed */}
       </div>
     </div>
   );

@@ -3,27 +3,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 // Removed Resizable components
 import { Search, Send, Filter, User, Bot } from 'lucide-react'; // Added User, Bot icons
-import { useToast } from "@heroui/toast";
+import { addToast } from "@heroui/toast";
 
 
 // Placeholder data types
 interface Conversation {
-  id: string;
-  leadId: string;
-  leadName: string;
-  lastMessage: string;
-  timestamp: Date;
-  unread?: boolean;
-  avatar?: string;
-  campaignId?: string;
+    id: string;
+    leadId: string;
+    leadName: string;
+    lastMessage: string;
+    timestamp: Date;
+    unread?: boolean;
+    avatar?: string;
+    campaignId?: string;
 }
 
 interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'ai' | 'lead';
-  timestamp: Date;
-  conversationId: string;
+    id: string;
+    text: string;
+    sender: 'user' | 'ai' | 'lead';
+    timestamp: Date;
+    conversationId: string;
 }
 
 // Placeholder hooks
@@ -56,7 +56,6 @@ const useConversations = () => {
 const useMessages = (conversationId: string | null) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
-    const { toast } = useToast();
 
     useEffect(() => {
         if (!conversationId) {
@@ -66,19 +65,19 @@ const useMessages = (conversationId: string | null) => {
         setLoading(true);
         console.log(`Setting up Firestore listener for messages in conversation ${conversationId} (placeholder)...`);
         const timer = setTimeout(() => {
-             if (conversationId === 'conv1') {
-                 setMessages([
+            if (conversationId === 'conv1') {
+                setMessages([
                     { id: 'm1', conversationId: 'conv1', text: 'Hi John, interested in saving on your energy bill with solar?', sender: 'ai', timestamp: new Date(Date.now() - 7200000) },
                     { id: 'm2', conversationId: 'conv1', text: 'Maybe, what\'s the cost?', sender: 'lead', timestamp: new Date(Date.now() - 5400000) },
                     { id: 'm3', conversationId: 'conv1', text: 'Costs vary, but we offer free consultations. Are you available tomorrow?', sender: 'ai', timestamp: new Date(Date.now() - 4800000) },
                     { id: 'm4', conversationId: 'conv1', text: 'Sounds interesting, tell me more.', sender: 'lead', timestamp: new Date(Date.now() - 3600000) },
-                 ]);
-             } else if (conversationId === 'conv2') {
-                 setMessages([
+                ]);
+            } else if (conversationId === 'conv2') {
+                setMessages([
                     { id: 'm5', conversationId: 'conv2', text: 'Hello Jane, following up on our roofing inspection offer.', sender: 'ai', timestamp: new Date(Date.now() - 90000000) },
                     { id: 'm6', conversationId: 'conv2', text: 'Not interested, please remove me.', sender: 'lead', timestamp: new Date(Date.now() - 86400000) },
-                 ]);
-             } else { setMessages([]); }
+                ]);
+            } else { setMessages([]); }
             setLoading(false);
         }, 500);
         return () => clearTimeout(timer);
@@ -94,11 +93,11 @@ const useMessages = (conversationId: string | null) => {
         setMessages(prev => [...prev, optimisticMessage]);
         try {
             await new Promise(resolve => setTimeout(resolve, 500));
-            toast({ title: "Message Sent" });
+            addToast({ title: "Message Sent" });
             // simulateAIResponse(conversationId, text); // Optional AI reply simulation
         } catch (error) {
             console.error("Failed to send message:", error);
-             toast({ title: "Failed to Send", description: "Could not send message.", variant: "destructive" });
+            addToast({ title: "Failed to Send", description: "Could not send message.", variant: "destructive" });
             setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id));
         }
     };
@@ -123,7 +122,7 @@ export default function MessagesPage() {
         }
     }, [conversations, loadingConversations, selectedConversationId]);
 
-     useEffect(() => {
+    useEffect(() => {
         if (selectedConversationId) {
             const selectedConv = conversations.find(c => c.id === selectedConversationId);
             if (selectedConv?.unread) markAsRead(selectedConversationId);
@@ -171,13 +170,13 @@ export default function MessagesPage() {
                             />
                         </div>
                         {/* Filter Dropdown */}
-                         <div className="relative">
+                        <div className="relative">
                             <button
                                 onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
                                 className="p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
                                 disabled={loadingConversations}
                             >
-                                 <Filter className="h-4 w-4" />
+                                <Filter className="h-4 w-4" />
                             </button>
                             {isFilterMenuOpen && (
                                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
@@ -195,7 +194,7 @@ export default function MessagesPage() {
                                     </div>
                                 </div>
                             )}
-                         </div>
+                        </div>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         {loadingConversations ? (
@@ -204,9 +203,8 @@ export default function MessagesPage() {
                             filteredConversations.map((conv) => (
                                 <button
                                     key={conv.id}
-                                    className={`flex w-full items-center gap-3 p-4 text-left border-b border-gray-200 dark:border-gray-700 transition-colors ${
-                                        selectedConversationId === conv.id ? 'bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                                    }`}
+                                    className={`flex w-full items-center gap-3 p-4 text-left border-b border-gray-200 dark:border-gray-700 transition-colors ${selectedConversationId === conv.id ? 'bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                                        }`}
                                     onClick={() => setSelectedConversationId(conv.id)}
                                 >
                                     {/* HeroUI style Avatar */}
@@ -238,21 +236,21 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Message Panel */}
-                 <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
+                <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
                     {selectedConversation ? (
                         <>
                             {/* Message Header */}
                             <div className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
                                 <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden">
                                     {selectedConversation.avatar ? (
-                                        <img className="h-full w-full object-cover" src={selectedConversation.avatar} alt={selectedConversation.leadName} data-ai-hint="person face"/>
+                                        <img className="h-full w-full object-cover" src={selectedConversation.avatar} alt={selectedConversation.leadName} data-ai-hint="person face" />
                                     ) : (
                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{getAvatarFallback(selectedConversation.leadName)}</span>
                                     )}
                                 </div>
                                 <div>
                                     <p className="font-semibold text-gray-900 dark:text-white">{selectedConversation.leadName}</p>
-                                     <p className="text-xs text-gray-500 dark:text-gray-400">Lead ID: {selectedConversation.leadId}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Lead ID: {selectedConversation.leadId}</p>
                                 </div>
                                 {/* TODO: Add actions */}
                             </div>
@@ -267,16 +265,15 @@ export default function MessagesPage() {
                                             className={`flex ${msg.sender === 'user' || msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}
                                         >
                                             <div
-                                                className={`max-w-[75%] rounded-lg px-4 py-2 shadow-sm ${
-                                                    msg.sender === 'user' ? 'bg-blue-600 text-white' :
-                                                    msg.sender === 'ai' ? 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200' :
-                                                    'bg-white text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                                                }`}
+                                                className={`max-w-[75%] rounded-lg px-4 py-2 shadow-sm ${msg.sender === 'user' ? 'bg-blue-600 text-white' :
+                                                        msg.sender === 'ai' ? 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200' :
+                                                            'bg-white text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                                    }`}
                                             >
                                                 <p className="text-sm">{msg.text}</p>
                                                 <div className="flex items-center justify-end mt-1 text-xs opacity-70">
-                                                     {msg.sender === 'ai' && <Bot className="h-3 w-3 mr-1 inline"/>}
-                                                     {msg.sender === 'user' && <User className="h-3 w-3 mr-1 inline"/>}
+                                                    {msg.sender === 'ai' && <Bot className="h-3 w-3 mr-1 inline" />}
+                                                    {msg.sender === 'user' && <User className="h-3 w-3 mr-1 inline" />}
                                                     <time>
                                                         {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                                                     </time>
@@ -285,9 +282,9 @@ export default function MessagesPage() {
                                         </div>
                                     ))
                                 ) : (
-                                     <p className="text-center text-gray-500 dark:text-gray-400">No messages in this conversation yet.</p>
+                                    <p className="text-center text-gray-500 dark:text-gray-400">No messages in this conversation yet.</p>
                                 )}
-                                 <div ref={messagesEndRef} /> {/* Anchor for scrolling */}
+                                <div ref={messagesEndRef} /> {/* Anchor for scrolling */}
                             </div>
                             {/* Message Input Area */}
                             <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">

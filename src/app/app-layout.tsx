@@ -7,7 +7,7 @@ import '../globals.css';
 import { Providers } from '@/providers'; // Ensure this path is correct
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs'; // Ensure this path is correct
-import { darkMode } from '@/tailwind.config'; // Ensure this path is correct
+import { dark } from '@clerk/themes'
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
@@ -40,7 +40,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
 
   // Define routes where the sidebar should NOT be shown
-  const noSidebarRoutes = ['/sign-in', '/sign-up', '/notifications', '/'];
+  const noSidebarRoutes = ['/sign-in', '/sign-up', '/'];
   const shouldShowSidebar = !noSidebarRoutes.includes(pathname);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
           { href: '/dashboard/leads', label: 'Leads', icon: Users },
           { href: '/dashboard/campaigns', label: 'Campaigns', icon: Send },
-          { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
+          { href: '/dashboard/conversations', label: 'Conversations', icon: MessageSquare },
           { href: '/dashboard/agents', label: 'AI Agents', icon: Bot },
           { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
         ].map(({ href, label, icon: Icon }) => ( // Map over nav items
@@ -156,7 +156,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 };
 
 const appearance = {
-  baseTheme: darkMode,
+  baseTheme: dark,
   layout: {
     logoImageUrl: '/images/im-ava-logo.png',
     logoLinkUrl: '/',
