@@ -120,7 +120,7 @@ export default function AgentsPage() {
     const handleCreateAgentSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newAgentName || !newAgentIndustry) {
-            addToast({ title: "Missing Information", description: "Please provide agent name and industry.", variant: "destructive" });
+            addToast({ title: "Missing Information", description: "Please provide agent name and industry.", variant: "flat" });
             return;
         }
         try {
