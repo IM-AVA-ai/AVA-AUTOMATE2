@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit, Settings, MoreVertical } from "lucide-react"; // Added MoreVertical
-import { useToast } from '@/components/BasicToaster';
+import { useToast } from '@heroui/toast';
 import { customizeAgent, CustomizeAgentInput } from '@/ai/flows/agent-customization';
 
 // Placeholder Agent type

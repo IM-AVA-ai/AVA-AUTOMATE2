@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { FileUp, Plus, Search, Trash2, Send, MoreVertical } from "lucide-react"; // Added MoreVertical for dropdown trigger
-import { useToast } from '@/components/BasicToaster'; // Corrected import path
+import { useToast } from '@heroui/toast'; // Corrected import path
 
 // Placeholder Lead type
 interface Lead {
