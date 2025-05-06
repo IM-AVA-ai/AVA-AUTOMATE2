@@ -147,7 +147,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Add other header items like profile dropdown if needed */}
           </header>
         )}
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-auto">
           {children}
         </main>
       </div>

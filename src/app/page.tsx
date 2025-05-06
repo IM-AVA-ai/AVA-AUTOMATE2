@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   MessageSquare,
@@ -16,8 +17,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useInView } from "@/hooks/use-in-view"
+import { useUser } from '@clerk/nextjs';
 
 export default function Home() {
+  const { isLoaded, isSignedIn, user } = useUser();
+  const router = useRouter();
+
   const [titleRef, titleInView] = useInView({ threshold: 0.3 })
   const [descRef, descInView] = useInView({ threshold: 0.3 })
   const [feature1Ref, feature1InView] = useInView({ threshold: 0.2 })
@@ -61,10 +66,16 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="hidden md:flex text-gray-400 hover:text-white hover:bg-transparent">
-              Sign In
-            </Button>
-            <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full">Sign Up</Button>
+            {!isLoaded ? (<div></div>) : (isSignedIn ? (
+              <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full" onClick={() => router.push('/dashboard')}>Dashboard</Button>
+            ) : (
+              <>
+                <Button variant="ghost" className="hidden md:flex text-gray-400 hover:text-white hover:bg-transparent" onClick={() => router.push('/sign-in')}>
+                  Sign In
+                </Button>
+                <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full" onClick={() => router.push('/sign-up')}>Sign Up</Button>
+              </>
+            ))}
           </div>
         </div>
       </header>
