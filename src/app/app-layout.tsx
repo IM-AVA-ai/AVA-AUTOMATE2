@@ -2,11 +2,11 @@
 'use client';
 
 import '../globals.css';
-// Update the path below if your providers file is located elsewhere
+
 // import { Providers } from './providers';
-import { Providers } from '@/providers'; // Ensure this path is correct
+import { Providers } from '@/providers'; 
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs'; // Ensure this path is correct
+import { ClerkProvider } from '@clerk/nextjs'; 
 import { dark } from '@clerk/themes'
 
 import React, { useState, useEffect } from 'react';
