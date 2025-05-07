@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-// Removed Resizable components
-import { Search, Send, Filter, User, Bot } from 'lucide-react'; // Added User, Bot icons
-import { addToast } from "@heroui/toast";
+import { Card, CardBody, Input, Button, Avatar, ScrollShadow } from '@heroui/react'; // Imported from new conversations page
+import { Icon } from '@iconify/react'; // Imported from new conversations page
+import { Search, Send, Filter, User, Bot } from 'lucide-react'; // Keep existing icons
+import { addToast } from "@heroui/toast"; // Keep existing toast
 
 
-// Placeholder data types
+// Keep existing placeholder data types
 interface Conversation {
     id: string;
     leadId: string;
@@ -26,18 +27,19 @@ interface Message {
     conversationId: string;
 }
 
-// Placeholder hooks
+// Keep existing placeholder hooks (assuming they contain Twilio/SMS/AI logic)
 const useConversations = () => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         console.log("Setting up Firestore listener for conversations (placeholder)...");
+        // Keep your existing data fetching logic here
         const timer = setTimeout(() => {
-            setConversations([
+             setConversations([
                 { id: 'conv1', leadId: 'lead1', leadName: 'John Solar', lastMessage: 'Sounds interesting, tell me more.', timestamp: new Date(Date.now() - 3600000), unread: true, avatar: 'https://picsum.photos/seed/john/40/40' },
                 { id: 'conv2', leadId: 'lead2', leadName: 'Jane Roof', lastMessage: 'Not interested, please remove me.', timestamp: new Date(Date.now() - 86400000), avatar: 'https://picsum.photos/seed/jane/40/40' },
-                { id: 'conv3', leadId: 'lead3', leadName: 'Bob General', lastMessage: 'Okay, thanks!', timestamp: new Date(Date.now() - 172800000), avatar: 'https://picsum.photos/seed/bob/40/40' },
+                { id: 'conv3', leadId: 'lead3', leadName: 'Bob General', lastMessage: 'Okay, thanks!', timestamp: new Date(Date.now() - 172800000), unread: true, avatar: 'https://picsum.photos/seed/bob/40/40' },
                 { id: 'conv4', leadId: 'lead4', leadName: 'Alice New', lastMessage: 'Can you call me tomorrow?', timestamp: new Date(Date.now() - 2 * 86400000), unread: true, avatar: 'https://picsum.photos/seed/alice/40/40' },
             ]);
             setLoading(false);
@@ -64,7 +66,8 @@ const useMessages = (conversationId: string | null) => {
         }
         setLoading(true);
         console.log(`Setting up Firestore listener for messages in conversation ${conversationId} (placeholder)...`);
-        const timer = setTimeout(() => {
+        // Keep your existing message fetching logic here
+         const timer = setTimeout(() => {
             if (conversationId === 'conv1') {
                 setMessages([
                     { id: 'm1', conversationId: 'conv1', text: 'Hi John, interested in saving on your energy bill with solar?', sender: 'ai', timestamp: new Date(Date.now() - 7200000) },
@@ -86,6 +89,7 @@ const useMessages = (conversationId: string | null) => {
     const sendMessage = async (text: string) => {
         if (!conversationId || !text.trim()) return;
         console.log(`Sending message "${text}" to conversation ${conversationId} as 'user' (placeholder)...`);
+        // Keep your existing message sending logic here (Twilio/SMS/AI)
         const optimisticMessage: Message = {
             id: `temp-${Date.now()}`, conversationId: conversationId, text: text,
             sender: 'user', timestamp: new Date(),
@@ -105,7 +109,8 @@ const useMessages = (conversationId: string | null) => {
     return { messages, loading, sendMessage };
 };
 
-export default function MessagesPage() {
+
+export default function ConversationsPage() { // Changed component name to match imported file
     const { conversations, loading: loadingConversations, markAsRead } = useConversations();
     const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
     const { messages, loading: loadingMessages, sendMessage } = useMessages(selectedConversationId);
@@ -113,7 +118,7 @@ export default function MessagesPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterUnread, setFilterUnread] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false); // State for filter dropdown
+    const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
 
     useEffect(() => {
         if (!selectedConversationId && !loadingConversations && conversations.length > 0) {
@@ -150,166 +155,146 @@ export default function MessagesPage() {
     const getAvatarFallback = (name: string) => name.substring(0, 2).toUpperCase();
 
     return (
-        <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] bg-white dark:bg-gray-900"> {/* Adjust height based on header/layout */}
-            <h1 className="text-3xl font-bold mb-6 px-4 pt-4 text-gray-900 dark:text-white">Messages</h1>
-            <div className="flex flex-1 overflow-hidden border-t border-gray-200 dark:border-gray-700">
-                {/* Conversation List Panel */}
-                <div className="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-white dark:bg-gray-800">
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-                        <div className="relative flex-1">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-                            </div>
-                            <input
-                                type="search"
-                                placeholder="Search conversations..."
-                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                disabled={loadingConversations}
+        <div className="p-8 h-[calc(100vh-4rem)]"> {/* Use styling from imported file */}
+            <div className="flex h-full gap-6"> {/* Use styling from imported file */}
+                {/* Recent Conversations List */}
+                <Card className="w-80 bg-black/40 border border-white/5"> {/* Use Card from imported file */}
+                    <CardBody className="p-0 h-full"> {/* Use CardBody from imported file */}
+                        <div className="p-4 border-b border-white/5">
+                            <Input
+                                placeholder="Search by name or agent..."
+                                startContent={<Icon icon="lucide:search" className="text-white/40" />}
+                                className="!bg-black/40 border-white/10 hover:border-white/20 focus:border-purple-500/50"
+                                classNames={{
+                                    input: "text-white/90 placeholder:text-white/40",
+                                    inputWrapper: "bg-black/40 hover:bg-black/60 transition-colors"
+                                }}
+                                value={searchTerm} // Bind to existing state
+                                onChange={(e) => setSearchTerm(e.target.value)} // Bind to existing state
                             />
                         </div>
-                        {/* Filter Dropdown */}
-                        <div className="relative">
-                            <button
-                                onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
-                                className="p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-                                disabled={loadingConversations}
-                            >
-                                <Filter className="h-4 w-4" />
-                            </button>
-                            {isFilterMenuOpen && (
-                                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                                    <div className="py-1" role="menu" aria-orientation="vertical">
-                                        <label className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2"
-                                                checked={filterUnread}
-                                                onChange={(e) => setFilterUnread(e.target.checked)}
-                                            />
-                                            Unread
-                                        </label>
-                                        {/* Add more filters here */}
-                                    </div>
-                                </div>
+                        <ScrollShadow className="h-[calc(100vh-12rem)]"> {/* Use ScrollShadow from imported file */}
+                            {loadingConversations ? ( // Use existing loading state
+                                <p className='text-center p-4 text-gray-500 dark:text-gray-400'>Loading conversations...</p>
+                            ) : filteredConversations.length > 0 ? ( // Use existing filtered conversations
+                                filteredConversations.map((conv) => (
+                                    <button
+                                        key={conv.id}
+                                        className={`flex w-full items-center gap-3 p-4 text-left border-b border-white/5 transition-colors ${selectedConversationId === conv.id ? 'bg-white/10' : 'hover:bg-white/5' // Use styling from imported file
+                                            }`}
+                                        onClick={() => setSelectedConversationId(conv.id)} // Use existing state setter
+                                    >
+                                        <Avatar src={conv.avatar} className="w-10 h-10" /> {/* Use Avatar from imported file */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="text-white/90 font-medium truncate">{conv.leadName}</h4> {/* Use leadName from existing data */}
+                                                <span className="text-xs text-white/40">{conv.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span> {/* Use timestamp from existing data */}
+                                            </div>
+                                            <p className="text-sm text-white/60 truncate mt-1">
+                                                {conv.lastMessage} {/* Use lastMessage from existing data */}
+                                            </p>
+                                            {/* Removed score display */}
+                                        </div>
+                                    </button>
+                                ))
+                            ) : (
+                                <p className='text-center p-4 text-gray-500 dark:text-gray-400'>
+                                    {searchTerm || filterUnread ? 'No matching conversations.' : 'No conversations found.'}
+                                </p>
                             )}
-                        </div>
-                    </div>
-                    <div className="flex-1 overflow-y-auto">
-                        {loadingConversations ? (
-                            <p className='text-center p-4 text-gray-500 dark:text-gray-400'>Loading conversations...</p>
-                        ) : filteredConversations.length > 0 ? (
-                            filteredConversations.map((conv) => (
-                                <button
-                                    key={conv.id}
-                                    className={`flex w-full items-center gap-3 p-4 text-left border-b border-gray-200 dark:border-gray-700 transition-colors ${selectedConversationId === conv.id ? 'bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                                        }`}
-                                    onClick={() => setSelectedConversationId(conv.id)}
-                                >
-                                    {/* HeroUI style Avatar */}
-                                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden">
-                                        {conv.avatar ? (
-                                            <img className="h-full w-full object-cover" src={conv.avatar} alt={conv.leadName} data-ai-hint="person face" />
-                                        ) : (
-                                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{getAvatarFallback(conv.leadName)}</span>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 overflow-hidden">
-                                        <p className={`truncate text-sm font-medium ${conv.unread ? 'text-gray-900 dark:text-white font-semibold' : 'text-gray-700 dark:text-gray-300'}`}>{conv.leadName}</p>
-                                        <p className={`text-xs truncate ${conv.unread ? 'text-gray-700 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'}`}>{conv.lastMessage}</p>
-                                    </div>
-                                    <div className="flex flex-col items-end self-start">
-                                        {conv.unread && <span className="px-1.5 py-0.5 text-xs font-medium bg-blue-500 text-white rounded-full mb-1">New</span>}
-                                        <time className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap mt-0.5">
-                                            {conv.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                                        </time>
-                                    </div>
-                                </button>
-                            ))
-                        ) : (
-                            <p className='text-center p-4 text-gray-500 dark:text-gray-400'>
-                                {searchTerm || filterUnread ? 'No matching conversations.' : 'No conversations found.'}
-                            </p>
-                        )}
-                    </div>
-                </div>
+                        </ScrollShadow>
+                    </CardBody>
+                </Card>
 
-                {/* Message Panel */}
-                <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
-                    {selectedConversation ? (
-                        <>
-                            {/* Message Header */}
-                            <div className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
-                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden">
-                                    {selectedConversation.avatar ? (
-                                        <img className="h-full w-full object-cover" src={selectedConversation.avatar} alt={selectedConversation.leadName} data-ai-hint="person face" />
-                                    ) : (
-                                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{getAvatarFallback(selectedConversation.leadName)}</span>
-                                    )}
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 dark:text-white">{selectedConversation.leadName}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Lead ID: {selectedConversation.leadId}</p>
-                                </div>
-                                {/* TODO: Add actions */}
+                {/* Chat Area */}
+                <Card className="flex-1 bg-black/40 border border-white/5"> {/* Use Card from imported file */}
+                    <CardBody className="p-0 h-full flex flex-col"> {/* Use CardBody from imported file */}
+                        {/* Chat Header */}
+                        <div className="p-4 border-b border-white/5 flex items-center gap-4">
+                            <Avatar
+                                src={selectedConversation?.avatar || "https://img.heroui.chat/image/avatar?w=40&h=40&u=1"} // Use avatar from selected conversation
+                                className="w-10 h-10"
+                            />
+                            <div>
+                                <h3 className="text-white/90 font-medium">{selectedConversation?.leadName || 'Select a conversation'}</h3>
+                                {/* Optionally display more info here, e.g. leadId */}
+                                {/* <p className="text-white/50 text-sm">{selectedConversation?.leadId}</p> */}
+                                {selectedConversation?.campaignId && (
+                                    <p className="text-xs text-purple-300 mt-1">
+                                        Campaign: {selectedConversation.campaignId}
+                                    </p>
+                                )}
                             </div>
-                            {/* Messages Area */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                                {loadingMessages ? (
-                                    <p className="text-center text-gray-500 dark:text-gray-400">Loading messages...</p>
-                                ) : messages.length > 0 ? (
-                                    messages.map((msg) => (
-                                        <div
-                                            key={msg.id}
-                                            className={`flex ${msg.sender === 'user' || msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}
-                                        >
-                                            <div
-                                                className={`max-w-[75%] rounded-lg px-4 py-2 shadow-sm ${msg.sender === 'user' ? 'bg-blue-600 text-white' :
-                                                        msg.sender === 'ai' ? 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200' :
-                                                            'bg-white text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                                                    }`}
-                                            >
-                                                <p className="text-sm">{msg.text}</p>
-                                                <div className="flex items-center justify-end mt-1 text-xs opacity-70">
-                                                    {msg.sender === 'ai' && <Bot className="h-3 w-3 mr-1 inline" />}
-                                                    {msg.sender === 'user' && <User className="h-3 w-3 mr-1 inline" />}
-                                                    <time>
-                                                        {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                                                    </time>
+                        </div>
+
+                        {/* Messages Area */}
+                        <ScrollShadow className="flex-1 p-4 space-y-4 overflow-y-auto"> {/* Use ScrollShadow from imported file */}
+                            {loadingMessages ? ( // Use existing loading state
+                                <p className="text-center text-gray-500 dark:text-gray-400">Loading messages...</p>
+                            ) : messages.length > 0 ? ( // Use existing messages
+                                messages.map((message) => (
+                                    <div
+                                        key={message.id}
+                                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`} // Use sender from existing data
+                                    >
+                                        <div className="flex gap-3 max-w-[80%]">
+                                            {message.sender !== 'user' && ( // Only show avatar for non-user messages
+                                                <Avatar
+                                                    src={selectedConversation?.avatar || "https://img.heroui.chat/image/avatar?w=32&h=32&u=1"} // Use avatar from selected conversation
+                                                    className="w-8 h-8"
+                                                />
+                                            )}
+                                            <div>
+                                                <div
+                                                    className={`p-3 rounded-2xl ${
+                                                        message.sender === 'user'
+                                                            ? 'bg-gradient-to-br from-purple-500/30 to-purple-600/30 border border-purple-500/20 shadow-[0_4px_20px_-4px_rgba(147,51,234,0.2)] backdrop-blur-sm text-white/80'
+                                                            : 'bg-gradient-to-br from-white/10 to-white/5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.2)] backdrop-blur-sm text-white/70'
+                                                    }`} // Use styling from imported file
+                                                >
+                                                    {message.text} {/* Use text from existing data */}
                                                 </div>
+                                                <p className={`text-xs text-white/40 mt-1 ${
+                                                    message.sender === 'user' ? 'text-right' : 'text-left'
+                                                }`}>
+                                                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} {/* Use timestamp from existing data */}
+                                                </p>
                                             </div>
                                         </div>
-                                    ))
-                                ) : (
-                                    <p className="text-center text-gray-500 dark:text-gray-400">No messages in this conversation yet.</p>
-                                )}
-                                <div ref={messagesEndRef} /> {/* Anchor for scrolling */}
-                            </div>
-                            {/* Message Input Area */}
-                            <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
-                                <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Type your message..."
-                                        value={newMessage}
-                                        onChange={(e) => setNewMessage(e.target.value)}
-                                        className="flex-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
-                                        disabled={loadingMessages}
-                                        autoComplete="off"
-                                    />
-                                    <button type="submit" className="inline-flex items-center justify-center p-2 border border-transparent rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50" disabled={loadingMessages || !newMessage.trim()}>
-                                        <Send className="h-5 w-5" />
-                                    </button>
-                                </form>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="flex h-full items-center justify-center text-gray-500 dark:text-gray-400">
-                            {loadingConversations ? 'Loading...' : 'Select a conversation to view messages'}
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-center text-gray-500 dark:text-gray-400">No messages in this conversation yet.</p>
+                            )}
+                            <div ref={messagesEndRef} /> {/* Anchor for scrolling */}
+                        </ScrollShadow>
+
+                        {/* Input Area */}
+                        <div className="p-4 border-t border-white/5 flex gap-2">
+                            <Input
+                                placeholder="Type a message..."
+                                value={newMessage} // Bind to existing state
+                                onChange={(e) => setNewMessage(e.target.value)} // Bind to existing state setter
+                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(e)} // Bind to existing send handler
+                                className="!bg-black/40 border-purple-500/30 hover:border-purple-500/50 focus:border-purple-500/70" // Use styling from imported file
+                                classNames={{
+                                    input: "text-white/90 placeholder:text-white/40",
+                                    inputWrapper: "bg-black/40 hover:bg-black/60 transition-colors"
+                                }}
+                                endContent={
+                                    <Button
+                                        isIconOnly
+                                        className="bg-purple-500/20 text-purple-400 hover:bg-purple-500/30" // Use styling from imported file
+                                        onPress={() => handleSendMessage(null as any)} // Call handleSendMessage directly (adjusting event type)
+                                        disabled={loadingMessages || !newMessage.trim()} // Use existing loading state and input check
+                                    >
+                                        <Icon icon="lucide:send" /> {/* Use Icon from imported file */}
+                                    </Button>
+                                }
+                            />
                         </div>
-                    )}
-                </div>
+                    </CardBody>
+                </Card>
             </div>
         </div>
     );

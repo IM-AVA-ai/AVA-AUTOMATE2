@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Chip, cn } from '@heroui/react'; // Added Chip and cn from @heroui/react
 import { useToast } from "@/hooks/use-toast";
 import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
-import { db } from "@/firebase/config"; // Assuming your Firebase config is here
-import { Icon } from '@iconify/react'; // Assuming Iconify is used for the bell icon
+import { db } from "@/firebase/config"; 
+import { Icon } from '@iconify/react'; 
 import MetricsCard from "@/components/MetricsCard"; // Added from DashboardContent
 import { Conversation } from '@/services/conversations'; // Import types from DashboardContent
-import { Campaign } from '@/services/campaigns'; // Import types from DashboardContent
-import { Lead } from '@/services/leads'; // Import types from DashboardContent
+import { Campaign } from '@/services/campaigns'; 
+import { Lead } from '@/services/leads'; 
 
 
 // Define the structure of a message document in Firestore
@@ -38,7 +38,7 @@ export const CommunicationsLogCard = () => {
   useEffect(() => {
     setIsLoading(true);
     // Set up real-time listener for messages
-    const messagesCollection = collection(db, 'messages'); // Assuming 'messages' is your collection name
+    const messagesCollection = collection(db, 'messages'); 
     const q = query(messagesCollection, orderBy('created_at', 'desc'), limit(20)); // Fetch recent messages
 
     const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
@@ -55,9 +55,9 @@ export const CommunicationsLogCard = () => {
       setIsLoading(false);
     });
 
-    // Clean up the listener on component unmount
+   
     return () => unsubscribe();
-  }, [toast]); // Added toast to dependency array
+  }, [toast]); 
 
   // Function to process messages and create conversation threads (simplified without ConversationThread component)
   const processMessages = (messages: FirestoreMessage[]) => {
@@ -145,7 +145,7 @@ const getStatusBadgeClasses = (status: string): string => {
     }
   };
 
-// Placeholder data for DashboardContent props
+
 const placeholderConversations: Conversation[] = []; // Replace with actual data fetching
 const placeholderCampaigns: Campaign[] = []; // Replace with actual data fetching
 const placeholderLeads: Lead[] = []; // Replace with actual data fetching

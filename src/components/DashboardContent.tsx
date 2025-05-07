@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Button, Card, CardHeader, Chip, cn } from '@heroui/react'; // Uncommented
+import { Button, Card, CardHeader, Chip, cn } from '@heroui/react';
 import { Activity, UserPlus, Rocket, MessagesSquare, Brain } from "lucide-react";
-import { Icon } from "@iconify/react"; // Uncommented
+import { Icon } from "@iconify/react";
 import MetricsCard from "@/components/MetricsCard";
-import { Conversation } from '@/services/conversations'; // Import types
-import { Campaign } from '@/services/campaigns'; // Import types
-import { Lead } from '@/services/leads'; // Import types
+import { Conversation } from '@/services/conversations';
+import { Campaign } from '@/services/campaigns';
+import { Lead } from '@/services/leads';
 
 
 // Helper for badge variant styles (Tailwind based)
@@ -15,8 +15,8 @@ const getStatusBadgeClasses = (status: string): string => {
     switch (status.toLowerCase()) {
       case 'active': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'paused': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'; // Changed outline to green
-      default: return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'; // Default to yellow for draft/other
+      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      default: return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
     }
   };
 
@@ -27,6 +27,39 @@ interface DashboardContentProps {
 }
 
 export default function DashboardContent({ recentConversations, campaigns, leads }: DashboardContentProps) {
+
+  
+  const stats = [
+    {
+      title: 'Active Campaigns',
+      value: '8',
+      icon: 'lucide:target',
+      trend: 15,
+      description: 'Running campaigns'
+    },
+    {
+      title: 'Total Leads',
+      value: '2,847',
+      icon: 'lucide:users',
+      trend: 23,
+      description: 'Across all campaigns'
+    },
+    {
+      title: 'Messages Sent',
+      value: '1,432',
+      icon: 'lucide:send',
+      trend: 8,
+      description: 'Today'
+    },
+    {
+      title: 'Reply Rate',
+      value: '42%',
+      icon: 'lucide:message-square',
+      trend: -3,
+      description: 'Overall average'
+    },
+  ];
+
 
   const recentCampaigns = campaigns.map(campaign => ({
     id: campaign.id,
@@ -47,38 +80,38 @@ export default function DashboardContent({ recentConversations, campaigns, leads
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         {/* Add Lead */}
-        <Card className="dark"> {/* Uncommented */}
-          <CardHeader> {/* Uncommented */}
-            <Link href="/leads/create"><Button>{/* <UserPlus className="mr-2 h-4 w-4" /> */} Add Lead</Button></Link> {/* Uncommented Button */}
-          </CardHeader> {/* Uncommented */}
-        </Card> {/* Uncommented */}
+        <Card className="dark">
+          <CardHeader>
+            <Link href="/leads/create"><Button> Add Lead</Button></Link>
+          </CardHeader>
+        </Card>
         {/* Start Campaign */}
-        <Card className="dark"> {/* Uncommented */}
-        <CardHeader> {/* Uncommented */}
-            <Link href="/campaigns/create"><Button>{/* <Rocket className="mr-2 h-4 w-4" /> */} Start Campaign</Button></Link> {/* Uncommented Button */}
-          </CardHeader> {/* Uncommented */}
-        </Card> {/* Uncommented */}
+        <Card className="dark">
+        <CardHeader>
+            <Link href="/campaigns/create"><Button> Start Campaign</Button></Link>
+          </CardHeader>
+        </Card>
         {/* View Conversations */}
-        <Card className="dark"> {/* Uncommented */}
-        <CardHeader> {/* Uncommented */}
-            <Link href="/conversations"><Button>{/* <MessagesSquare className="mr-2 h-4 w-4" /> */} View Conversations</Button></Link> {/* Uncommented Button */}
-          </CardHeader> {/* Uncommented */}
-        </Card> {/* Uncommented */}
+        <Card className="dark">
+        <CardHeader>
+            <Link href="/conversations"><Button> View Conversations</Button></Link>
+          </CardHeader>
+        </Card>
         {/* Create Agent */}
-        <Card className="dark"> {/* Uncommented */}
-        <CardHeader> {/* Uncommented */}
-            <Link href="/agents/create"><Button>{/* <Brain className="mr-2 h-4 w-4" /> */} Create Agent</Button></Link> {/* Uncommented Button */}
-          </CardHeader> {/* Uncommented */}
-        </Card> {/* Uncommented */}
+        <Card className="dark">
+        <CardHeader>
+            <Link href="/agents/create"><Button> Create Agent</Button></Link>
+          </CardHeader>
+        </Card>
       </div>
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
       {/* Recent Conversations */}
-      <Card className="dark mb-4"> {/* Uncommented */}
-        <CardHeader> {/* Uncommented */}
+      <Card className="dark mb-4">
+        <CardHeader>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Recent Conversations
             </h2>
-        </CardHeader> {/* Uncommented */}
+        </CardHeader>
         <div className="p-6">
           <div className="space-y-4">
             {recentConversations.length > 0 ? (
@@ -96,7 +129,7 @@ export default function DashboardContent({ recentConversations, campaigns, leads
             )}
           </div>
         </div>
-      </Card> {/* Uncommented */}
+      </Card>
 
       {/* Stats Cards */}
         <MetricsCard leads={leads} campaigns={campaigns}/>
@@ -152,9 +185,9 @@ export default function DashboardContent({ recentConversations, campaigns, leads
              {activityFeed.length > 0 ? (
                  activityFeed.map((activity) => (
                     <div key={activity.id} className="flex items-start gap-3">
-                      <div className="pt-1 flex-shrink-0"> {/* Uncommented */}
+                      <div className="pt-1 flex-shrink-0">
                         <Activity className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                      </div> {/* Uncommented */}
+                      </div>
                       <div className="flex-1">
                             <p className="text-sm text-gray-900 dark:text-white">{activity.text}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
