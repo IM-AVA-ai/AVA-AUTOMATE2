@@ -16,11 +16,10 @@ const navItems = [
 ];
 
 export const Sidebar = () => {
-  const pathname = usePathname(); // Use Next.js usePathname
+  const pathname = usePathname(); 
   const [isCompact, setIsCompact] = React.useState(true);
 
   const isActive = (path: string) => {
-    // Handle the case where pathname might be null
     return pathname !== null && (pathname === path || (pathname.startsWith(path) && path !== '/dashboard'));
   };
 
@@ -31,7 +30,7 @@ export const Sidebar = () => {
         {/* Header */}
         <div className={`flex items-center gap-3 p-6 ${isCompact ? 'justify-center' : ''}`}>
           <img 
-            src="/images/im-ava-logo.png" 
+            src="/images/favicon.png" 
             alt="IM AVA Logo" 
             className={`h-8 w-auto ${isCompact ? '' : ''}`} // Adjust height and width as needed
           />

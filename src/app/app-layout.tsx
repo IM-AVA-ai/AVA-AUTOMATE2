@@ -11,11 +11,11 @@ import Link from 'next/link';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
 
-import { Sidebar } from '@/components/Sidebar'; // Import the new Sidebar
-import { TopNav } from '@/components/TopNav'; // Import the new TopNav
-import { Providers } from '@/providers'; // Assuming this is needed for context/state
+import { Sidebar } from '@/components/Sidebar'; 
+import { TopNav } from '@/components/TopNav'; 
+import { Providers } from '@/providers'; 
 
-// Metadata for the application
+
 export const metadata: Metadata = {
   title: 'IM AVA',
   description: 'AI-driven SMS communication platform',
@@ -52,7 +52,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 const appearance = {
   baseTheme: dark,
   layout: {
-    logoImageUrl: '/images/im-ava-logo.png',
+    logoImageUrl: '/images/favicon.png',
     logoLinkUrl: '/',
   },
 };
