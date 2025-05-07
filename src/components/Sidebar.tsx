@@ -20,7 +20,8 @@ export const Sidebar = () => {
   const [isCompact, setIsCompact] = React.useState(true);
 
   const isActive = (path: string) => {
-    return pathname === path || (pathname.startsWith(path) && path !== '/dashboard');
+    // Handle the case where pathname might be null
+    return pathname !== null && (pathname === path || (pathname.startsWith(path) && path !== '/dashboard'));
   };
 
   return (
@@ -29,7 +30,11 @@ export const Sidebar = () => {
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className={`flex items-center gap-3 p-6 ${isCompact ? 'justify-center' : ''}`}>
-          <Icon icon="public/images/im-ava-logo.png" className="text-purple-400 text-2xl" />
+          <img 
+            src="/images/im-ava-logo.png" 
+            alt="IM AVA Logo" 
+            className={`h-8 w-auto ${isCompact ? '' : ''}`} // Adjust height and width as needed
+          />
           {!isCompact && (
             <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
               IM AVA
