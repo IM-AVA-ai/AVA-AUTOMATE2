@@ -58,7 +58,7 @@ const useAgents = () => {
             return newAgent;
         } catch (error) {
             console.error("Failed to create agent:", error);
-            addToast({ title: "Agent Creation Failed", description: error instanceof Error ? error.message : "Could not generate prompt or save agent.", variant: "destructive" });
+            addToast({ title: "Agent Creation Failed", description: error instanceof Error ? error.message : "Could not generate prompt or save agent.", variant: "flat" /* TODO: Apply destructive styling if needed */ });
             setLoading(false);
             throw error;
         }
@@ -69,7 +69,7 @@ const useAgents = () => {
         // TODO: Delete agent from Firestore
         await new Promise(resolve => setTimeout(resolve, 500));
         setAgents(prev => prev.filter(agent => agent.id !== agentId));
-        addToast({ title: "Agent Deleted", variant: "destructive" });
+        addToast({ title: "Agent Deleted", variant: "flat" /* TODO: Apply destructive styling if needed */ });
     }
 
     return { agents, loading, createAgent, deleteAgent };
@@ -120,7 +120,7 @@ export default function AgentsPage() {
     const handleCreateAgentSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newAgentName || !newAgentIndustry) {
-            addToast({ title: "Missing Information", description: "Please provide agent name and industry.", variant: "destructive" });
+            addToast({ title: "Missing Information", description: "Please provide agent name and industry.", variant: "flat" });
             return;
         }
         try {

@@ -126,11 +126,11 @@ export default function LeadsPage() {
   const handleAddLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLeadName || !newLeadPhone) {
-      addToast({ title: "Missing Information", description: "Please enter both name and phone number.", variant: "destructive" });
+      addToast({ title: "Missing Information", description: "Please enter both name and phone number.", variant: "solid" });
       return;
     }
     if (!/^\+?[1-9]\d{1,14}$/.test(newLeadPhone)) {
-      addToast({ title: "Invalid Phone Number", description: "Please enter a valid phone number (e.g., +15551234567).", variant: "destructive" });
+      addToast({ title: "Invalid Phone Number", description: "Please enter a valid phone number (e.g., +15551234567).", variant: "solid" });
       return;
     }
 
@@ -141,7 +141,7 @@ export default function LeadsPage() {
       setNewLeadPhone('');
       setIsAddLeadOpen(false);
     } catch (err) {
-      addToast({ title: "Failed to Add Lead", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "destructive" });
+      addToast({ title: "Failed to Add Lead", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "solid" });
     }
   };
 
@@ -152,7 +152,7 @@ export default function LeadsPage() {
 
   const handleBulkDelete = () => {
     console.log("Deleting selected leads:", Array.from(selectedLeads));
-    addToast({ title: "Bulk Delete", description: `Delete functionality for ${selectedLeads.size} leads is not yet implemented.`, variant: "destructive" });
+    addToast({ title: "Bulk Delete", description: `Delete functionality for ${selectedLeads.size} leads is not yet implemented.`, variant: "solid" });
   };
 
   const handleBulkAddToCampaign = () => {

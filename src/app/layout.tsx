@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import '@/app/globals.css';
+import '../landing-page(s)/styles/globals.css';
 import { Providers } from '@/providers';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <meta name="author" content="IM AVA.ai Team" />
         </head>
         <body className={`${inter.variable} font-sans overflow-x-hidden`}>
-          <ThemeProvider defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
             <Providers>
               <AppLayout>
                 {children}

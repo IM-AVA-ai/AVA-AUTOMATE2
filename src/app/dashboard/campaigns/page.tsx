@@ -136,6 +136,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 };
 
 export default function CampaignsPage() {
+    console.log('CampaignsPage rendering');
     const { campaigns, agents, queuedLeads, setQueuedLeads, loading, addLeadToQueue, createCampaign, updateCampaign, sendCampaign } = useCampaigns();
     const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
     const [selectedQueuedLeads, setSelectedQueuedLeads] = useState<Set<string>>(new Set());
@@ -143,12 +144,16 @@ export default function CampaignsPage() {
     const [newCampaignName, setNewCampaignName] = useState('');
 
     useEffect(() => {
+        console.log('useEffect in CampaignsPage running');
         if (!selectedCampaignId && !loading && campaigns.length > 0) {
+            console.log('Setting selectedCampaignId to:', campaigns[0].id);
             setSelectedCampaignId(campaigns[0].id);
         }
+        console.log('loading:', loading, 'campaigns:', campaigns);
     }, [loading, campaigns, selectedCampaignId]);
 
     const selectedCampaign = campaigns.find(c => c.id === selectedCampaignId);
+    console.log('selectedCampaign:', selectedCampaign);
     const currentQueuedLeads = queuedLeads.filter(ql => ql.campaignId === selectedCampaignId);
 
     // Helper for badge variant styles (Tailwind based)
