@@ -17,16 +17,16 @@ import { Campaign } from '@/services/campaigns';
 import { Lead } from '@/services/leads'; 
 
 
-// Define the structure of a message document in Firestore
+
 interface FirestoreMessage {
   id: string;
   lead_id: string;
   content: string;
   created_at: {
-    toDate(): Date; // Firestore Timestamps have a toDate() method
+    toDate(): Date; 
   };
   direction: 'inbound' | 'outbound';
-  status: 'read' | 'unread'; // Assuming status can be read/unread
+  status: 'read' | 'unread'; 
 }
 
 export const CommunicationsLogCard = () => {

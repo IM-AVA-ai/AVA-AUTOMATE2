@@ -29,7 +29,7 @@ export const Sidebar = () => {
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className={`flex items-center gap-3 p-6 ${isCompact ? 'justify-center' : ''}`}>
-          <Icon icon="lucide:bot" className="text-purple-400 text-2xl" />
+          <Icon icon="public/images/im-ava-logo.png" className="text-purple-400 text-2xl" />
           {!isCompact && (
             <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
               IM AVA
@@ -46,7 +46,7 @@ export const Sidebar = () => {
               placement="right"
             >
               <Link
-                href={item.path} // Use Next.js href
+                href={item.path} 
                 className={`
                   flex items-center gap-3 p-3 rounded-lg transition-all duration-300 mb-2 cursor-pointer
                   ${isCompact ? 'justify-center' : ''}
