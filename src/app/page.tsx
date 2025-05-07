@@ -67,6 +67,7 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-4">
+            <Spinner size="sm" variant="wave" />
             {!isLoaded ? (<Spinner size="sm" variant="wave" />) : (isSignedIn ? (
               <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full" onClick={() => router.push('/dashboard')}>Dashboard</Button>
             ) : (

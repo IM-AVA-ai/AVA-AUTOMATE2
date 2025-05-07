@@ -32,6 +32,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider appearance={appearance}>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <link rel="icon" href="/images/favicon.png" />
+          <link rel="apple-touch-icon" href="/images/favicon.png" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="theme-color" content="#000000" />
+          <meta name="description" content={metadata.description ?? ''} />
+          <meta name="keywords" content="AI, SMS, Lead Engagement, IM AVA.ai" />
+          <meta name="author" content="IM AVA.ai Team" />
+        </head>
         <body className={`${inter.variable} font-sans overflow-x-hidden`}>
           <ThemeProvider defaultTheme="dark" enableSystem disableTransitionOnChange>
             <Providers>
