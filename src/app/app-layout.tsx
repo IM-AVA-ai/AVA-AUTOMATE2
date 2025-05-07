@@ -34,7 +34,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-black via-black/95 to-black">
+    <div className="flex min-h-screen ">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent pointer-events-none" />
       <Sidebar /> {/* Use the new Sidebar */}
       <div className="flex-1 flex flex-col transition-all duration-300 relative" style={{

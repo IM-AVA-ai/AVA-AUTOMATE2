@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <meta name="keywords" content="AI, SMS, Lead Engagement, IM AVA.ai" />
           <meta name="author" content="IM AVA.ai Team" />
         </head>
-        <body className={`${inter.variable} font-sans overflow-x-hidden`}>
+        <body className={`dark ${inter.variable} font-sans overflow-x-hidden`}>
           <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
             <Providers>
               <AppLayout>
