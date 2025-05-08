@@ -8,6 +8,7 @@
     font-family: Arial, Helvetica, sans-serif;
     transition: background-color 0.3s, color 0.3s;
   }
+
   .dark {
     @apply bg-gray-900 text-gray-50;
   }
@@ -17,4 +18,18 @@
 
 a {
   @apply text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300;
+}
+
+/* Button styles */
+button,
+.btn {
+  @apply rounded-full;
+}
+
+.btn-primary {
+  @apply btn bg-ava-purple2 hover:bg-ava-purple1;
+}
+
+.btn-secondary {
+  @apply btn border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white;
 }

@@ -16,7 +16,7 @@ const navItems = [
 ];
 
 export const Sidebar = () => {
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const [isCompact, setIsCompact] = React.useState(true);
 
   const isActive = (path: string) => {
@@ -24,15 +24,15 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={`bg-black/95 border-r border-white/5 fixed left-0 top-0 h-screen transition-all duration-300 backdrop-blur-xl
+    <div className={`bg-black/95 border-r border-white/5 left-0 top-0 h-screen transition-all duration-300 backdrop-blur-xl
       ${isCompact ? 'w-20' : 'w-64'}`}>
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className={`flex items-center gap-3 p-6 ${isCompact ? 'justify-center' : ''}`}>
           {/* Replace the Icon component with an img tag for the logo */}
-          <img 
-            src="/images/im-ava-logo.png" 
-            alt="IM AVA Logo" 
+          <img
+            src="/images/im-ava-logo.png"
+            alt="IM AVA Logo"
             className={`h-8 w-auto ${isCompact ? '' : ''}`} // Adjust height and width as needed
           />
           {!isCompact && (
@@ -51,21 +51,19 @@ export const Sidebar = () => {
               placement="right"
             >
               <Link
-                href={item.path} 
+                href={item.path}
                 className={`
                   flex items-center gap-3 p-3 rounded-lg transition-all duration-300 mb-2 cursor-pointer
                   ${isCompact ? 'justify-center' : ''}
-                  ${
-                    isActive(item.path) // Use Next.js active check
-                      ? 'bg-black/60 text-white border border-purple-500/20 shadow-lg shadow-purple-500/20'
-                      : 'text-white/70 border border-transparent'
+                  ${isActive(item.path) // Use Next.js active check
+                    ? 'bg-black/60 text-white border border-purple-500/20 shadow-lg shadow-purple-500/20'
+                    : 'text-white/70 border border-transparent'
                   }
                   hover:bg-black/40 hover:text-white hover:border-purple-500/20 hover:shadow-lg hover:shadow-purple-500/20
                 `}
               >
-                <Icon icon={item.icon} className={`text-xl ${
-                  isActive(item.path) ? 'text-purple-400' : 'group-hover:text-purple-400' // Use Next.js active check
-                }`} />
+                <Icon icon={item.icon} className={`text-xl ${isActive(item.path) ? 'text-purple-400' : 'group-hover:text-purple-400' // Use Next.js active check
+                  }`} />
                 {!isCompact && <span>{item.name}</span>}
               </Link>
             </Tooltip>
@@ -99,10 +97,9 @@ export const Sidebar = () => {
             <Button
               isIconOnly
               variant="light"
-              className={`w-full flex items-center justify-center text-white/70 hover:text-purple-400 ${
-                isCompact ? '' : 'mt-2'
-              }`}
-              onPress={() => setIsCompact(!isCompact)} 
+              className={`w-full flex items-center justify-center text-white/70 hover:text-purple-400 ${isCompact ? '' : 'mt-2'
+                }`}
+              onPress={() => setIsCompact(!isCompact)}
             >
               <Icon
                 icon={isCompact ? 'lucide:chevron-right' : 'lucide:chevron-left'}

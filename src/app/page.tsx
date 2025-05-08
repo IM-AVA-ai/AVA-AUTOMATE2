@@ -69,7 +69,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <Spinner size="sm" variant="wave" />
             {!isLoaded ? (<Spinner size="sm" variant="wave" />) : (isSignedIn ? (
-              <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full" onClick={() => router.push('/dashboard')}>Dashboard</Button>
+              <Button className="btn-primary" onClick={() => router.push('/dashboard')}>Dashboard</Button>
             ) : (
               <>
                 <Button variant="ghost" className="hidden md:flex text-gray-400 hover:text-white hover:bg-transparent" onClick={() => router.push('/sign-in')}>
@@ -100,14 +100,11 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-ava-purple5 hover:bg-ava-purple4 rounded-full text-base py-6 px-8">
+            <Button className="btn-primary">
               Sign Up
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              className="border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white rounded-full text-base py-6 px-8"
-            >
+            <Button variant="outline" className="btn-secondary">
               Book a Demo
             </Button>
           </div>
