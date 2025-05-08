@@ -101,7 +101,7 @@ export const Sidebar = () => {
               className={`w-full flex items-center justify-center text-white/70 hover:text-purple-400 ${
                 isCompact ? '' : 'mt-2'
               }`}
-              onPress={() => setIsCompact(!isCompact)}
+              onPress={() => setIsCompact(!isCompact)} 
             >
               <Icon
                 icon={isCompact ? 'lucide:chevron-right' : 'lucide:chevron-left'}

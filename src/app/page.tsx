@@ -40,7 +40,7 @@ export default function Home() {
         </div>
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/images/im-ava-logo.png" alt="IM AVA.ai Logo" width={32} height={32} className="h-8 w-auto" />
+            <Image src="/images/favicon.png" alt="IM AVA.ai Logo" width={32} height={32} className="h-8 w-auto" />
             <span className="text-xl font-normal">
               IM AVA<span className="text-ava-purple5">.ai</span>
             </span>

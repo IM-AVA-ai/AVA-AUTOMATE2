@@ -27,7 +27,7 @@ interface Message {
     conversationId: string;
 }
 
-// Keep existing placeholder hooks (assuming they contain Twilio/SMS/AI logic)
+
 const useConversations = () => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
