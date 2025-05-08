@@ -29,8 +29,9 @@ export const Sidebar = () => {
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className={`flex items-center gap-3 p-6 ${isCompact ? 'justify-center' : ''}`}>
+          {/* Replace the Icon component with an img tag for the logo */}
           <img 
-            src="/images/favicon.png" 
+            src="/images/im-ava-logo.png" 
             alt="IM AVA Logo" 
             className={`h-8 w-auto ${isCompact ? '' : ''}`} // Adjust height and width as needed
           />
