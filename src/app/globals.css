@@ -24,12 +24,14 @@
 button,
 .btn {
   @apply rounded-full;
+  background-origin: border-box;;
+  background-clip: padding-box, border-box;
 }
 
 .btn-primary {
-  @apply btn bg-ava-purple2 hover:bg-ava-purple1;
+  @apply btn border-gray-800 bg-ava-purple2 hover:bg-ava-purple1;
 }
 
 .btn-secondary {
-  @apply btn border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white;
+  @apply btn border-gray-800 text-gray-300 hover:bg-gray-900 hover:hover:bg-ava-darkpurple1 text-gray-50;
 }
