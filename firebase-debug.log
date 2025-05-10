@@ -1,0 +1,217 @@
+[debug] [2025-05-10T00:21:08.944Z] ----------------------------------------------------------------------
+[debug] [2025-05-10T00:21:08.947Z] Command:       /nix/store/rbdrkcs5kkwpalxcd7c6bnm33lk2955n-nodejs-20.19.0/bin/node /nix/store/h4vwr7z06qfjp6g97is2nhmki2jfwlgd-firebase-tools-14.2.2/lib/node_modules/firebase-tools/lib/bin/firebase.js serve
+[debug] [2025-05-10T00:21:08.948Z] CLI Version:   14.2.2
+[debug] [2025-05-10T00:21:08.948Z] Platform:      linux
+[debug] [2025-05-10T00:21:08.948Z] Node Version:  v20.19.0
+[debug] [2025-05-10T00:21:08.949Z] Time:          Sat May 10 2025 00:21:08 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-05-10T00:21:08.949Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-10T00:21:09.485Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:09.486Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:09.487Z] [iam] checking project ava-automate2 for permissions ["firebase.projects.get"]
+[debug] [2025-05-10T00:21:09.490Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:09.491Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:09.491Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:09.491Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:09.494Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions [none]
+[debug] [2025-05-10T00:21:09.494Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions x-goog-quota-user=projects/ava-automate2
+[debug] [2025-05-10T00:21:09.494Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-05-10T00:21:09.744Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions 200
+[debug] [2025-05-10T00:21:09.744Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-05-10T00:21:09.746Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:09.746Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:09.746Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:09.746Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:09.747Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2 [none]
+[debug] [2025-05-10T00:21:09.843Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2 200
+[debug] [2025-05-10T00:21:09.847Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2 {"projectNumber":"381160095911","projectId":"ava-automate2","lifecycleState":"ACTIVE","name":"Ava-Automate2","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-05-04T05:51:58.475120Z"}
+[info] 
+[info] === Serving from '/home/user/AVA-AUTOMATE'...
+[info] 
+[debug] [2025-05-10T00:21:09.856Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:09.856Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:09.856Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:09.857Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:09.867Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ava-automate2/sites 
+[debug] [2025-05-10T00:21:10.334Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ava-automate2/sites 200
+[debug] [2025-05-10T00:21:10.335Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ava-automate2/sites {"sites":[{"name":"projects/ava-automate2/sites/ava-automate2","defaultUrl":"https://ava-automate2.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2025-05-10T00:21:10.335Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:10.337Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:10.337Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:10.337Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:10.337Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/webApps/-/config [none]
+[debug] [2025-05-10T00:21:10.705Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/webApps/-/config 200
+[debug] [2025-05-10T00:21:10.708Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/webApps/-/config {"projectId":"ava-automate2","appId":"1:381160095911:web:8cc9bdcd3adcee42b4db82","databaseURL":"https://ava-automate2-default-rtdb.firebaseio.com","storageBucket":"ava-automate2.firebasestorage.app","apiKey":"AIzaSyBh3HZGNsMwhJ2xnqeBQwIg_EBKLXH_s68","authDomain":"ava-automate2.firebaseapp.com","messagingSenderId":"381160095911","measurementId":"G-0FM6NXN4SB"}
+[debug] [2025-05-10T00:21:10.735Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:10.737Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:10.737Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:10.737Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:10.738Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2 [none]
+[debug] [2025-05-10T00:21:10.956Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2 200
+[debug] [2025-05-10T00:21:10.959Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2 {"projectId":"ava-automate2","projectNumber":"381160095911","displayName":"Ava-Automate2","name":"projects/ava-automate2","resources":{"hostingSite":"ava-automate2","realtimeDatabaseInstance":"ava-automate2-default-rtdb"},"state":"ACTIVE","etag":"1_f93b61ff-64a9-42fc-a156-8ccb8b70e006"}
+[info] i  hosting[ava-automate2]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] ✔  hosting[ava-automate2]: Local server: http://localhost:5002 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5002\u001b[22m\u001b[24m"}}
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET / HTTP/1.1" 200 - "https://studio.firebase.google.com/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET / HTTP/1.1\" 200 - \"https://studio.firebase.google.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.255Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js [none]
+[debug] [2025-05-10T00:21:13.289Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js 200
+[debug] [2025-05-10T00:21:13.289Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-app-compat.js HTTP/1.1" 200 10178 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-app-compat.js HTTP/1.1\" 200 10178 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.345Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js [none]
+[debug] [2025-05-10T00:21:13.373Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js 200
+[debug] [2025-05-10T00:21:13.374Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-auth-compat.js HTTP/1.1" 200 40484 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-auth-compat.js HTTP/1.1\" 200 40484 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.451Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-database-compat.js [none]
+[debug] [2025-05-10T00:21:13.462Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js [none]
+[debug] [2025-05-10T00:21:13.479Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-database-compat.js 200
+[debug] [2025-05-10T00:21:13.479Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-database-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-database-compat.js HTTP/1.1" 200 48150 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-database-compat.js HTTP/1.1\" 200 48150 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.536Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-functions-compat.js [none]
+[debug] [2025-05-10T00:21:13.561Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js [none]
+[debug] [2025-05-10T00:21:13.586Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-functions-compat.js 200
+[debug] [2025-05-10T00:21:13.587Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-functions-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-functions-compat.js HTTP/1.1" 200 3974 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-functions-compat.js HTTP/1.1\" 200 3974 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.622Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-storage-compat.js [none]
+[debug] [2025-05-10T00:21:13.646Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-storage-compat.js 200
+[debug] [2025-05-10T00:21:13.650Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-storage-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-storage-compat.js HTTP/1.1" 200 13023 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-storage-compat.js HTTP/1.1\" 200 13023 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /app.js HTTP/1.1" 200 - "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /app.js HTTP/1.1\" 200 - \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.712Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics-compat.js [none]
+[debug] [2025-05-10T00:21:13.715Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-remote-config-compat.js [none]
+[debug] [2025-05-10T00:21:13.738Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js 200
+[debug] [2025-05-10T00:21:13.739Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-messaging-compat.js HTTP/1.1" 200 9968 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-messaging-compat.js HTTP/1.1\" 200 9968 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.757Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics-compat.js 200
+[debug] [2025-05-10T00:21:13.757Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-analytics-compat.js HTTP/1.1" 200 9132 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-analytics-compat.js HTTP/1.1\" 200 9132 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.779Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js 200
+[debug] [2025-05-10T00:21:13.779Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-firestore-compat.js HTTP/1.1" 200 104513 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-firestore-compat.js HTTP/1.1\" 200 104513 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.819Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-performance-compat.js [none]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/init.js?useEmulator=true HTTP/1.1" 200 - "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/init.js?useEmulator=true HTTP/1.1\" 200 - \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.868Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-performance-compat.js 200
+[debug] [2025-05-10T00:21:13.868Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-performance-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-performance-compat.js HTTP/1.1" 200 13496 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-performance-compat.js HTTP/1.1\" 200 13496 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[debug] [2025-05-10T00:21:13.894Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-remote-config-compat.js 200
+[debug] [2025-05-10T00:21:13.904Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/11.6.1/firebase-remote-config-compat.js [stream]
+[info] i  hosting: 127.0.0.1 - - [10/May/2025:00:21:13 +0000] "GET /__/firebase/11.6.1/firebase-remote-config-compat.js HTTP/1.1" 200 9172 "https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [10/May/2025:00:21:13 +0000] \"GET /__/firebase/11.6.1/firebase-remote-config-compat.js HTTP/1.1\" 200 9172 \"https://5002-idx-ava-automategit-1746338153443.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36\""}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-05-10T00:21:16.014Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:16.014Z] No OAuth tokens found
+[debug] [2025-05-10T00:21:16.014Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:21:16.017Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:21:16.017Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/adminSdkConfig [none]
+[debug] [2025-05-10T00:21:16.276Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/adminSdkConfig 200
+[debug] [2025-05-10T00:21:16.276Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/adminSdkConfig {"projectId":"ava-automate2","databaseURL":"https://ava-automate2-default-rtdb.firebaseio.com","storageBucket":"ava-automate2.firebasestorage.app"}
+[debug] [2025-05-10T00:21:16.297Z] Error: listen EADDRINUSE: address already in use 127.0.0.1:5001
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at GetAddrInfoReqWrap.doListen [as callback] (node:net:2139:7)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:111:8)
+[error] 
+[error] Error: An unexpected error has occurred.
+[info] i  functions: Watching "/home/user/AVA-AUTOMATE/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/user/AVA-AUTOMATE/functions\" for Cloud Functions..."}}
+[debug] [2025-05-10T00:25:25.906Z] ----------------------------------------------------------------------
+[debug] [2025-05-10T00:25:25.909Z] Command:       /nix/store/rbdrkcs5kkwpalxcd7c6bnm33lk2955n-nodejs-20.19.0/bin/node /nix/store/h4vwr7z06qfjp6g97is2nhmki2jfwlgd-firebase-tools-14.2.2/lib/node_modules/firebase-tools/lib/bin/firebase.js serve
+[debug] [2025-05-10T00:25:25.910Z] CLI Version:   14.2.2
+[debug] [2025-05-10T00:25:25.910Z] Platform:      linux
+[debug] [2025-05-10T00:25:25.910Z] Node Version:  v20.19.0
+[debug] [2025-05-10T00:25:25.910Z] Time:          Sat May 10 2025 00:25:25 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-05-10T00:25:25.911Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-10T00:25:26.440Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:26.441Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:26.441Z] [iam] checking project ava-automate2 for permissions ["firebase.projects.get"]
+[debug] [2025-05-10T00:25:26.443Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:26.444Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:26.444Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:26.444Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:26.446Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions [none]
+[debug] [2025-05-10T00:25:26.446Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions x-goog-quota-user=projects/ava-automate2
+[debug] [2025-05-10T00:25:26.446Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-05-10T00:25:26.605Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions 200
+[debug] [2025-05-10T00:25:26.606Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-05-10T00:25:26.607Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:26.607Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:26.607Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:26.608Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:26.608Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2 [none]
+[debug] [2025-05-10T00:25:26.693Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2 200
+[debug] [2025-05-10T00:25:26.693Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/ava-automate2 {"projectNumber":"381160095911","projectId":"ava-automate2","lifecycleState":"ACTIVE","name":"Ava-Automate2","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-05-04T05:51:58.475120Z"}
+[info] 
+[info] === Serving from '/home/user/AVA-AUTOMATE'...
+[info] 
+[debug] [2025-05-10T00:25:26.701Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:26.703Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:26.703Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:26.704Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:26.711Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ava-automate2/sites 
+[debug] [2025-05-10T00:25:27.050Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ava-automate2/sites 200
+[debug] [2025-05-10T00:25:27.053Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ava-automate2/sites {"sites":[{"name":"projects/ava-automate2/sites/ava-automate2","defaultUrl":"https://ava-automate2.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2025-05-10T00:25:27.056Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:27.060Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:27.061Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:27.061Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:27.061Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/webApps/-/config [none]
+[debug] [2025-05-10T00:25:27.452Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/webApps/-/config 200
+[debug] [2025-05-10T00:25:27.453Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/webApps/-/config {"projectId":"ava-automate2","appId":"1:381160095911:web:8cc9bdcd3adcee42b4db82","databaseURL":"https://ava-automate2-default-rtdb.firebaseio.com","storageBucket":"ava-automate2.firebasestorage.app","apiKey":"AIzaSyBh3HZGNsMwhJ2xnqeBQwIg_EBKLXH_s68","authDomain":"ava-automate2.firebaseapp.com","messagingSenderId":"381160095911","measurementId":"G-0FM6NXN4SB"}
+[debug] [2025-05-10T00:25:27.471Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:27.471Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:27.471Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:27.472Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:27.473Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2 [none]
+[debug] [2025-05-10T00:25:27.622Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2 200
+[debug] [2025-05-10T00:25:27.626Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2 {"projectId":"ava-automate2","projectNumber":"381160095911","displayName":"Ava-Automate2","name":"projects/ava-automate2","resources":{"hostingSite":"ava-automate2","realtimeDatabaseInstance":"ava-automate2-default-rtdb"},"state":"ACTIVE","etag":"1_f93b61ff-64a9-42fc-a156-8ccb8b70e006"}
+[info] i  hosting[ava-automate2]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] ✔  hosting[ava-automate2]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-05-10T00:25:32.076Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:32.077Z] No OAuth tokens found
+[debug] [2025-05-10T00:25:32.077Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-10T00:25:32.077Z] > authorizing via signed-in user (merandafreiner3@gmail.com)
+[debug] [2025-05-10T00:25:32.089Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/adminSdkConfig [none]
+[debug] [2025-05-10T00:25:32.262Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/adminSdkConfig 200
+[debug] [2025-05-10T00:25:32.262Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ava-automate2/adminSdkConfig {"projectId":"ava-automate2","databaseURL":"https://ava-automate2-default-rtdb.firebaseio.com","storageBucket":"ava-automate2.firebasestorage.app"}
+[info] i  functions: Watching "/home/user/AVA-AUTOMATE/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/user/AVA-AUTOMATE/functions\" for Cloud Functions..."}}
+[debug] [2025-05-10T00:25:32.317Z] Validating nodejs source
+[debug] [2025-05-10T00:25:34.093Z] > [functions] package.json contents: {
+  "main": "lib/index.js",
+  "scripts": {
+    "genkit:start": "genkit start -- tsx --watch src/genkit-sample.ts",
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "name": "functions",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@genkit-ai/firebase": "^1.7.0",
+    "@genkit-ai/vertexai": "^1.7.0",
+    "express": "^5.1.0",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.0.1",
+    "genkit": "^1.7.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "tsx": "^4.19.4",
+    "typescript": "^4.9.5"
+  },
+  "private": true
+}
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: There was an error reading functions/package.json:
+
+ functions/lib/index.js does not exist, can't deploy Cloud Functions {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: There was an error reading functions/package.json:\n\n functions/lib/index.js does not exist, can't deploy Cloud Functions"}}
+[info] i  functions: Watching "/home/user/AVA-AUTOMATE/ava-automate" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/user/AVA-AUTOMATE/ava-automate\" for Cloud Functions..."}}
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: could not deploy functions because the "ava-automate" directory was not found. Please create it or specify a different source directory in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: could not deploy functions because the \u001b[1m\"ava-automate\"\u001b[22m directory was not found. Please create it or specify a different source directory in firebase.json"}}

@@ -39,6 +39,14 @@
     </style>
   </head>
   <body>
+    <h1>Import Leads from CSV</h1>
+
+    <input type="file" id="csvFile" accept=".csv">
+    <button id="uploadButton">Upload and Import</button>
+
+    <div id="statusMessage"></div>
+
+    <!-- Existing welcome message div -->
     <div id="message">
       <h2>Welcome</h2>
       <h1>Firebase Hosting Setup Complete</h1>
@@ -85,5 +93,7 @@
         }
       });
     </script>
+    <!-- Link to your app.js file -->
+    <script src="./app.js"></script>
   </body>
 </html>

@@ -31,8 +31,8 @@
       ]
     },
     {
-      "source": "ava-automate2",
-      "codebase": "ava-automate2",
+      "source": "ava-automate",
+      "codebase": "ava-automate",
       "ignore": [
         "node_modules",
         ".git",
