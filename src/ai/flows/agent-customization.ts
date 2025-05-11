@@ -8,7 +8,7 @@
  * - CustomizeAgentOutput - The return type for the customizeAgent function.
  */
 
-import {ai} from '@/ai/ai-instance';
+import {ai} from '../../../functions/ai-instance';
 import {z} from 'genkit';
 
 const CustomizeAgentInputSchema = z.object({

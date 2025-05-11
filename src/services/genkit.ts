@@ -1,5 +1,5 @@
 // src/services/genkit.ts
-import { ai } from '../ai/ai-instance';
+import { ai } from '../../functions/ai-instance';
 
 export const getGenkitResponse = async (prompt: string, systemPrompt: string): Promise<string | null> => {
   try {

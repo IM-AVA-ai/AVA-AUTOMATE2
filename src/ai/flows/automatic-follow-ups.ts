@@ -9,7 +9,7 @@
  * - `AutomaticFollowUpOutput`: The output type for the `automaticFollowUp` function.
  */
 
-import {ai} from '@/ai/ai-instance';
+import {ai} from '../../../functions/ai-instance';
 import {z} from 'genkit';
 import { TwilioService } from '@/services/twilio';
 

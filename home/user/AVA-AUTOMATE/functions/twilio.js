@@ -2,16 +2,13 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { DataConnect } = require('@firebase/data-connect');
 const twilio = require('twilio');
-const moment = require('moment-timezone');  // Import moment-timezone
-//const { ai } = require('./ai-instance'); // Access the ai instance  -- REMOVED see line 190 - 199
-
 
 admin.initializeApp();
 
 // Get your Twilio Auth Token securely (replace with your actual method)
 // Example using Firebase Environment Configuration:
 const authToken = functions.config().twilio.auth_token;
-//const GOOGLE_GENAI_API_KEY = functions.config().google.genai_key // todo move this call to the ai block  --REMOVED moved to inside function
+
 exports.processIncomingSMS = functions.https.onRequest(async (req, res) => {
   // Ensure this is a POST request from Twilio
   if (req.method !== 'POST') {
@@ -20,7 +17,7 @@ exports.processIncomingSMS = functions.https.onRequest(async (req, res) => {
 
   // --- Implement Twilio signature validation ---
   const twilioSignature = req.headers['x-twilio-signature'];
-  // Reconstruct the full request URL. Be mindful of proxy headers if using a load balancer or similar.\n
+  // Reconstruct the full request URL. Be mindful of proxy headers if using a load balancer or similar.
   const requestUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
   const params = req.body; // Twilio sends data as URL-encoded
 
@@ -87,7 +84,7 @@ exports.processIncomingSMS = functions.https.onRequest(async (req, res) => {
     } else {
       // No existing conversation found, create a new one
       // TODO: Determine how to get clientId (e.g., from lead, campaign, or user context)
-      // TODO: Determine how to get aiAgentId (e.g., from lead's recentCampaign, or default)\n
+      // TODO: Determine how to get aiAgentId (e.g., from lead's recentCampaign, or default)
       const clientId = 'TODO_GET_CLIENT_ID';
       const aiAgentId = 'TODO_GET_AI_AGENT_ID';
 
@@ -101,84 +98,16 @@ exports.processIncomingSMS = functions.https.onRequest(async (req, res) => {
           leadId: lead.id,
           clientId: clientId,
           aiAgentId: aiAgentId,
-          createdAt: new Date().toISOString(),
-          lastUpdatedAt: new Date().toISOString(),
         },
       });
       conversation = newConversation.insertConversation;
       console.log(`Created new conversation for lead ${lead.id}: ${conversation.id}`);
     }
     // --- End of logic to find or create a conversation ---
-    // --- Implement logic to record the inbound message in the Message table using Data Connect mutation ---
 
-       // Format the timestamp in MM/DD/YY format and American Standard Time
-       const timestamp = moment().tz('America/Chicago').format('MM/DD/YY h:mm A');
-
-       try {
-         // Insert the new message into the Message table
-         await dataConnect.mutate({
-           insertMessage: {
-             conversationId: conversation.id,
-             sender: 'LEAD',
-             text: messageBody,
-             timestamp: timestamp,
-             direction: 'INBOUND',
-             status: 'new',
-           },
-         });
-         console.log('Successfully recorded inbound message');
-       } catch (error) {
-         console.error('Error recording inbound message:', error);
-       }
-    // --- End of logic to record the inbound message ---
-    // --- Implement logic to trigger the AI agent and get a response ---
-        // 1. Load AI agent configuration from the database using aiAgentId
-        const aiAgent = {systemPrompt: "You are a helpful assistant"}; //TODO - make the agent query
-
-        // 2. Construct the prompt
-        const prompt = `
-        ${aiAgent.systemPrompt}
-        The lead said: ${messageBody}
-        `;
-        // 3. Call the Genkit model
-        try {
-            const GOOGLE_GENAI_API_KEY = functions.config().google.genai_key // MUST BE WITHIN THIS FUNCTION or it may be undefined
-            const ai = genkit({ //new code here
-              promptDir: './prompts', //TODO you may need to change this to a location you have
-              plugins: [
-                googleAI({
-                  apiKey: GOOGLE_GENAI_API_KEY, // functions.config().google.genai_key // this will be secured by firebase when deployed
-                }),
-             ],
-             model: 'googleai/gemini-2.0-flash',
-           });
-           
-            const aiResponse = await ai.generateText({prompt}); // I am having trouble making the genkit function known so I am fixing this
-            //Get the text from the aiResponse
-            const nextText  = aiResponse.text;
-            console.log(`AI Agent Response: ${nextText}`);
-        } catch (error) {
-            console.error('Error generating AI response:', error);
-            return 'Sorry, I am having trouble generating a response right now.';
-        }
-        //This is the AI respons
-    // --- End of logic to trigger the AI agent and get a response ---
+    // TODO: Implement logic to record the inbound message in the Message table using Data Connect mutation
+    // TODO: Implement logic to trigger the AI agent and get a response
     // TODO: Implement logic to send the AI agent's response back via Twilio API
-        // ---Implement logic to send the AI agent's response back via Twilio API---
-            const client = twilio(accountSid, authToken); //twillio object
-                try {
-                  await client.messages.create({
-                    body: aiResponse,
-                    from: twilioPhoneNumber,
-                    to: fromPhoneNumber,
-                  });
-                  console.log("Twilio success");
-                } catch (e) {
-                  console.error("Twilio error", e);
-                  // set a default resposne
-                  aiResponse = "There was an error with Twilio, please try again"
-                }
-        //--- End of implement logic to send the AI agent's response back via Twilio API
   } catch (error) {
     console.error('Error processing incoming SMS:', error);
     res.status(500).send('Internal Server Error');

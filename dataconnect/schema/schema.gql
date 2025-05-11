@@ -28,6 +28,18 @@ enum LeadStatus {
   CONVERTED
 }
 
+# Define an Enum for message senders
+enum MessageSender {
+  LEAD
+  ASSISTANT
+}
+
+# Define an Enum for message directions
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
 # Campaign table to store SMS campaign details.
 type Campaign @table {
   # Automatically generated unique ID for the campaign.
@@ -87,16 +99,15 @@ type Message @table {
   # Automatically generated unique ID for the message.
   id: String! @default(expr: "uuidV4()")
   conversationId: String! # Link to the Conversation the message belongs to.
-  sender: String! @col(dataType: "varchar(50)") # 'user' or 'assistant'
+  sender: MessageSender! # 'LEAD' or 'ASSISTANT'
   text: String! @col(dataType: "text")
   timestamp: Date! @default(expr: "request.time")
-  direction: String! @col(dataType: "varchar(10)") # 'inbound' or 'outbound'
+  direction: MessageDirection! # 'INBOUND' or 'OUTBOUND'
   status: String! @col(dataType: "varchar(50)")
 
   # Relationship to the Conversation this message belongs to
   conversation: Conversation! @oneToOne(foreignKey: "conversationId")
 }
-# # Movie is keyed by a randomly generated UUID.
 
 # Notification table to store user notifications.
 type Notification @table {
@@ -132,44 +143,6 @@ type Conversation @table {
   # Relationship to the Messages within this conversation
   messages: [Message!]! @hasMany(foreignKey: "conversationId")
 }
-# type Movie @table {
-#   # If you do not pass a 'key' to `@table`, Data Connect automatically adds the following 'id' column.
-#   # Feel free to uncomment and customize it.
-#   #  id: UUID! @default(expr: "uuidV4()")
-#   title: String!
-#   imageUrl: String!
-#   genre: String
-# }
-
-# # MovieMetadata is a metadata attached to a Movie.
-# # Movie <-> MovieMetadata is a one-to-one relationship
-# type MovieMetadata @table {
-#   # @unique ensures each Movie can only one MovieMetadata.
-#   movie: Movie! @unique
-#   # The movie field adds the following foreign key field. Feel free to uncomment and customize it.
-#   #  movieId: UUID!
-#   rating: Float
-#   releaseYear: Int
-#   description: String
-# }
-
-# # Reviews is a join table between User and Movie.
-# # It has a composite primary keys `userUid` and `movieId`.
-# # A user can leave reviews for many movies. A movie can have reviews from many users.
-# # User  <-> Review is a one-to-many relationship
-# # Movie <-> Review is a one-to-many relationship
-# # Movie <-> User is a many-to-many relationship
-# type Review @table(name: "Reviews", key: ["movie", "user"]) {
-#   user: User!
-#   # The user field adds the following foreign key field. Feel free to uncomment and customize it.
-#   #  userUid: String!
-#   movie: Movie!
-#   # The movie field adds the following foreign key field. Feel free to uncomment and customize it.
-#   #  movieId: UUID!
-#   rating: Int
-#   reviewText: String
-#   reviewDate: Date! @default(expr: "request.time")
-# }
 
 type Query {
   # Query to find leads by phone number or email
@@ -179,7 +152,15 @@ type Query {
       query: "{ phone: "$phone", email: "$email" }"
       operation: READ
     )
+    # Query to find conversations by lead ID
+  conversationsByLead(leadId: String!): [Conversation!]!
+    @firestore(
+      collection: "conversations"
+      query: "{ leadId: "$leadId" }"
+      operation: READ
+    )
 }
+
 type Mutation {
   insertLead(
     id: String
@@ -201,4 +182,20 @@ type Mutation {
     createdAt: Date
     message: String!
   ): Notification @insert(table: "Notification")
+    insertConversation(
+    id: String
+    leadId: String!
+    clientId: String!
+    aiAgentId: String!
+    createdAt: Date
+    lastUpdatedAt: Date
+  ): Conversation @insert(table: "Conversation")
+    insertMessage(
+    conversationId: String!
+    sender: MessageSender!
+    text: String!
+    timestamp: Date! @default(expr: "request.time")
+    direction: MessageDirection!
+    status: String!
+  ): Message @insert(table: "Message")
 }

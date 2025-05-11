@@ -8,7 +8,7 @@
  * - PersonalizeMessageOutput - The return type for the personalizeMessage function.
  */
 
-import {ai} from '@/ai/ai-instance';
+import {ai} from '../../../functions/ai-instance';
 import {z} from 'genkit';
 
 const PersonalizeMessageInputSchema = z.object({
