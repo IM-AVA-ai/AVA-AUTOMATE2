@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { heroui } from "@heroui/react";
 
 export default {
 	darkMode: "class",
@@ -132,5 +133,36 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		heroui({
+			themes: {
+				light: {
+					colors: {
+						background: {
+							DEFAULT: "#000000",
+							foreground: "#FFFFFF"
+						},
+						content1: {
+							DEFAULT: "rgba(0, 0, 0, 0.7)",
+							foreground: "#FFFFFF"
+						},
+						content2: {
+							DEFAULT: "rgba(0, 0, 0, 0.9)",
+							foreground: "#FFFFFF"
+						},
+						primary: {
+							DEFAULT: "#9333EA",
+							foreground: "#FFFFFF",
+						},
+						gradient: {
+							start: "#000000",
+							middle: "#0F0F0F",
+							end: "#000000"
+						}
+					},
+				},
+			},
+		}),
+	],
 } satisfies Config;
