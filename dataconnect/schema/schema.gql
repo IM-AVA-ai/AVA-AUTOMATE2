@@ -171,6 +171,15 @@ type Conversation @table {
 #   reviewDate: Date! @default(expr: "request.time")
 # }
 
+type Query {
+  # Query to find leads by phone number or email
+  leadsByContact(phone: String, email: String): [Lead!]!
+    @firestore(
+      collection: "leads"
+      query: "{ phone: "$phone", email: "$email" }"
+      operation: READ
+    )
+}
 type Mutation {
   insertLead(
     id: String
@@ -188,6 +197,8 @@ type Mutation {
     id: String
     userId: String!
     type: String!
+    message: String!
+    createdAt: Date
     message: String!
   ): Notification @insert(table: "Notification")
 }

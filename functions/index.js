@@ -61,6 +61,19 @@ exports.importLeadsFromCSV = functions.https.onCall(async (data, context) => {
         throw new Error('Invalid phone number format');
       }
 
+      // --- Check for Duplicates using Data Connect Query ---
+      const existingLeads = await dataConnect.query({
+        leadsByContact: { // Call the leadsByContact query
+          phone: leadData.phone,
+          email: leadData.email || null, // Pass email if available
+        },
+      });
+
+      if (existingLeads && existingLeads.leadsByContact && existingLeads.leadsByContact.length > 0) {
+        // Duplicate found, skip insertion
+        throw new Error('Duplicate lead (phone or email already exists)');
+      }
+
       // --- Check for Duplicates (Optional but Recommended) ---
       // You might want to query Data Connect to check if a lead with the same phone number already exists
       // const existingLead = await dataConnect.query(...); // Implement duplicate check query
@@ -75,11 +88,9 @@ exports.importLeadsFromCSV = functions.https.onCall(async (data, context) => {
         phone: leadData.phone,
         email: leadData.email || null, // Handle optional fields
         address: leadData.address || null,
-        // Set other fields as needed (createdAt, status, etc.)
         createdAt: new Date().toISOString(),
         status: 'NO_REPLY', // Default status for new leads
-        // You might also link to the user who imported the lead if you add a field in the Lead schema
-        // importedBy: userId,
+        importedBy: userId,
       };
 
       // --- Insert into Lead table using Data Connect ---
@@ -118,7 +129,6 @@ exports.importLeadsFromCSV = functions.https.onCall(async (data, context) => {
         type: notificationType,
         message: notificationMessage,
         status: 'NEW', // Default status for a new notification
-        // relatedEntityId: // Optionally link to an import log entity if you create one
       },
     });
   } catch (notificationError) {
