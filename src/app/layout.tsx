@@ -4,7 +4,6 @@ import { Providers } from '@/providers';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes'
-import AppLayout from '@/app/app-layout';
 import { ThemeProvider } from "@/components/theme-provider"
 import { Inter } from "next/font/google"
 
