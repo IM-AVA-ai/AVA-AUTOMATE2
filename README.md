@@ -35,51 +35,9 @@ Conversation Management & Notifications
 
 ---
 
-##  Project Structure
-
-```
-AVA-AUTOMATE/
-├── firebase.json                → Firebase config (functions, hosting, rules)
-├── functions/                  → Core Firebase Functions
-├── ava-automate/             → Additional/alternate functions
-├── dataconnect/
-│   └── schema/
-│       └── schema.gql         → Firestore schema using Data Connect GraphQL
-├── public/
-│   ├── index.html             → Basic UI for CSV upload
-│   └── app.js                 → Firebase client integration
 ```
 
----
 
-## 🧬 Data Connect Schema
-
-**File:** `dataconnect/schema/schema.gql`
-
-###  Key Types
-- User
-- Campaign
-- AIAgent
-- ResponseRule
-- Lead
-- Message
-- Notification
-- Conversation
-
-###  Enums
-- `LeadStatus`
-- `NotificationStatus`
-
-###  Relationships
-- `User @hasMany Campaigns`
-- `Campaign @hasMany Leads`
-- `Lead @hasMany Conversations`
-- `Conversation @hasMany Messages`
-- `Campaign @oneToOne AIAgent`
-
-###  Mutations
-- `insertLead`
-- `insertNotification`
 
 ---
 
