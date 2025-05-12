@@ -10,15 +10,18 @@ import moment from 'moment-timezone'; // Import moment-timezone
 // Corrected Genkit imports based on src/ai/flows/agent-customization.ts
 import { ai } from '../../../functions/ai-instance'; // Import the Genkit instance
 import { z } from 'genkit'; // Import z from Genkit
-
-const twilioService = new TwilioService(process.env.TWILIO_ACCOUNT_SID || '', process.env.TWILIO_AUTH_TOKEN || '', process.env.TWILIO_PHONE_NUMBER || '');
-const app = firebaseApp;
-const db = getFirestore(app);
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating IDs
 
 // Initialize PostgreSQL connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // Use DATABASE_URL environment variable
 });
+
+// Remove global TwilioService initialization
+// const twilioService = new TwilioService(process.env.TWILIO_ACCOUNT_SID || '', process.env.TWILIO_AUTH_TOKEN || '', process.env.TWILIO_PHONE_NUMBER || '');
+
+const app = firebaseApp;
+const db = getFirestore(app);
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,11 +30,11 @@ export async function POST(req: NextRequest) {
 
     // Extract Twilio SMS data
     const messageSid = body.get('MessageSid') as string;
-    const fromPhoneNumber = body.get('From') as string; // Renamed to match functions/index.js
-    const to = body.get('To') as string;
-    const messageBody = body.get('Body') as string; // Renamed to match functions/index.js
+    const fromPhoneNumber = body.get('From') as string; // The sender's phone number (Lead's number)
+    const toPhoneNumber = body.get('To') as string; // The recipient's phone number (User's Twilio number)
+    const messageBody = body.get('Body') as string; // The message content
 
-    if (!messageSid || !fromPhoneNumber || !to || !messageBody) {
+    if (!messageSid || !fromPhoneNumber || !toPhoneNumber || !messageBody) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
         {
@@ -43,30 +46,55 @@ export async function POST(req: NextRequest) {
     const url = new URL(req.url);
     const fullUrl = `${url.protocol}//${url.host}${url.pathname}`;
 
-    // Use the Twilio Auth Token from environment variables for validation
+    // --- Implement logic to find the User (Client) by their Twilio phone number using pg ---
+    const userResult = await pool.query('SELECT "id", "twilio_account_sid", "twilio_auth_token", "twilio_phone_number" FROM "User" WHERE "twilio_phone_number" = $1', [toPhoneNumber]);
+    const user = userResult.rows.length > 0 ? userResult.rows[0] : null;
+
+    if (!user) {
+      console.warn(`No user found with Twilio phone number: ${toPhoneNumber}`);
+      // If no user is found for this Twilio number, we cannot process the message
+      const response = new twiml.MessagingResponse();
+      // Optionally send a message back indicating the number is not recognized
+      // response.message('This number is not associated with an active account.');
+      return new NextResponse(response.toString(), {
+        headers: { 'Content-Type': 'text/xml' },
+      });
+    }
+
+    const clientId = user.id; // Use the found user's ID as the clientId
+    const userTwilioAccountSid = user.twilio_account_sid;
+    const userTwilioAuthToken = user.twilio_auth_token;
+    const userTwilioPhoneNumber = user.twilio_phone_number; // This is the same as toPhoneNumber
+
+    // Initialize TwilioService dynamically with the user's credentials
+    const twilioService = new TwilioService(userTwilioAccountSid, userTwilioAuthToken, userTwilioPhoneNumber);
+
+    // Use the user's Twilio Auth Token for validation
     const isValidRequest = validateRequest(
-        process.env.TWILIO_AUTH_TOKEN || '',
+        userTwilioAuthToken || '', // Use the user's auth token for validation
         twilioSignature,
         fullUrl,
         Object.fromEntries(body)
       );
 
     if (!isValidRequest) {
-      console.error('Invalid Twilio request');
+      console.error('Invalid Twilio request signature for user:', clientId);
       return new NextResponse('Unauthorized', { status: 401 });
     }
     const mediaUrl = body.get('MediaUrl0') as string | null;
     const mediaContentType = body.get('MediaContentType0') as string | null;
 
-    console.log('Received SMS from:', fromPhoneNumber, 'Message:', messageBody);
+    console.log(`Received SMS from: ${fromPhoneNumber} to user's number: ${toPhoneNumber}. Message: ${messageBody}`);
 
     // --- Implement logic to find the lead by phone number using pg ---
+    // Assuming Lead phone numbers are unique and stored in the "phone" column
     const leadsResult = await pool.query('SELECT * FROM "Lead" WHERE phone = $1', [fromPhoneNumber]);
     const lead = leadsResult.rows.length > 0 ? leadsResult.rows[0] : null;
 
     if (!lead) {
-      console.warn(`No lead found for phone number: ${fromPhoneNumber}`);
-      // Send a simple response indicating the message was received but not processed
+      console.warn(`No lead found for phone number: ${fromPhoneNumber} associated with user: ${clientId}`);
+      // If no lead is found, we might want to handle this case
+      // (e.g., create a new lead, send an automated response to the sender, etc.)
       const response = new twiml.MessagingResponse();
       response.message('Your message was received, but we could not find a matching lead.');
       return new NextResponse(response.toString(), {
@@ -74,11 +102,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    console.log(`Found lead for phone number ${fromPhoneNumber}: ${lead.id}`);
+    console.log(`Found lead for phone number ${fromPhoneNumber}: ${lead.id} for user: ${clientId}`);
     // --- End of logic to find the lead ---
 
-    // --- Implement logic to find or create a conversation for the lead using pg ---
-    const conversationsResult = await pool.query('SELECT * FROM "Conversation" WHERE "leadId" = $1 ORDER BY "createdAt" ASC', [lead.id]);
+    // --- Implement logic to find or create a conversation for the lead and user using pg ---
+    // Find conversation specifically for this lead AND client (user)
+    const conversationsResult = await pool.query('SELECT * FROM "Conversation" WHERE "leadId" = $1 AND "clientId" = $2 ORDER BY "createdAt" ASC', [lead.id, clientId]);
 
     let conversation = null;
 
@@ -86,18 +115,19 @@ export async function POST(req: NextRequest) {
       // Found existing conversations, use the first one for now
       // TODO: Add logic to find the "most active" or appropriate conversation if needed
       conversation = conversationsResult.rows[0];
-      console.log(`Found existing conversation for lead ${lead.id}: ${conversation.id}`);
+      console.log(`Found existing conversation for lead ${lead.id} and user ${clientId}: ${conversation.id}`);
     } else {
       // No existing conversation found, create a new one
-      // TODO: Determine how to get clientId (e.g., from lead, campaign, or user context)
       // TODO: Determine how to get aiAgentId (e.g., from lead's recentCampaign, or default)
-      const clientId = 'TODO_GET_CLIENT_ID'; // Placeholder
-      const aiAgentId = 'TODO_GET_AI_AGENT_ID'; // Placeholder
-      const newConversationId = require('uuid').v4(); // Generate UUID for new conversation
+      const aiAgentId = 'TODO_GET_AI_AGENT_ID'; // Placeholder - needs to be determined based on user/lead/campaign context
+      const newConversationId = uuidv4(); // Generate UUID for new conversation
 
-      if (clientId === 'TODO_GET_CLIENT_ID' || aiAgentId === 'TODO_GET_AI_AGENT_ID') {
-          console.error('Cannot create conversation: clientId or aiAgentId not determined.');
-          return new NextResponse('Internal Server Error: Cannot create conversation.', { status: 500 });
+      if (aiAgentId === 'TODO_GET_AI_AGENT_ID') {
+          console.error('Cannot create conversation: aiAgentId not determined for user:', clientId);
+          // Send an error response or a message to the lead
+          const response = new twiml.MessagingResponse();
+          response.message('Sorry, I am unable to start a new conversation at this time.');
+          return new NextResponse(response.toString(), { status: 500, headers: { 'Content-Type': 'text/xml' } });
       }
 
       const insertConversationResult = await pool.query(
@@ -105,14 +135,14 @@ export async function POST(req: NextRequest) {
         [newConversationId, lead.id, clientId, aiAgentId, new Date().toISOString(), new Date().toISOString()]
       );
       conversation = insertConversationResult.rows[0];
-      console.log(`Created new conversation for lead ${lead.id}: ${conversation.id}`);
+      console.log(`Created new conversation for lead ${lead.id} and user ${clientId}: ${conversation.id}`);
     }
     // --- End of logic to find or create a conversation ---
 
     // --- Implement logic to record the inbound message in the Message table using pg ---
     // Format the timestamp in MM/DD/YY format and American Standard Time
     const timestamp = moment().tz('America/Chicago').format('MM/DD/YY h:mm A');
-    const newMessageId = require('uuid').v4(); // Generate UUID for new message
+    const newMessageId = uuidv4(); // Generate UUID for new message
 
     try {
       await pool.query(
@@ -127,7 +157,9 @@ export async function POST(req: NextRequest) {
 
     // --- Implement logic to trigger the AI agent and get a response using Genkit ---
     // 1. Load AI agent configuration from the database using aiAgentId (Placeholder)
-    const aiAgent = {systemPrompt: "You are a helpful assistant"}; //TODO - make the agent query
+    // This should now use the aiAgentId determined when finding/creating the conversation
+    const aiAgentResult = await pool.query('SELECT "systemPrompt" FROM "AIAgent" WHERE "id" = $1', [conversation.aiAgentId]);
+    const aiAgent = aiAgentResult.rows.length > 0 ? aiAgentResult.rows[0] : {systemPrompt: "You are a helpful assistant"}; // Fallback prompt
 
     // 2. Construct the prompt
     const prompt = `
@@ -137,6 +169,8 @@ export async function POST(req: NextRequest) {
     // 3. Call the Genkit model using the imported 'ai' instance
     let aiResponseText = 'Sorry, I am having trouble generating a response right now.'; // Default response
     try {
+        // Assuming 'ai' is correctly initialized and configured in functions/ai-instance.ts
+        // and can be used in this Next.js API route environment.
         const aiResponse = await ai.generateText({prompt});
         aiResponseText = aiResponse.text;
         console.log(`AI Agent Response: ${aiResponseText}`);
@@ -147,18 +181,17 @@ export async function POST(req: NextRequest) {
     // --- End of logic to trigger the AI agent and get a response ---
 
     // --- Implement logic to send the AI agent's response back via Twilio API ---
-    // Use the TwilioService instance initialized earlier
+    // Use the TwilioService instance initialized earlier with user's credentials
     try {
-      const smsResult = await twilioService.sendSMS(fromPhoneNumber, aiResponseText);
+      const smsResult = await twilioService.sendSMS(fromPhoneNumber, aiResponseText); // Send to the Lead's number
       if (smsResult.success) {
         console.log("Twilio success:", smsResult.messageSid);
-        // Optionally record the outbound message in the database here if not handled by another process
-        // Example:
-        // const outboundMessageId = require('uuid').v4();
-        // await pool.query(
-        //   'INSERT INTO "Message" ("id", "conversationId", "sender", "text", "timestamp", "direction", "status") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-        //   [outboundMessageId, conversation.id, 'ASSISTANT', aiResponseText, moment().tz('America/Chicago').format('MM/DD/YY h:mm A'), 'OUTBOUND', 'sent']
-        // );
+        // Record the outbound message in the database
+        const outboundMessageId = uuidv4();
+        await pool.query(
+          'INSERT INTO "Message" ("id", "conversationId", "sender", "text", "timestamp", "direction", "status") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+          [outboundMessageId, conversation.id, 'ASSISTANT', aiResponseText, moment().tz('America/Chicago').format('MM/DD/YY h:mm A'), 'OUTBOUND', 'sent']
+        );
       } else {
         console.error("Twilio error:", smsResult.error);
         // Handle Twilio sending failure
@@ -171,10 +204,14 @@ export async function POST(req: NextRequest) {
 
     // Send a TwiML response to acknowledge receipt to Twilio
     const response = new twiml.MessagingResponse();
-    // You might not want to send a "Message received!" confirmation SMS here
-    // if the AI response is sent immediately after.
-    // The TwiML response is primarily to tell Twilio the webhook was processed successfully.
-    // response.message('Message received!'); // Optional: send a simple TwiML message back
+    // It's generally not recommended to send a TwiML message here if you are
+    // sending the AI response immediately after via the REST API.
+    // The TwiML response tells Twilio what to do *next* with the incoming message.
+    // If you send a TwiML message AND use the REST API to send a message,
+    // Twilio might send two messages back to the lead.
+    // A common pattern is to respond with an empty TwiML <Response/> if you handle
+    // the reply via the REST API.
+    // response.message('Message received!'); // Removed to avoid double-sending
 
     return new NextResponse(response.toString(), {
       headers: { 'Content-Type': 'text/xml' },
