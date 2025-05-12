@@ -1,0 +1,140 @@
+//************************************************************/
+// Ava DB Schema
+//************************************************************/
+
+Project Ava {
+	database_type: 'Firestore'
+	Note: '''
+	This schema defines the structure of the Firestore. This document does not include:
+		* Auth, which is managed by Clerk.
+	'''
+}
+
+//****************************************************/
+// Grouping
+//****************************************************/
+TableGroup data_structures {
+	PhoneNumber
+	Address
+	Email
+	Name
+}
+
+//****************************************************/
+// Tables
+//****************************************************/
+// User Information
+Table user [headercolor: #d942ff] {
+	id ObjectId [pk]
+	company_id ObjectId [ref: > company.id, note: 'Company the user has access to']
+	auth_uid string [unique, note: 'Auth UID (Firebase)']
+	emails Email[]
+	name Name
+	phone_numbers PhoneNumber[]
+	addresses Address[]
+	last_login_at timestamp
+	created_at timestamp
+	updated_at timestamp
+
+	indexes {
+		auth_uid
+	}
+}
+
+// Business Profile & Management
+Table company [headercolor: #226b00] {
+	id ObjectId [pk]
+	name string [note: 'A user friendly name for the business']
+	legal_name string
+	addresses Address[]
+	website string
+	phone_numbers PhoneNumber[]
+	created_at timestamp
+	updated_at timestamp
+
+	indexes {
+		id
+	}
+}
+
+Table lead [headercolor: #1f78b4] {
+	id ObjectId [pk]
+	company_id ObjectId [ref: > company.id]
+	name Name
+	phone_number PhoneNumber
+	status string [note: 'e.g., new, contacted, qualified, etc.']
+	email Email
+	added_at timestamp
+	updated_at timestamp
+
+	indexes {
+		owner_id
+	}
+}
+
+Table campaign [headercolor: #ff7f00] {
+	id ObjectId [pk]
+	company_id ObjectId [ref: > company.id]
+	name string
+	description string
+	start_date timestamp
+	end_date timestamp
+	leads Lead[] [ref: > lead.id, note: 'Leads associated with this campaign']
+	created_at timestamp
+	updated_at timestamp
+
+	indexes {
+		id
+	}
+}
+
+Table chat [headercolor: #ff00ff] {
+	id ObjectId [pk]
+	lead_id ObjectId [ref: > lead.id]
+	company_id ObjectId [ref: > company.id]
+	phone_number PhoneNumber [note: 'Phone number used for the chat']
+	messages Message[]
+	created_at timestamp
+	updated_at timestamp
+
+	indexes {
+		id
+	}
+}
+
+//****************************************************/
+// Data Structures
+//****************************************************/
+Table PhoneNumber [headercolor: #808080] {
+	phone_number string
+	phone_type string [note: 'e.g., cell, home, work']
+}
+
+Table Address [headercolor: #808080] {
+	street string
+	city string
+	state string
+	postal_code string
+	country string
+	type string
+}
+
+Table Email [headercolor: #808080] {
+	email string
+	email_type string [note: 'e.g., personal, work']
+	is_primary boolean [note: 'Primary email indicator']
+}
+
+Table Name [headercolor: #808080] {
+	prefix string
+	first_name string
+	middle_name string
+	last_name string
+	suffix string
+}
+
+Table Message [headercolor: #808080] {
+	role string [note: 'e.g., user, assistant']
+	content string [note: 'The content of the message']
+	timestamp timestamp
+}
