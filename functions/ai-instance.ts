@@ -8,14 +8,11 @@ const googleAIModel = new GoogleAI({
 
 export const ai = genkit({
   plugins: [googleAIModel],
-  // The default model to use for the flow.
-  // You can override this in the flow definition.
+
   model: 'gemini-1.5-pro-latest',
-  // The default temperature to use for the flow.
-  // You can override this in the flow definition.
+  // The model to use for the flow.
   temperature: 0.7,
-  // The default response schema to use for the flow.
-  // You can override this in the flow definition.
+  
   responseSchema: z.object({
     response: z.string().describe('A response to the user.'),
   }),

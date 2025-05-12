@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileUp, Plus, Search, Trash2, Send, MoreVertical } from "lucide-react"; // Added MoreVertical for dropdown trigger
 import { addToast } from '@heroui/toast'; // Corrected import path
+import LeadImportForm from '@/components/LeadImportForm'; // Import the LeadImportForm component
 
 // Placeholder Lead type
 interface Lead {
@@ -195,13 +196,8 @@ export default function LeadsPage() {
               </button>
             </>
           )}
-          <button
-            onClick={handleImportCsv}
-            disabled={loading}
-            className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-          >
-            <FileUp className="mr-2 h-4 w-4" /> Import CSV
-          </button>
+          {/* Replace the old Import CSV button with the new component */}
+          <LeadImportForm />
           <button
             onClick={() => setIsAddLeadOpen(true)}
             disabled={loading}
@@ -369,3 +365,62 @@ export default function LeadsPage() {
     </div>
   );
 }
+
+</final_file_content>
+
+IMPORTANT: For any future changes to this file, use the final_file_content shown above as your reference. This content reflects the current state of the file, including any auto-formatting (e.g., if you used single quotes but the formatter converted them to double quotes). Always base your SEARCH/REPLACE operations on this final version to ensure accuracy.
+
+<environment_details>
+# VSCode Visible Files
+../../../../../response_59354cde-d8fa-4c6e-9901-fca527b6006b/0
+src/app/dashboard/conversations/page.tsx
+src/app/dashboard/conversations/page.tsx
+src/app/dashboard/layout.tsx
+src/app/dashboard/layout.tsx
+src/components/Sidebar.tsx
+src/components/Sidebar.tsx
+src/app/dashboard/leads/page.tsx
+
+# VSCode Open Tabs
+.env.example
+src/components/UseCaseCard.tsx
+.next/types/app/pages/dashboard/page.ts
+.env.local
+src/app/(auth)/sign-in/page.tsx
+src/landing-page(s)/public/placeholder-logo.png
+src/components/Providers/QueryProvider.tsx
+src/functions/api/twilio-sms-webhook.ts
+functions/index.js
+functions/ai-instance.ts
+PROJECT_OVERVIEW.md
+functions/src/PostgreSQL-sql.md
+src/app/dashboard/page.tsx
+src/components/LeadImportForm.tsx
+src/app/dashboard/leads/page.tsx
+src/prompt-container-empty.tsx
+PROJECTSTRUCTURE.md
+src/components/Header.tsx
+src/app/globals.css
+src/components/TopNav.tsx
+src/components/DashboardContent.tsx
+src/app/dashboard/conversations/page.tsx
+src/components/Sidebar.tsx
+.git/config
+src/firebase/config.ts
+src/features-cards.tsx
+src/app/dashboard/campaigns/page.tsx
+public/images/square-logo-white.jpg
+public/images/long-logo.jpg
+../../../Downloads/Untitled design (5).png
+../../../Downloads/IM. AVA.AI.jpg
+../../../Downloads/IM. AVA.AI (1).jpg
+
+# Current Time
+5/11/2025, 8:33:35 PM (America/Chicago, UTC-5:00)
+
+# Context Window Usage
+713,733 / 1,048.576K tokens used (68%)
+
+# Current Mode
+ACT MODE
+</environment_details>
