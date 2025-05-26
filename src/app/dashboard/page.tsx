@@ -1,21 +1,28 @@
 "use client";
 
+// react and next imports
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link'; // Added from DashboardContent
-import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain } from 'lucide-react'; // Combined icons
+
+// third party imports
+import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar  } from 'lucide-react'; // Combined icons
+
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"; // Combined imports
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Chip, cn } from '@heroui/react'; // Added Chip and cn from @heroui/react
-import { useToast } from "@/hooks/use-toast";
-import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
-import { db } from "@/firebase/config"; 
-import { Icon } from '@iconify/react'; 
 import MetricsCard from "@/components/MetricsCard"; // Added from DashboardContent
+
+// custom hooks
+import { useToast } from "@/hooks/use-toast";
+
+// custom components
 import { Conversation } from '@/services/conversations'; // Import types from DashboardContent
 import { Campaign } from '@/services/campaigns'; 
 import { Lead } from '@/services/leads'; 
 
+// firebase imports
+import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
+import { db } from "@/firebase/config"; 
 
 
 interface FirestoreMessage {
@@ -172,6 +179,17 @@ const DashboardPage = () => {
       { id: 'a4', type: 'agent', text: 'Agent "Roofing Lead Qualifier" created.', time: '1d ago' },
   ];
 
+  const getGoogleAuthUrl = async () => {
+    try {
+      const res = await fetch('/api/auth/google/login');
+      const json = await res.json();
+      const googleAuthUrl = json.data;
+      window.open(googleAuthUrl, '_blank');
+    } catch (err) {
+      console.error('Error fetching Google Auth URL:', err);
+    }
+  };
+
 
   return (
     <div className="space-y-8 p-8"> {/* Added p-8 for padding */}
@@ -199,6 +217,12 @@ const DashboardPage = () => {
         <Card className="dark">
         <CardHeader>
             <Link href="/agents/create"><Button> <Brain className="mr-2 h-4 w-4" /> Create Agent</Button></Link>
+          </CardHeader>
+        </Card>
+        {/* Fetch Google Calendar Events */}
+        <Card className="dark">
+        <CardHeader>
+            <Button onClick={() => getGoogleAuthUrl()}><Calendar className="mr-2 h-4 w-4" />Fetch Events</Button>
           </CardHeader>
         </Card>
       </div>
