@@ -22,7 +22,6 @@ export default function CallbackPage() {
         throw new Error('Failed to validate code');
       }
       const responseJson = await response.json();
-      console.log(responseJson,"responseJson");
       Cookies.set('__gc_accessToken', responseJson.access_token,{
         expires : new Date(responseJson.expiry_date)
       });

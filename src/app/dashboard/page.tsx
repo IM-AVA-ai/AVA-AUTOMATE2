@@ -1,12 +1,13 @@
 "use client";
 
 // react and next imports
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link'; // Added from DashboardContent
 
 // third party imports
-import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar  } from 'lucide-react'; // Combined icons
+import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar, Loader2  } from 'lucide-react'; // Combined icons
 import Cookies from 'js-cookie'
+import { useInView } from "react-intersection-observer";
 
 // custom components
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"; // Combined imports
@@ -21,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
 
 // custom hooks
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +36,6 @@ import { Lead } from '@/services/leads';
 // firebase imports
 import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
 import { db } from "@/firebase/config"; 
-import { Input } from '@/components/ui/input';
 
 
 interface FirestoreMessage {
@@ -216,12 +217,20 @@ const DashboardPage = () => {
   const campaigns = placeholderCampaigns;
   const leads = placeholderLeads;
   const accessToken = Cookies.get('__gc_accessToken');
+  
   const [allCalendarEvents, setAllCalendarEvents] = useState<ICalendarEvents[]>([]);
   const [calendarLoading, setCalendarLoading] = useState<boolean>(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [pageToken, setPageToken] = useState<string | null>(null);
-  const [prevPageTokens, setPrevPageTokens] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
   const debouncedSearchTerm = useDebounce(searchTerm);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const [loadMoreRef, inView] = useInView({
+    threshold: 0,
+    rootMargin: '200px',
+  });
 
   const recentCampaigns = campaigns.map(campaign => ({
     id: campaign.id,
@@ -249,37 +258,45 @@ const DashboardPage = () => {
     }
   };
 
-  const fetchAllCalendarEvents = async (searchQuery = '', token?: string) => {
+  const fetchAllCalendarEvents = useCallback(async (searchQuery = '', token?: string | null, isNewSearch = false) => {
     setCalendarLoading(true);
     try {
-      const response = await fetch(`/api/calendar/events?accessToken=${accessToken}&${new URLSearchParams({
-        q: searchQuery,
-        pageToken: token || '',
-      })}`);
+      const params = new URLSearchParams();
+      if (searchQuery) params.set('q', searchQuery);
+      if (token) params.set('pageToken', token);
       
+      const response = await fetch(`/api/calendar/events?accessToken=${accessToken}&${params.toString()}`);
       const data = await response.json();
-      setAllCalendarEvents(data.items || []);
-      setPageToken(data.nextPageToken || null);
-      if (token) {
-        setPrevPageTokens(prev => [...prev, token]);
+
+      if (isNewSearch) {
+        setAllCalendarEvents(data.items || []);
+      } else {
+        setAllCalendarEvents(prev => [...prev, ...(data.items || [])]);
       }
+      setNextPageToken(data.nextPageToken || null);
+      setHasMore(!!data.nextPageToken);
     } catch (error) {
-      console.log(error,"error");
       console.error('Error fetching events:', error);
     } finally {
       setCalendarLoading(false);
     }
-  }
+  }, [accessToken, calendarLoading, hasMore]);
 
   useEffect(() => {
     if (accessToken) {
-      fetchAllCalendarEvents(debouncedSearchTerm);
-      setPrevPageTokens([]);
-      setPageToken(null);
+      fetchAllCalendarEvents(debouncedSearchTerm,undefined,true);
     }else{
-      setCalendarLoading(false);
+      setAllCalendarEvents([]);
+      setNextPageToken(null);
     }
   }, [accessToken, debouncedSearchTerm]);
+
+  useEffect(() => {
+    if (inView && hasMore && !calendarLoading && nextPageToken) {
+      fetchAllCalendarEvents(debouncedSearchTerm, nextPageToken);
+    }
+  }, [inView, hasMore, calendarLoading, debouncedSearchTerm, nextPageToken, fetchAllCalendarEvents]);
+
   
   return (
     <div className="space-y-8 p-8"> {/* Added p-8 for padding */}
@@ -333,56 +350,40 @@ const DashboardPage = () => {
 
       {/* All calendar events*/}
       <Card className="dark mb-4">
-        <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            All Calendar Events
-          </h2>
-          <div className="flex items-center justify-between mt-4">
-            <Input
-              placeholder="Search events..."
-              className="max-w-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  const prevToken = prevPageTokens.pop();
-                  fetchAllCalendarEvents(debouncedSearchTerm, prevToken);
-                  setPrevPageTokens([...prevPageTokens]);
-                }}
-                disabled={prevPageTokens.length === 0}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => fetchAllCalendarEvents(debouncedSearchTerm, pageToken || undefined)}
-                disabled={!pageToken}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        
-        {!calendarLoading ? (
-          <div className="p-6">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Creator</TableHead>
-                  <TableHead>Organizer</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allCalendarEvents.length > 0 ? (
-                  allCalendarEvents.map((event) => (
-                    <TableRow key={event.id}>
+      <CardHeader>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          All Calendar Events
+        </h2>
+        <div className="flex items-center justify-between mt-4">
+          <Input
+            placeholder="Search events..."
+            className="max-w-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </CardHeader>
+      
+      <div className="relative">
+        <div 
+          ref={tableContainerRef}
+          className="p-6 overflow-y-auto max-h-[calc(100vh-300px)]"
+        >
+          <Table>
+            <TableHeader className="sticky top-0 bg-gray-900 z-10">
+              <TableRow>
+                <TableHead>Event</TableHead>
+                <TableHead>Creator</TableHead>
+                <TableHead>Organizer</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allCalendarEvents.length > 0 ? (
+                <>
+                  {allCalendarEvents.map((event) => (
+                    <TableRow key={`${event.id}-${event.created}`}>
                       <TableCell className="font-medium">{event.summary}</TableCell>
                       <TableCell>
                         <div>
@@ -398,22 +399,47 @@ const DashboardPage = () => {
                         {event.created && new Date(event.created).toLocaleString()}
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No events found
+                  ))}
+                  
+                  {/* Infinite scroll trigger */}
+                  <TableRow ref={loadMoreRef}>
+                    <TableCell colSpan={5} className="text-center py-4">
+                      {calendarLoading ? (
+                        <div className="flex justify-center">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        </div>
+                      ) : hasMore ? (
+                        <Button 
+                          variant="ghost"
+                          onClick={() => fetchAllCalendarEvents(debouncedSearchTerm, nextPageToken)}
+                        >
+                          Load More
+                        </Button>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          No more events to load
+                        </p>
+                      )}
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        ) : (
-          <div className="h-64 flex flex-col items-center justify-center text-center text-gray-400">
-            Loading...
-          </div>
-        )}
+                </>
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    {calendarLoading ? (
+                      <div className="flex justify-center">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      </div>
+                    ) : (
+                      'No events found'
+                    )}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
       </Card>
 
       {/* Recent Conversations - Added from DashboardContent */}
