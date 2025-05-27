@@ -6,14 +6,25 @@ import Link from 'next/link'; // Added from DashboardContent
 
 // third party imports
 import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar  } from 'lucide-react'; // Combined icons
+import Cookies from 'js-cookie'
 
+// custom components
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"; // Combined imports
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import MetricsCard from "@/components/MetricsCard"; // Added from DashboardContent
+import MetricsCard from "@/components/MetricsCard";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 // custom hooks
 import { useToast } from "@/hooks/use-toast";
+import { useDebounce } from '@/hooks/useDebounce';
 
 // custom components
 import { Conversation } from '@/services/conversations'; // Import types from DashboardContent
@@ -23,6 +34,7 @@ import { Lead } from '@/services/leads';
 // firebase imports
 import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
 import { db } from "@/firebase/config"; 
+import { Input } from '@/components/ui/input';
 
 
 interface FirestoreMessage {
@@ -34,6 +46,46 @@ interface FirestoreMessage {
   };
   direction: 'inbound' | 'outbound';
   status: 'read' | 'unread'; 
+}
+
+interface ICalendarEvents {
+  attendees : string[];
+  created : string;
+  creator : {
+    displayName : string;
+    email : string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  etag: string;
+  eventType: string;
+  guestsCanModify: boolean;
+  htmlLink: string;
+  iCalUID: string;
+  id: string;
+  kind: string;
+  organizer: {
+    email: string;
+    displayName: string;
+  };
+  originalStartTime: {
+    dateTime: string;
+    timeZone: string;
+  };
+  recurringEventId: string;
+  reminders: {
+    useDefault: boolean;
+  };
+  sequence: number;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  status: string;
+  summary: string;
+  updated: string;
 }
 
 export const CommunicationsLogCard = () => {
@@ -163,6 +215,13 @@ const DashboardPage = () => {
   const recentConversations = placeholderConversations;
   const campaigns = placeholderCampaigns;
   const leads = placeholderLeads;
+  const accessToken = Cookies.get('__gc_accessToken');
+  const [allCalendarEvents, setAllCalendarEvents] = useState<ICalendarEvents[]>([]);
+  const [calendarLoading, setCalendarLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [pageToken, setPageToken] = useState<string | null>(null);
+  const [prevPageTokens, setPrevPageTokens] = useState<string[]>([]);
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   const recentCampaigns = campaigns.map(campaign => ({
     id: campaign.id,
@@ -184,13 +243,44 @@ const DashboardPage = () => {
       const res = await fetch('/api/auth/google/login');
       const json = await res.json();
       const googleAuthUrl = json.data;
-      window.open(googleAuthUrl, '_blank');
+      window.open(googleAuthUrl, '_self');
     } catch (err) {
       console.error('Error fetching Google Auth URL:', err);
     }
   };
 
+  const fetchAllCalendarEvents = async (searchQuery = '', token?: string) => {
+    setCalendarLoading(true);
+    try {
+      const response = await fetch(`/api/calendar/events?accessToken=${accessToken}&${new URLSearchParams({
+        q: searchQuery,
+        pageToken: token || '',
+      })}`);
+      
+      const data = await response.json();
+      setAllCalendarEvents(data.items || []);
+      setPageToken(data.nextPageToken || null);
+      if (token) {
+        setPrevPageTokens(prev => [...prev, token]);
+      }
+    } catch (error) {
+      console.log(error,"error");
+      console.error('Error fetching events:', error);
+    } finally {
+      setCalendarLoading(false);
+    }
+  }
 
+  useEffect(() => {
+    if (accessToken) {
+      fetchAllCalendarEvents(debouncedSearchTerm);
+      setPrevPageTokens([]);
+      setPageToken(null);
+    }else{
+      setCalendarLoading(false);
+    }
+  }, [accessToken, debouncedSearchTerm]);
+  
   return (
     <div className="space-y-8 p-8"> {/* Added p-8 for padding */}
       {/* Quick Actions */}
@@ -222,7 +312,7 @@ const DashboardPage = () => {
         {/* Fetch Google Calendar Events */}
         <Card className="dark">
         <CardHeader>
-            <Button onClick={() => getGoogleAuthUrl()}><Calendar className="mr-2 h-4 w-4" />Fetch Events</Button>
+            <Button onClick={() => getGoogleAuthUrl()} disabled={!!accessToken}><Calendar className="mr-2 h-4 w-4" />Fetch Events</Button>
           </CardHeader>
         </Card>
       </div>
@@ -240,6 +330,91 @@ const DashboardPage = () => {
 
       {/* Stats Cards - Replaced Key Metrics Section */}
       <MetricsCard leads={leads} campaigns={campaigns}/>
+
+      {/* All calendar events*/}
+      <Card className="dark mb-4">
+        <CardHeader>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            All Calendar Events
+          </h2>
+          <div className="flex items-center justify-between mt-4">
+            <Input
+              placeholder="Search events..."
+              className="max-w-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const prevToken = prevPageTokens.pop();
+                  fetchAllCalendarEvents(debouncedSearchTerm, prevToken);
+                  setPrevPageTokens([...prevPageTokens]);
+                }}
+                disabled={prevPageTokens.length === 0}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => fetchAllCalendarEvents(debouncedSearchTerm, pageToken || undefined)}
+                disabled={!pageToken}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        
+        {!calendarLoading ? (
+          <div className="p-6">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Creator</TableHead>
+                  <TableHead>Organizer</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {allCalendarEvents.length > 0 ? (
+                  allCalendarEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="font-medium">{event.summary}</TableCell>
+                      <TableCell>
+                        <div>
+                          <p>{event.creator?.displayName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {event.creator?.email}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{event.organizer?.displayName}</TableCell>
+                      <TableCell>{event.status}</TableCell>
+                      <TableCell>
+                        {event.created && new Date(event.created).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                      No events found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="h-64 flex flex-col items-center justify-center text-center text-gray-400">
+            Loading...
+          </div>
+        )}
+      </Card>
 
       {/* Recent Conversations - Added from DashboardContent */}
       <Card className="dark mb-4">
@@ -349,6 +524,7 @@ const DashboardPage = () => {
     </div>
   );
 };
+
 
 // Placeholder data
 const campaignPerformanceData = {

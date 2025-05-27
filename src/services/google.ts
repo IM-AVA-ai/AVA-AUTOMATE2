@@ -27,13 +27,3 @@ export const setCredentials = (tokens: any) => {
     oauth2Client.setCredentials(tokens);
 };
 
-export const fetchCalendarEvents = async () => {
-    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-    const res = await calendar.events.list({
-        calendarId: 'primary',
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime',
-    });
-    return res.data.items;
-};

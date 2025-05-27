@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react'; // Assuming you're using lucide-react icons
 import { Card } from '@/components/ui/card'; // Using your Card component from reference
+import Cookies from 'js-cookie'
+
 
 export default function CallbackPage() {
   const router = useRouter();
@@ -19,6 +21,14 @@ export default function CallbackPage() {
       if (!response.ok) {
         throw new Error('Failed to validate code');
       }
+      const responseJson = await response.json();
+      console.log(responseJson,"responseJson");
+      Cookies.set('__gc_accessToken', responseJson.access_token,{
+        expires : new Date(responseJson.expiry_date)
+      });
+      Cookies.set('__gc_refreshToken', responseJson.refresh_token),{
+        expires: new Date(Date.now() + responseJson.refresh_token_expires_in * 1000)
+      };
       router.push('/dashboard');
     } catch (err) {
       console.error('Callback error:', err);
