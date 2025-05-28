@@ -224,7 +224,8 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false); 
+  const [loading, setLoading] = useState<boolean>(false);  
 
   const debouncedSearchTerm = useDebounce(searchTerm);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -250,6 +251,7 @@ const DashboardPage = () => {
   ];
 
   const getGoogleAuthUrl = async () => {
+    setLoading(true);
     try {
       const res = await fetch('/api/auth/google/login');
       const json = await res.json();
@@ -257,6 +259,8 @@ const DashboardPage = () => {
       window.open(googleAuthUrl, '_self');
     } catch (err) {
       console.error('Error fetching Google Auth URL:', err);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -300,6 +304,7 @@ const DashboardPage = () => {
     }
   }, [inView, hasMore, calendarLoading, debouncedSearchTerm, nextPageToken, fetchAllCalendarEvents]);
 
+  console.log(!accessToken,"accessToken");
 
   return (
     <div className="space-y-8 p-8"> {/* Added p-8 for padding */}
@@ -331,10 +336,22 @@ const DashboardPage = () => {
         </Card>
         {/* Fetch Google Calendar Events */}
         <Card className="dark">
-        <CardHeader>
-            <Button onClick={() => getGoogleAuthUrl()} disabled={!!accessToken}><Calendar className="mr-2 h-4 w-4" />Fetch Events</Button>
-          </CardHeader>
-        </Card>
+      <CardHeader>
+        <Button onClick={()=>getGoogleAuthUrl()} disabled={loading || !!accessToken}>
+          {loading ? (
+            <>
+              <Calendar className="mr-2 h-4 w-4 animate-spin" />
+              Fetching...
+            </>
+          ) : (
+            <>
+              <Calendar className="mr-2 h-4 w-4" />
+              Fetch Events
+            </>
+          )}
+        </Button>
+      </CardHeader>
+    </Card>
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1> {/* Moved H1 here */}
@@ -369,6 +386,7 @@ const DashboardPage = () => {
               variant="default" 
               className="dark bg-primary hover:bg-primary/90 text-white"
               onClick={() => setIsEventModalOpen(true)}
+              disabled={!accessToken}
             >
               <Plus className="mr-2 h-4 w-4" />
               Add New Event
