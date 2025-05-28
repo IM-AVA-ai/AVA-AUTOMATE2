@@ -10,7 +10,7 @@ export const oauth2Client = new google.auth.OAuth2(
 );
 
 export const getAuthUrl = () => {
-    const scopes = ['https://www.googleapis.com/auth/calendar.readonly'];
+    const scopes = ['https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/calendar.app.created'];
     return oauth2Client.generateAuthUrl({
         access_type: 'offline',
         prompt: 'consent',

@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link'; // Added from DashboardContent
 
 // third party imports
-import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar, Loader2  } from 'lucide-react'; // Combined icons
+import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar, Loader2, Plus  } from 'lucide-react'; // Combined icons
 import Cookies from 'js-cookie'
 import { useInView } from "react-intersection-observer";
 
@@ -23,6 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import {EventModal} from '@/components/CalendarEventModal';
 
 // custom hooks
 import { useToast } from "@/hooks/use-toast";
@@ -223,6 +224,7 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -286,6 +288,7 @@ const DashboardPage = () => {
     if (accessToken) {
       fetchAllCalendarEvents(debouncedSearchTerm,undefined,true);
     }else{
+      setCalendarLoading(false);
       setAllCalendarEvents([]);
       setNextPageToken(null);
     }
@@ -297,7 +300,7 @@ const DashboardPage = () => {
     }
   }, [inView, hasMore, calendarLoading, debouncedSearchTerm, nextPageToken, fetchAllCalendarEvents]);
 
-  
+
   return (
     <div className="space-y-8 p-8"> {/* Added p-8 for padding */}
       {/* Quick Actions */}
@@ -350,96 +353,104 @@ const DashboardPage = () => {
 
       {/* All calendar events*/}
       <Card className="dark mb-4">
-      <CardHeader>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          All Calendar Events
-        </h2>
-        <div className="flex items-center justify-between mt-4">
-          <Input
-            placeholder="Search events..."
-            className="max-w-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </CardHeader>
-      
-      <div className="relative">
-        <div 
-          ref={tableContainerRef}
-          className="p-6 overflow-y-auto max-h-[calc(100vh-300px)]"
-        >
-          <Table>
-            <TableHeader className="sticky top-0 bg-gray-900 z-10">
-              <TableRow>
-                <TableHead>Event</TableHead>
-                <TableHead>Creator</TableHead>
-                <TableHead>Organizer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {allCalendarEvents.length > 0 ? (
-                <>
-                  {allCalendarEvents.map((event) => (
-                    <TableRow key={`${event.id}-${event.created}`}>
-                      <TableCell className="font-medium">{event.summary}</TableCell>
-                      <TableCell>
-                        <div>
-                          <p>{event.creator?.displayName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {event.creator?.email}
+        <CardHeader>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            All Calendar Events
+          </h2>
+          <div className="flex items-center justify-between mt-4">
+            <Input
+              placeholder="Search events..."
+              className="max-w-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              type='search'
+            />
+            <Button 
+              variant="default" 
+              className="dark bg-primary hover:bg-primary/90 text-white"
+              onClick={() => setIsEventModalOpen(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add New Event
+            </Button>
+          </div>
+        </CardHeader>
+        <div className="relative">
+          <div 
+            ref={tableContainerRef}
+            className="p-6 overflow-y-auto max-h-[calc(100vh-300px)]"
+          >
+            <Table>
+              <TableHeader className="sticky top-0 bg-gray-900 z-10">
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Creator</TableHead>
+                  <TableHead>Organizer</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {allCalendarEvents.length > 0 ? (
+                  <>
+                    {allCalendarEvents.map((event) => (
+                      <TableRow key={`${event.id}-${event.created}`}>
+                        <TableCell className="font-medium">{event.summary}</TableCell>
+                        <TableCell>
+                          <div>
+                            <p>{event.creator?.displayName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {event.creator?.email}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>{event.organizer?.displayName}</TableCell>
+                        <TableCell>{event.status}</TableCell>
+                        <TableCell>
+                          {event.created && new Date(event.created).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    
+                    {/* Infinite scroll trigger */}
+                    <TableRow ref={loadMoreRef}>
+                      <TableCell colSpan={5} className="text-center py-4">
+                        {calendarLoading ? (
+                          <div className="flex justify-center">
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                          </div>
+                        ) : hasMore ? (
+                          <Button 
+                            variant="ghost"
+                            onClick={() => fetchAllCalendarEvents(debouncedSearchTerm, nextPageToken)}
+                          >
+                            Load More
+                          </Button>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">
+                            No more events to load
                           </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{event.organizer?.displayName}</TableCell>
-                      <TableCell>{event.status}</TableCell>
-                      <TableCell>
-                        {event.created && new Date(event.created).toLocaleString()}
+                        )}
                       </TableCell>
                     </TableRow>
-                  ))}
-                  
-                  {/* Infinite scroll trigger */}
-                  <TableRow ref={loadMoreRef}>
-                    <TableCell colSpan={5} className="text-center py-4">
+                  </>
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
                       {calendarLoading ? (
                         <div className="flex justify-center">
                           <Loader2 className="h-5 w-5 animate-spin" />
                         </div>
-                      ) : hasMore ? (
-                        <Button 
-                          variant="ghost"
-                          onClick={() => fetchAllCalendarEvents(debouncedSearchTerm, nextPageToken)}
-                        >
-                          Load More
-                        </Button>
                       ) : (
-                        <p className="text-sm text-muted-foreground">
-                          No more events to load
-                        </p>
+                        'No events found'
                       )}
                     </TableCell>
                   </TableRow>
-                </>
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
-                    {calendarLoading ? (
-                      <div className="flex justify-center">
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      </div>
-                    ) : (
-                      'No events found'
-                    )}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </div>
       </Card>
 
       {/* Recent Conversations - Added from DashboardContent */}
@@ -547,6 +558,11 @@ const DashboardPage = () => {
           <p className="text-gray-600 dark:text-gray-400">Manage your leads, configure AI agents, launch SMS campaigns, and monitor conversations all from this dashboard. Use the sidebar to navigate between sections.</p>
           {/* Could add quick action buttons here */}
        </div>
+
+       <EventModal
+          isOpen={isEventModalOpen}
+          onClose={() => setIsEventModalOpen(false)}
+       />
     </div>
   );
 };
