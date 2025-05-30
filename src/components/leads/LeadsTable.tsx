@@ -1,20 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { FileUp, Plus, Search, Trash2, Send, MoreVertical } from "lucide-react";
-import LeadImportForm from '@/components/leads/LeadImportForm';
+// react and next imports
+import React, {  useState } from "react";
+
+// third party imports
+import { Plus, Search, Trash2, Send, Loader2 } from "lucide-react";
 import { addToast } from '@heroui/toast';
 
-interface Lead {
-	id: string;
-	name: string;
-	phone: string;
-	status: string;
-	added: string;
-}
+// custom components
+import { Button } from "../ui/button";
+
+// custom hooks
+import { useDebounce } from "@/hooks/useDebounce";
+
+// types
+import { ISalesForceLeadsResponse } from "@/types/apiResponse";
 
 interface LeadsTableClientProps {
-	initialLeads: Lead[];
+	leads: ISalesForceLeadsResponse[];
+	leadsLoading ?: boolean
+	contacts : ISalesForceLeadsResponse[]
 }
 
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
@@ -45,8 +50,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 	);
 };
 
-const LeadsTable: React.FC<LeadsTableClientProps> = ({ initialLeads }) => {
-	const [leads, setLeads] = useState<Lead[]>(initialLeads);
+const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoading}) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 	const [searchTerm, setSearchTerm] = useState('');
@@ -56,25 +60,12 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ initialLeads }) => {
 	const [newLeadPhone, setNewLeadPhone] = useState('');
 	const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
-	// Add a new lead
-	const addLead = async (newLeadData: Omit<Lead, 'id' | 'added' | 'status'>): Promise<Lead> => {
-		setLoading(true);
-		await new Promise(resolve => setTimeout(resolve, 500));
-		const newLead: Lead = {
-			id: `lead-${Date.now()}`,
-			...newLeadData,
-			status: 'New',
-			added: new Date().toISOString().split('T')[0],
-		};
-		setLeads(prev => [newLead, ...prev]);
-		setLoading(false);
-		return newLead;
-	};
+	const debouncedSearchTerm = useDebounce(searchTerm);
+	
 
-	// Callback for import form
-	const handleImport = (importedLeads: Lead[]) => {
-		setLeads(prev => [...importedLeads, ...prev]);
-		addToast({ title: "Import Complete", description: `${importedLeads.length} leads imported.` });
+	// Add a new lead
+	const addLead = async () => {
+		
 	};
 
 	const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,10 +90,17 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ initialLeads }) => {
 		});
 	};
 
-	const filteredLeads = leads.filter(lead =>
-		lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-		lead.phone.includes(searchTerm)
-	);
+	// const filteredLeads = leads.filter(lead =>
+	// 	lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+	// 	lead.phone.includes(searchTerm)
+	// );
+	const filteredLeads = [{
+		id: 'lead-1',
+		name: 'John Doe',
+		phone: '+15551234567',
+		status: 'New',
+		added: '2022-01-01',
+	}]
 
 	const isAllSelected = filteredLeads.length > 0 && selectedLeads.size === filteredLeads.length;
 	const isIndeterminate = selectedLeads.size > 0 && selectedLeads.size < filteredLeads.length;
@@ -118,28 +116,28 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ initialLeads }) => {
 			return;
 		}
 
-		try {
-			await addLead({ name: newLeadName, phone: newLeadPhone });
-			addToast({ title: "Lead Added", description: `${newLeadName} has been added successfully.` });
-			setNewLeadName('');
-			setNewLeadPhone('');
-			setIsAddLeadOpen(false);
-		} catch (err) {
-			addToast({ title: "Failed to Add Lead", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "solid" });
-		}
+		// try {
+		// 	await addLead({ name: newLeadName, phone: newLeadPhone });
+		// 	addToast({ title: "Lead Added", description: `${newLeadName} has been added successfully.` });
+		// 	setNewLeadName('');
+		// 	setNewLeadPhone('');
+		// 	setIsAddLeadOpen(false);
+		// } catch (err) {
+		// 	addToast({ title: "Failed to Add Lead", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "solid" });
+		// }
 	};
 
 	const handleBulkDelete = () => {
-		setLeads(prev => prev.filter(lead => !selectedLeads.has(lead.id)));
-		setSelectedLeads(new Set());
-		addToast({ title: "Bulk Delete", description: `Deleted ${selectedLeads.size} leads.`, variant: "solid" });
+		// setLeads(prev => prev.filter(lead => !selectedLeads.has(lead.id)));
+		// setSelectedLeads(new Set());
+		// addToast({ title: "Bulk Delete", description: `Deleted ${selectedLeads.size} leads.`, variant: "solid" });
 	};
 
 	const handleBulkAddToCampaign = () => {
 		addToast({ title: "Add to Campaign", description: `Functionality to add ${selectedLeads.size} leads to a campaign is not yet implemented.` });
 	};
 
-	const getStatusBadgeClasses = (status: string): string => {
+	const getStatusBadgeClasses  = (status: string): string => {
 		switch (status.toLowerCase()) {
 			case 'new': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
 			case 'contacted': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
@@ -156,30 +154,30 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ initialLeads }) => {
 				<div className="flex items-center gap-2 flex-wrap">
 					{selectedLeads.size > 0 && (
 						<>
-							<button
+							<Button
 								onClick={handleBulkAddToCampaign}
 								disabled={loading}
 								className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
 							>
 								<Send className="mr-2 h-4 w-4" /> Add to Campaign ({selectedLeads.size})
-							</button>
-							<button
+							</Button>
+							<Button
 								onClick={handleBulkDelete}
 								disabled={loading}
 								className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
 							>
 								<Trash2 className="mr-2 h-4 w-4" /> Delete Selected
-							</button>
+							</Button>
 						</>
 					)}
-					<LeadImportForm onImport={handleImport} />
-					<button
+					{/* <LeadImportForm onImport={handleImport} /> */}
+					<Button
 						onClick={() => setIsAddLeadOpen(true)}
 						disabled={loading}
 						className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
 					>
 						<Plus className="mr-2 h-4 w-4" /> Add Lead
-					</button>
+					</Button>
 				</div>
 			</div>
 
@@ -222,73 +220,80 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ initialLeads }) => {
 			</Modal>
 
 			{/* Leads Table Card */}
-			<div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-				<div className="p-4 border-b border-gray-200 dark:border-gray-700">
-					<h2 className="text-lg font-semibold text-gray-900 dark:text-white">Manage Leads</h2>
-					<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">View, add, import, and manage your leads. Select leads to add them to a campaign.</p>
-					<div className="relative mt-4">
-						<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-							<Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+			<div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden relative min-h-[200px]">
+				{leadsLoading ? (
+					<div className="absolute inset-0 flex items-center justify-center">
+					<Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
+				  </div>
+				): 
+				<>
+					<div className="p-4 border-b border-gray-200 dark:border-gray-700">
+						<h2 className="text-lg font-semibold text-gray-900 dark:text-white">Manage Leads</h2>
+						<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">View, add, import, and manage your leads. Select leads to add them to a campaign.</p>
+						<div className="relative mt-4">
+							<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+								<Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+							</div>
+							<input
+								type="search"
+								placeholder="Search leads by name or phone..."
+								className="block w-full sm:w-80 pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+								value={searchTerm}
+								onChange={(e) => setSearchTerm(e.target.value)}
+								disabled={loading}
+							/>
 						</div>
-						<input
-							type="search"
-							placeholder="Search leads by name or phone..."
-							className="block w-full sm:w-80 pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-							disabled={loading}
-						/>
 					</div>
-				</div>
 
-				{/* Table */}
-				<div className="overflow-x-auto">
-					{error && <p className="text-red-600 dark:text-red-400 text-center p-4">Error loading leads: {error.message}</p>}
-					<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-						<thead className="bg-gray-50 dark:bg-gray-700">
-							<tr>
-								<th className="px-4 py-3">
-									<input
-										type="checkbox"
-										checked={isAllSelected}
-										ref={el => {
-											if (el) el.indeterminate = isIndeterminate;
-										}}
-										onChange={handleSelectAll}
-									/>
-								</th>
-								<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-								<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Phone</th>
-								<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-								<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Added</th>
-							</tr>
-						</thead>
-						<tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-							{filteredLeads.map((lead) => (
-								<tr key={lead.id}>
-									<td className="px-4 py-3">
+					{/* Table */}
+					<div className="overflow-x-auto">
+						{error && <p className="text-red-600 dark:text-red-400 text-center p-4">Error loading leads: {error.message}</p>}
+						<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+							<thead className="bg-gray-50 dark:bg-gray-700">
+								<tr>
+									<th className="px-4 py-3">
 										<input
 											type="checkbox"
-											checked={selectedLeads.has(lead.id)}
-											onChange={(e) => handleSelectLead(lead.id, e)}
+											checked={isAllSelected}
+											ref={el => {
+												if (el) el.indeterminate = isIndeterminate;
+											}}
+											onChange={handleSelectAll}
 										/>
-									</td>
-									<td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{lead.name}</td>
-									<td className="px-4 py-3 text-gray-700 dark:text-gray-300">{lead.phone}</td>
-									<td className="px-4 py-3">
-										<span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${getStatusBadgeClasses(lead.status)}`}>{lead.status}</span>
-									</td>
-									<td className="px-4 py-3 text-gray-500 dark:text-gray-400">{lead.added}</td>
+									</th>
+									<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+									<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Phone</th>
+									<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+									<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Added</th>
 								</tr>
-							))}
-							{filteredLeads.length === 0 && (
-								<tr>
-									<td colSpan={5} className="text-center py-6 text-gray-500 dark:text-gray-400">No leads found.</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
+							</thead>
+							<tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+								{leads && leads.map((lead) => (
+									<tr key={lead.Id}>
+										<td className="px-4 py-3">
+											<input
+												type="checkbox"
+												checked={selectedLeads.has(lead.Id)}
+												onChange={(e) => handleSelectLead(lead.Id, e)}
+											/>
+										</td>
+										<td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{lead.Name}</td>
+										<td className="px-4 py-3 text-gray-700 dark:text-gray-300">{lead.Phone}</td>
+										<td className="px-4 py-3">
+											<span className={`inline-block px-2 py-1 rounded text-xs font-semibold`}>{lead.attributes.type}</span>
+										</td>
+										<td className="px-4 py-3 text-gray-500 dark:text-gray-400">{lead.attributes.url}</td>
+									</tr>
+								))}
+								{filteredLeads.length === 0 && (
+									<tr>
+										<td colSpan={5} className="text-center py-6 text-gray-500 dark:text-gray-400">No leads found.</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+				</>}
 				{/* TODO: Add Pagination controls here if needed */}
 			</div>
 		</div>

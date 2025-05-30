@@ -67,6 +67,7 @@
 		"googleapis": "^149.0.0",
 		"input-otp": "1.4.1",
 		"js-cookie": "^3.0.5",
+		"jsforce": "^3.8.2",
 		"lucide-react": "^0.475.0",
 		"moment-timezone": "^0.5.48",
 		"next": "^15.3.1",

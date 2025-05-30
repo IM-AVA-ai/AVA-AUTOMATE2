@@ -1,22 +1,47 @@
+// This file contains the leads page that will call the leads route and display the leads in a table
 
+"use client";
+
+// react and next imports
+import { useEffect, useState } from 'react';
+
+// custom components
 import LeadsTableClient from '@/components/leads/LeadsTable';
 
-// Server Component: fetch initial leads data here (replace with real fetch in production)
+// third party imports
+import { addToast } from '@heroui/react';
+import Cookies from 'js-cookie';
 
-// Simulate server-side fetch (replace with real DB/API call)
-async function fetchLeads(): Promise<Array<{ id: string; name: string; phone: string; status: string; added: string }>> {
-  // Simulate delay
-  await new Promise((resolve) => setTimeout(resolve, 100));
-  return [
-    { id: '1', name: 'John Doe', phone: '+15551234567', status: 'New', added: '2024-07-28' },
-    { id: '2', name: 'Jane Smith', phone: '+15559876543', status: 'Contacted', added: '2024-07-27' },
-    { id: '3', name: 'Bob Johnson', phone: '+15551112233', status: 'Qualified', added: '2024-07-26' },
-  ];
-}
+// types  
+import { ISalesForceLeadsResponse } from '@/types/apiResponse';
 
-export default async function LeadsPage() {
-  const initialLeads = await fetchLeads();
+export default function LeadsPage() {
+  // salesforce access token
+  const accessToken = Cookies.get("__sf_accessToken");
+  const instanceUrl = Cookies.get("__sf_instanceUrl");
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [leads, setLeads] = useState<ISalesForceLeadsResponse[]>([]);
+  const [contacts, setContacts] = useState<ISalesForceLeadsResponse[]>([]);
+
+  const fetchAllLeads = async () => {
+      try {
+        const leads = await fetch(`/api/salesforce/leads?accessToken=${accessToken}&instanceUrl=${instanceUrl}`);
+        const leadsJson = await leads.json();
+        setLeads(leadsJson.leads.records);
+        setContacts(leadsJson.contacts.records);
+      } catch (err) {
+        addToast({ title: "Failed to Fetch Leads", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "solid" });
+      } finally {
+        setLoading(false);
+      }
+	}
+  useEffect(() => {
+    if (accessToken && instanceUrl) {
+      fetchAllLeads();
+    }
+  },[accessToken, instanceUrl]);
   return (
-    <LeadsTableClient initialLeads={initialLeads} />
+    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts}/>
   );
 }

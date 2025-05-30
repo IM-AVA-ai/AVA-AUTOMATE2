@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link'; // Added from DashboardContent
 
 // third party imports
-import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar, Loader2, Plus  } from 'lucide-react'; // Combined icons
+import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar, Loader2, Plus, Link2Icon  } from 'lucide-react'; // Combined icons
 import Cookies from 'js-cookie'
 import { useInView } from "react-intersection-observer";
 
@@ -226,6 +226,7 @@ const DashboardPage = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false); 
   const [loading, setLoading] = useState<boolean>(false);  
+  const [salesForceLoading, setSalesForceLoading] = useState<boolean>(false);  
 
   const debouncedSearchTerm = useDebounce(searchTerm);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -288,6 +289,20 @@ const DashboardPage = () => {
     }
   }, [accessToken, calendarLoading, hasMore]);
 
+  const getSalesForceAuthUrl = async () => {
+    setSalesForceLoading(true);
+      try {
+        const res = await fetch('/api/auth/salesforce/login');
+        const json = await res.json();
+        const salesforceAuthUrl = json.data;
+        window.open(salesforceAuthUrl, '_self');
+      } catch (err) {
+        console.error('Error fetching Salesforce Auth URL:', err);
+      }finally{
+        setSalesForceLoading(false);
+      }
+  }
+
   useEffect(() => {
     if (accessToken) {
       fetchAllCalendarEvents(debouncedSearchTerm,undefined,true);
@@ -304,7 +319,6 @@ const DashboardPage = () => {
     }
   }, [inView, hasMore, calendarLoading, debouncedSearchTerm, nextPageToken, fetchAllCalendarEvents]);
 
-  console.log(!accessToken,"accessToken");
 
   return (
     <div className="space-y-8 p-8"> {/* Added p-8 for padding */}
@@ -336,22 +350,40 @@ const DashboardPage = () => {
         </Card>
         {/* Fetch Google Calendar Events */}
         <Card className="dark">
-      <CardHeader>
-        <Button onClick={()=>getGoogleAuthUrl()} disabled={loading || !!accessToken}>
-          {loading ? (
-            <>
-              <Calendar className="mr-2 h-4 w-4 animate-spin" />
-              Fetching...
-            </>
-          ) : (
-            <>
-              <Calendar className="mr-2 h-4 w-4" />
-              Fetch Events
-            </>
-          )}
-        </Button>
-      </CardHeader>
-    </Card>
+          <CardHeader>
+            <Button onClick={()=>getGoogleAuthUrl()} disabled={loading || !!accessToken}>
+              {loading ? (
+                <>
+                  <Calendar className="mr-2 h-4 w-4 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Fetch Events
+                </>
+              )}
+            </Button>
+          </CardHeader>
+        </Card>
+        {/* Connect SalesForce */}
+        <Card className="dark">
+          <CardHeader>
+            <Button onClick={()=>getSalesForceAuthUrl()} disabled={salesForceLoading}>
+              {salesForceLoading ? (
+                <>
+                  <Link2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <Link2Icon className="mr-2 h-4 w-4" />
+                  Fetch Leads
+                </>
+              )}
+            </Button>
+          </CardHeader>
+        </Card>
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1> {/* Moved H1 here */}
