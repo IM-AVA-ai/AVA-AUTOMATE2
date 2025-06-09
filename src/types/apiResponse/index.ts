@@ -10,5 +10,7 @@ export type ISalesForceLeadsResponse = {
     Id: string;
     Name: string;
     Phone: string
-    attributes: ISalesForceLeadsAttributes
+    attributes: ISalesForceLeadsAttributes;
+    Status: string;
+    LeadSource?: string
 }

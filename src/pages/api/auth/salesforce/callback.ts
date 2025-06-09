@@ -5,7 +5,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 // third party imports
 import { OAuth2, Connection } from "jsforce";
-import Cookies from "js-cookie";
 
 
 const oauth2 = new OAuth2({

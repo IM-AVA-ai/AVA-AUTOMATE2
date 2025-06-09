@@ -18,6 +18,9 @@ interface ModalProps {
   okButtonClassName?: string;
   centered?: boolean;
   focusTriggerAfterClose?: boolean;
+  okText?: string;
+  okSubmitText?: string;
+  loading?: boolean;
 }
 
 export const Modal = ({
@@ -31,6 +34,9 @@ export const Modal = ({
   okButtonClassName = '',
   centered = false,
   focusTriggerAfterClose = false,
+  okText,
+  okSubmitText,
+  loading,
 }: ModalProps) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -97,8 +103,10 @@ export const Modal = ({
               <Button
                 onClick={onOk}
                 className={okButtonClassName}
+                disabled={loading}
+                type='submit'
               >
-                OK
+                {!loading ? okText : okSubmitText}
               </Button>
             )}
           </div>

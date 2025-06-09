@@ -42,6 +42,6 @@ export default function LeadsPage() {
     }
   },[accessToken, instanceUrl]);
   return (
-    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts}/>
+    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads}/>
   );
 }

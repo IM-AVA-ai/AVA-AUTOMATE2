@@ -57,3 +57,15 @@ export type CreateCalendarEventFormType = {
     timezone: string;
     googleMeet: string
 }
+
+export type CreateNewLeadFormType = {
+    firstName: string;
+    lastName: string;
+    company: string;
+    phoneNumber: string;
+    title: string;
+    address: string;
+    leadStatus: string;
+    instanceUrl?: string
+    accessToken: string
+}
