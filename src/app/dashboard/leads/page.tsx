@@ -8,12 +8,20 @@ import { useEffect, useState } from 'react';
 // custom components
 import LeadsTableClient from '@/components/leads/LeadsTable';
 
+// custom hooks
+import { useDebounce } from '@/hooks/useDebounce';
+
 // third party imports
 import { addToast } from '@heroui/react';
 import Cookies from 'js-cookie';
 
+// helpers
+import { makeQueryParams } from '@/services/helpers';
+
 // types  
 import { ISalesForceLeadsResponse } from '@/types/apiResponse';
+import { IFetchLeadsQueryParamsType } from '@/types/apiRequest';
+
 
 export default function LeadsPage() {
   // salesforce access token
@@ -23,10 +31,19 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [leads, setLeads] = useState<ISalesForceLeadsResponse[]>([]);
   const [contacts, setContacts] = useState<ISalesForceLeadsResponse[]>([]);
-
+  const [isSalesForceIntegrated, setIsSalesForceIntegrated] = useState<boolean>(false);
+  const [queryParams, setQueryParams] = useState<IFetchLeadsQueryParamsType>(({
+    limit: 10,
+    offset: 0,
+    search: '',
+    nextRecordUrl: '',
+  }))
+  console.log(queryParams, "queryParams");
+  const debouncedSearchTerm = useDebounce(queryParams.search);
+  
   const fetchAllLeads = async () => {
       try {
-        const leads = await fetch(`/api/salesforce/leads?accessToken=${accessToken}&instanceUrl=${instanceUrl}`);
+        const leads = await fetch(`/api/salesforce/leads?accessToken=${accessToken}&instanceUrl=${instanceUrl}${makeQueryParams(queryParams)}`);
         const leadsJson = await leads.json();
         setLeads(leadsJson.leads.records);
         setContacts(leadsJson.contacts.records);
@@ -36,12 +53,19 @@ export default function LeadsPage() {
         setLoading(false);
       }
 	}
+
   useEffect(() => {
     if (accessToken && instanceUrl) {
+      setIsSalesForceIntegrated(true);
       fetchAllLeads();
     }
-  },[accessToken, instanceUrl]);
+    else{
+      setIsSalesForceIntegrated(false);
+      setLoading(false);
+  }
+  },[accessToken, instanceUrl, debouncedSearchTerm,queryParams.limit, queryParams.offset, queryParams.nextRecordUrl]);
+
   return (
-    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads}/>
+    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads} isSalesForceIntegrated={isSalesForceIntegrated} setQueryParams={setQueryParams} queryParams={queryParams}/>
   );
 }

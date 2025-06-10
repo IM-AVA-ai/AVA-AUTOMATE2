@@ -13,4 +13,5 @@ export type ISalesForceLeadsResponse = {
     attributes: ISalesForceLeadsAttributes;
     Status: string;
     LeadSource?: string
+    nextRecordsUrl?: string
 }

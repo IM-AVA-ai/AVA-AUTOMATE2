@@ -69,3 +69,19 @@ export type CreateNewLeadFormType = {
     instanceUrl?: string
     accessToken: string
 }
+
+export type CreateNewContactFormType = {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
+    instanceUrl?: string
+    accessToken: string
+}
+
+export type IFetchLeadsQueryParamsType = {
+    limit: number;
+    offset: number;
+    search: string;
+    nextRecordUrl: string;
+}
