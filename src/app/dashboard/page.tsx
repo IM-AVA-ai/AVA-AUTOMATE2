@@ -1,21 +1,42 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+// react and next imports
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link'; // Added from DashboardContent
-import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain } from 'lucide-react'; // Combined icons
+
+// third party imports
+import { MessageCircle, BarChart, LineChart, PieChart, Users, Activity, CheckCircle, XCircle, UserPlus, Rocket, MessagesSquare, Brain,Calendar, Loader2, Plus, Link2Icon  } from 'lucide-react'; // Combined icons
+import Cookies from 'js-cookie'
+import { useInView } from "react-intersection-observer";
+
+// custom components
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"; // Combined imports
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Chip, cn } from '@heroui/react'; // Added Chip and cn from @heroui/react
+import MetricsCard from "@/components/MetricsCard";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import {EventModal} from '@/components/CalendarEventModal';
+
+// custom hooks
 import { useToast } from "@/hooks/use-toast";
-import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
-import { db } from "@/firebase/config"; 
-import { Icon } from '@iconify/react'; 
-import MetricsCard from "@/components/MetricsCard"; // Added from DashboardContent
+import { useDebounce } from '@/hooks/useDebounce';
+
+// custom components
 import { Conversation } from '@/services/conversations'; // Import types from DashboardContent
 import { Campaign } from '@/services/campaigns'; 
 import { Lead } from '@/services/leads'; 
 
+// firebase imports
+import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
+import { db } from "@/firebase/config"; 
 
 
 interface FirestoreMessage {
@@ -27,6 +48,46 @@ interface FirestoreMessage {
   };
   direction: 'inbound' | 'outbound';
   status: 'read' | 'unread'; 
+}
+
+interface ICalendarEvents {
+  attendees : string[];
+  created : string;
+  creator : {
+    displayName : string;
+    email : string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  etag: string;
+  eventType: string;
+  guestsCanModify: boolean;
+  htmlLink: string;
+  iCalUID: string;
+  id: string;
+  kind: string;
+  organizer: {
+    email: string;
+    displayName: string;
+  };
+  originalStartTime: {
+    dateTime: string;
+    timeZone: string;
+  };
+  recurringEventId: string;
+  reminders: {
+    useDefault: boolean;
+  };
+  sequence: number;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  status: string;
+  summary: string;
+  updated: string;
 }
 
 export const CommunicationsLogCard = () => {
@@ -156,6 +217,24 @@ const DashboardPage = () => {
   const recentConversations = placeholderConversations;
   const campaigns = placeholderCampaigns;
   const leads = placeholderLeads;
+  const accessToken = Cookies.get('__gc_accessToken');
+  
+  const [allCalendarEvents, setAllCalendarEvents] = useState<ICalendarEvents[]>([]);
+  const [calendarLoading, setCalendarLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false); 
+  const [loading, setLoading] = useState<boolean>(false);  
+  const [salesForceLoading, setSalesForceLoading] = useState<boolean>(false);  
+
+  const debouncedSearchTerm = useDebounce(searchTerm);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const [loadMoreRef, inView] = useInView({
+    threshold: 0,
+    rootMargin: '200px',
+  });
 
   const recentCampaigns = campaigns.map(campaign => ({
     id: campaign.id,
@@ -171,6 +250,74 @@ const DashboardPage = () => {
       { id: 'a3', type: 'message', text: 'New reply received from John Doe.', time: '3h ago' },
       { id: 'a4', type: 'agent', text: 'Agent "Roofing Lead Qualifier" created.', time: '1d ago' },
   ];
+
+  const getGoogleAuthUrl = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/google/login');
+      const json = await res.json();
+      const googleAuthUrl = json.data;
+      window.open(googleAuthUrl, '_self');
+    } catch (err) {
+      console.error('Error fetching Google Auth URL:', err);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const fetchAllCalendarEvents = useCallback(async (searchQuery = '', token?: string | null, isNewSearch = false) => {
+    setCalendarLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set('q', searchQuery);
+      if (token) params.set('pageToken', token);
+      
+      const response = await fetch(`/api/calendar/events?accessToken=${accessToken}&${params.toString()}`);
+      const data = await response.json();
+
+      if (isNewSearch) {
+        setAllCalendarEvents(data.items || []);
+      } else {
+        setAllCalendarEvents(prev => [...prev, ...(data.items || [])]);
+      }
+      setNextPageToken(data.nextPageToken || null);
+      setHasMore(!!data.nextPageToken);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setCalendarLoading(false);
+    }
+  }, [accessToken, calendarLoading, hasMore]);
+
+  const getSalesForceAuthUrl = async () => {
+    setSalesForceLoading(true);
+      try {
+        const res = await fetch('/api/auth/salesforce/login');
+        const json = await res.json();
+        const salesforceAuthUrl = json.data;
+        window.open(salesforceAuthUrl, '_self');
+      } catch (err) {
+        console.error('Error fetching Salesforce Auth URL:', err);
+      }finally{
+        setSalesForceLoading(false);
+      }
+  }
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchAllCalendarEvents(debouncedSearchTerm,undefined,true);
+    }else{
+      setCalendarLoading(false);
+      setAllCalendarEvents([]);
+      setNextPageToken(null);
+    }
+  }, [accessToken, debouncedSearchTerm]);
+
+  useEffect(() => {
+    if (inView && hasMore && !calendarLoading && nextPageToken) {
+      fetchAllCalendarEvents(debouncedSearchTerm, nextPageToken);
+    }
+  }, [inView, hasMore, calendarLoading, debouncedSearchTerm, nextPageToken, fetchAllCalendarEvents]);
 
 
   return (
@@ -201,6 +348,42 @@ const DashboardPage = () => {
             <Link href="/agents/create"><Button> <Brain className="mr-2 h-4 w-4" /> Create Agent</Button></Link>
           </CardHeader>
         </Card>
+        {/* Fetch Google Calendar Events */}
+        <Card className="dark">
+          <CardHeader>
+            <Button onClick={()=>getGoogleAuthUrl()} disabled={loading || !!accessToken}>
+              {loading ? (
+                <>
+                  <Calendar className="mr-2 h-4 w-4 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Fetch Events
+                </>
+              )}
+            </Button>
+          </CardHeader>
+        </Card>
+        {/* Connect SalesForce */}
+        <Card className="dark">
+          <CardHeader>
+            <Button onClick={()=>getSalesForceAuthUrl()} disabled={salesForceLoading}>
+              {salesForceLoading ? (
+                <>
+                  <Link2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <Link2Icon className="mr-2 h-4 w-4" />
+                  Fetch Leads
+                </>
+              )}
+            </Button>
+          </CardHeader>
+        </Card>
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1> {/* Moved H1 here */}
@@ -216,6 +399,109 @@ const DashboardPage = () => {
 
       {/* Stats Cards - Replaced Key Metrics Section */}
       <MetricsCard leads={leads} campaigns={campaigns}/>
+
+      {/* All calendar events*/}
+      <Card className="dark mb-4">
+        <CardHeader>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            All Calendar Events
+          </h2>
+          <div className="flex items-center justify-between mt-4">
+            <Input
+              placeholder="Search events..."
+              className="max-w-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              type='search'
+            />
+            <Button 
+              variant="default" 
+              className="dark bg-primary hover:bg-primary/90 text-white"
+              onClick={() => setIsEventModalOpen(true)}
+              disabled={!accessToken}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add New Event
+            </Button>
+          </div>
+        </CardHeader>
+        <div className="relative">
+          <div 
+            ref={tableContainerRef}
+            className="p-6 overflow-y-auto max-h-[calc(100vh-300px)]"
+          >
+            <Table>
+              <TableHeader className="sticky top-0 bg-gray-900 z-10">
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Creator</TableHead>
+                  <TableHead>Organizer</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {allCalendarEvents.length > 0 ? (
+                  <>
+                    {allCalendarEvents.map((event) => (
+                      <TableRow key={`${event.id}-${event.created}`}>
+                        <TableCell className="font-medium">{event.summary}</TableCell>
+                        <TableCell>
+                          <div>
+                            <p>{event.creator?.displayName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {event.creator?.email}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>{event.organizer?.displayName}</TableCell>
+                        <TableCell>{event.status}</TableCell>
+                        <TableCell>
+                          {event.created && new Date(event.created).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    
+                    {/* Infinite scroll trigger */}
+                    <TableRow ref={loadMoreRef}>
+                      <TableCell colSpan={5} className="text-center py-4">
+                        {calendarLoading ? (
+                          <div className="flex justify-center">
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                          </div>
+                        ) : hasMore ? (
+                          <Button 
+                            variant="ghost"
+                            onClick={() => fetchAllCalendarEvents(debouncedSearchTerm, nextPageToken)}
+                          >
+                            Load More
+                          </Button>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">
+                            No more events to load
+                          </p>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </>
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                      {calendarLoading ? (
+                        <div className="flex justify-center">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        </div>
+                      ) : (
+                        'No events found'
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </Card>
 
       {/* Recent Conversations - Added from DashboardContent */}
       <Card className="dark mb-4">
@@ -322,9 +608,15 @@ const DashboardPage = () => {
           <p className="text-gray-600 dark:text-gray-400">Manage your leads, configure AI agents, launch SMS campaigns, and monitor conversations all from this dashboard. Use the sidebar to navigate between sections.</p>
           {/* Could add quick action buttons here */}
        </div>
+
+       <EventModal
+          isOpen={isEventModalOpen}
+          onClose={() => setIsEventModalOpen(false)}
+       />
     </div>
   );
 };
+
 
 // Placeholder data
 const campaignPerformanceData = {
