@@ -80,8 +80,6 @@ export type CreateNewContactFormType = {
 }
 
 export type IFetchLeadsQueryParamsType = {
-    limit: number;
-    offset: number;
     search: string;
     nextRecordUrl: string;
 }

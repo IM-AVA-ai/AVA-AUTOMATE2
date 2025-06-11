@@ -33,12 +33,9 @@ export default function LeadsPage() {
   const [contacts, setContacts] = useState<ISalesForceLeadsResponse[]>([]);
   const [isSalesForceIntegrated, setIsSalesForceIntegrated] = useState<boolean>(false);
   const [queryParams, setQueryParams] = useState<IFetchLeadsQueryParamsType>(({
-    limit: 10,
-    offset: 0,
     search: '',
     nextRecordUrl: '',
   }))
-  console.log(queryParams, "queryParams");
   const debouncedSearchTerm = useDebounce(queryParams.search);
   
   const fetchAllLeads = async () => {
@@ -63,7 +60,7 @@ export default function LeadsPage() {
       setIsSalesForceIntegrated(false);
       setLoading(false);
   }
-  },[accessToken, instanceUrl, debouncedSearchTerm,queryParams.limit, queryParams.offset, queryParams.nextRecordUrl]);
+  },[accessToken, instanceUrl, debouncedSearchTerm, queryParams.nextRecordUrl]);
 
   return (
     <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads} isSalesForceIntegrated={isSalesForceIntegrated} setQueryParams={setQueryParams} queryParams={queryParams}/>

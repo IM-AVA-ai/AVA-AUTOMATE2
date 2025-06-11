@@ -17,10 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const authUrl = oauth2.getAuthorizationUrl({
             scope: "api refresh_token web",
         });
-        console.log(authUrl, "authUrl");
         return res.status(200).json({ "data": authUrl });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ error: 'Failed to get authorization URL' });
     }
 }

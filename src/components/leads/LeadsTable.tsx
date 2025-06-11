@@ -65,7 +65,6 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 			addToast({ title: "Error", description: "Please login to salesforce", variant: "solid" });
 			return;
 		}
-		console.log(payload, "payload");
 		setLoading(true);
 		let response
 		try{
@@ -91,7 +90,6 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 			addToast({ title: "Success", description: "Leads created successfully", variant: "solid" });
 		}catch(err){
 			addToast({ title: "Error", description: "Something went wrong", variant: "solid" });
-			console.log(err);
 		}finally{
 			setLoading(false);
 			setIsAddLeadOpen(false);
@@ -169,10 +167,15 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 					{/* <LeadImportForm onImport={handleImport} /> */}
 					<Button
 						onClick={() => setIsAddLeadOpen(true)}
-						disabled={!isSalesForceIntegrated || loading}
+						disabled={leadsLoading || !isSalesForceIntegrated || loading}
 						className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
 						>
-						{!isSalesForceIntegrated ? (
+						{leadsLoading ? (
+							<>
+							<Plus className="mr-2 h-4 w-4" />
+							Add {viewType === 'contacts' ? 'Contact' : 'Lead'}
+							</>
+						) : !isSalesForceIntegrated ? (
 							<>
 							<Lock className="mr-2 h-4 w-4" />
 							Connect Salesforce to Add {viewType === 'contacts' ? 'Contact' : 'Lead'}
@@ -203,14 +206,14 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 
 			{viewType === "leads" ? (
 			<div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden relative min-h-[200px]">
-				{!isSalesForceIntegrated ? (
+				{leadsLoading ? (
+				<div className="absolute inset-0 flex items-center justify-center">
+					<Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
+				</div>
+				) : !isSalesForceIntegrated ? (
 				<div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
 					<AlertCircle className="h-8 w-8 text-yellow-500 mb-2" />
 					<p className="text-gray-700 dark:text-gray-300 mb-4">Please connect Salesforce to view leads</p>
-				</div>
-				) : leadsLoading ? (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
 				</div>
 				) : (
 				<>
@@ -271,14 +274,14 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 			</div>
 			) : (
 			<div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden relative min-h-[200px]">
-				{!isSalesForceIntegrated ? (
+				{leadsLoading ? (
+				<div className="absolute inset-0 flex items-center justify-center">
+					<Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
+				</div>
+				) : !isSalesForceIntegrated ? (
 				<div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
 					<AlertCircle className="h-8 w-8 text-yellow-500 mb-2" />
 					<p className="text-gray-700 dark:text-gray-300 mb-4">Please connect Salesforce to view contacts</p>
-				</div>
-				) : leadsLoading ? (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
 				</div>
 				) : (
 				<>

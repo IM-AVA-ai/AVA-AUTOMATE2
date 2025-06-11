@@ -26,14 +26,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const searchCondition = search ? ` WHERE Name LIKE '%${search}%'` : '';
         const orderBy = ` ORDER BY CreatedDate DESC`;
-        const limitClause = ` LIMIT ${limit || 10}`;
+        const limitClause = ` LIMIT ${2000}`;
 
         const leadsQuery = `${baseLeadQuery}${searchCondition}${orderBy}${limitClause}`;
         const contactsQuery = `${baseContactQuery}${searchCondition}${orderBy}${limitClause}`;
 
         const leads = await connection.query(leadsQuery);
         const contacts = await connection.query(contactsQuery);
-
+        
         return res.status(200).json({ leads, contacts });
     } catch (error) {
         console.error(error, "error");
