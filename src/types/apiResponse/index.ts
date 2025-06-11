@@ -15,3 +15,16 @@ export type ISalesForceLeadsResponse = {
     LeadSource?: string
     nextRecordsUrl?: string
 }
+
+export type IHubSpotContactsResponse = {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    properties: {
+        email: string;
+        firstname: string;
+        lastname: string;
+        hs_object_id: string;
+    },
+    archived: boolean
+}

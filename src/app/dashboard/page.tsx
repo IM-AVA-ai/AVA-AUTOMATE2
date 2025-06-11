@@ -218,6 +218,9 @@ const DashboardPage = () => {
   const campaigns = placeholderCampaigns;
   const leads = placeholderLeads;
   const accessToken = Cookies.get('__gc_accessToken');
+  const salesForceAccessToken = Cookies.get('__sf_accessToken');
+  const hubSpotAccessToken = Cookies.get('__hs_accessToken');
+
   
   const [allCalendarEvents, setAllCalendarEvents] = useState<ICalendarEvents[]>([]);
   const [calendarLoading, setCalendarLoading] = useState<boolean>(true);
@@ -227,6 +230,7 @@ const DashboardPage = () => {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false); 
   const [loading, setLoading] = useState<boolean>(false);  
   const [salesForceLoading, setSalesForceLoading] = useState<boolean>(false);  
+  const [hubSpotLoading, setHubSpotLoading] = useState<boolean>(false);  
 
   const debouncedSearchTerm = useDebounce(searchTerm);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -302,6 +306,19 @@ const DashboardPage = () => {
         setSalesForceLoading(false);
       }
   }
+  const getHubSpotAuthUrl = async () => {
+    setHubSpotLoading(true);
+      try {
+        const res = await fetch('/api/auth/hubspot/login');
+        const json = await res.json();
+        const hubSpotAuthUrl = json.data;
+        window.open(hubSpotAuthUrl, '_self');
+      } catch (err) {
+        console.error('Error fetching HubSpot Auth URL:', err);
+      }finally{
+        setHubSpotLoading(false);
+      }
+  }
 
   useEffect(() => {
     if (accessToken) {
@@ -369,7 +386,7 @@ const DashboardPage = () => {
         {/* Connect SalesForce */}
         <Card className="dark">
           <CardHeader>
-            <Button onClick={()=>getSalesForceAuthUrl()} disabled={salesForceLoading}>
+            <Button onClick={()=>getSalesForceAuthUrl()} disabled={salesForceLoading || !!salesForceAccessToken}>
               {salesForceLoading ? (
                 <>
                   <Link2Icon className="mr-2 h-4 w-4 animate-spin" />
@@ -379,6 +396,24 @@ const DashboardPage = () => {
                 <>
                   <Link2Icon className="mr-2 h-4 w-4" />
                   Fetch Leads
+                </>
+              )}
+            </Button>
+          </CardHeader>
+        </Card>
+        {/* Connect Hubspot */}
+        <Card className="dark">
+          <CardHeader>
+            <Button onClick={()=>getHubSpotAuthUrl()} disabled={hubSpotLoading || !!hubSpotAccessToken}>
+              {hubSpotLoading ? (
+                <>
+                  <Link2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <Link2Icon className="mr-2 h-4 w-4" />
+                  Fetch HubSpot Leads
                 </>
               )}
             </Button>

@@ -83,3 +83,10 @@ export type IFetchLeadsQueryParamsType = {
     search: string;
     nextRecordUrl: string;
 }
+export type IFetchHubSpotContactsQueryParamsType = {
+    contactSearch?: string;
+    leadSearch?: string;
+}
+export type IFetchHubSpotQueryParamsType = {
+    query?: string;
+}

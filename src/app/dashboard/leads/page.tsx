@@ -19,14 +19,17 @@ import Cookies from 'js-cookie';
 import { makeQueryParams } from '@/services/helpers';
 
 // types  
-import { ISalesForceLeadsResponse } from '@/types/apiResponse';
-import { IFetchLeadsQueryParamsType } from '@/types/apiRequest';
+import { IHubSpotContactsResponse, ISalesForceLeadsResponse } from '@/types/apiResponse';
+import { IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType } from '@/types/apiRequest';
 
 
 export default function LeadsPage() {
   // salesforce access token
   const accessToken = Cookies.get("__sf_accessToken");
   const instanceUrl = Cookies.get("__sf_instanceUrl");
+
+  // hubspot access token
+  const hubSpotAccessToken = Cookies.get("__hs_accessToken");
 
   const [loading, setLoading] = useState<boolean>(true);
   const [leads, setLeads] = useState<ISalesForceLeadsResponse[]>([]);
@@ -36,7 +39,14 @@ export default function LeadsPage() {
     search: '',
     nextRecordUrl: '',
   }))
+  const [hubSpotContacts, setHubSpotContacts] = useState<IHubSpotContactsResponse[]>([]);
+  const [hubSpotLeads, setHubSpotLeads] = useState<[]>([]);
+  const [isHubSpotIntegrated, setIsHubSpotIntegrated] = useState<boolean>(false);
+  const [hubSpotQueryParams, setHubSpotQueryParams] = useState<IFetchHubSpotContactsQueryParamsType>(({
+    contactSearch: '',
+  }))
   const debouncedSearchTerm = useDebounce(queryParams.search);
+  const hubSpotDebouncedSearchTerm = useDebounce(hubSpotQueryParams.contactSearch as string);
   
   const fetchAllLeads = async () => {
       try {
@@ -51,6 +61,21 @@ export default function LeadsPage() {
       }
 	}
 
+  const fetchAllHubSpotLeads = async () => {
+    console.log(`/api/hubspot/leads?accessToken=${hubSpotAccessToken}${makeQueryParams(queryParams)}`,"Query...")
+      try {
+        const hubSpotLeads = await fetch(`/api/hubspot/leads?accessToken=${hubSpotAccessToken}${makeQueryParams(hubSpotQueryParams)}`);
+        const hubSpotLeadsJson = await hubSpotLeads.json();
+        const {contacts,leads} = hubSpotLeadsJson;
+        setHubSpotContacts(contacts);
+        setHubSpotLeads(leads);
+      } catch (err) {
+        addToast({ title: "Failed to Fetch Leads", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "solid" });
+      } finally {
+        setLoading(false);
+      }
+  }
+
   useEffect(() => {
     if (accessToken && instanceUrl) {
       setIsSalesForceIntegrated(true);
@@ -59,10 +84,21 @@ export default function LeadsPage() {
     else{
       setIsSalesForceIntegrated(false);
       setLoading(false);
-  }
+    }
   },[accessToken, instanceUrl, debouncedSearchTerm, queryParams.nextRecordUrl]);
+  
+  useEffect(() => { 
+    if (hubSpotAccessToken){ 
+      setIsHubSpotIntegrated(true);
+      fetchAllHubSpotLeads();
+    }
+    else{
+      setIsHubSpotIntegrated(false);
+      setLoading(false);
+    }
+  },[hubSpotAccessToken, hubSpotDebouncedSearchTerm]);
 
   return (
-    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads} isSalesForceIntegrated={isSalesForceIntegrated} setQueryParams={setQueryParams} queryParams={queryParams}/>
+    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads} isSalesForceIntegrated={isSalesForceIntegrated} setQueryParams={setQueryParams} queryParams={queryParams} isHubSpotIntegrated={isHubSpotIntegrated} hubSpotContacts={hubSpotContacts} hubSpotLeads={hubSpotLeads} hubSpotQueryParams={hubSpotQueryParams} setHubSpotQueryParams={setHubSpotQueryParams}/>
   );
 }
