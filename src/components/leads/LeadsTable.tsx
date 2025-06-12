@@ -16,7 +16,7 @@ import { HubSpotView } from "./HubSpotView";
 
 // types
 import { IHubSpotContactsResponse, ISalesForceLeadsResponse } from "@/types/apiResponse";
-import { CreateNewContactFormType, CreateNewLeadFormType, IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType } from "@/types/apiRequest";
+import { CreateNewContactFormType, CreateNewLeadFormType, IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from "@/types/apiRequest";
 
 // css
 import "react-phone-input-2/lib/style.css";
@@ -34,13 +34,18 @@ interface LeadsTableClientProps {
 	hubSpotLeads: []
 	setHubSpotQueryParams : (queryParams:IFetchHubSpotContactsQueryParamsType) => void;
 	hubSpotQueryParams : IFetchHubSpotContactsQueryParamsType;
+	salesForceContactsQueryParams : IFetchSalesForceContactsQueryParamsType
+	setSalesForceContactsQueryParams : (queryParams:IFetchSalesForceContactsQueryParamsType) => void
+	setViewType: (viewType: string) => void
+	viewType: string
+	leadsTotal : number
+	contactsTotal : number
 }
 
-const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoading, fetchAllLeads, isSalesForceIntegrated, setQueryParams, queryParams, isHubSpotIntegrated, hubSpotContacts, hubSpotLeads, setHubSpotQueryParams, hubSpotQueryParams}) => {
+const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoading, fetchAllLeads, isSalesForceIntegrated, setQueryParams, queryParams, isHubSpotIntegrated, hubSpotContacts, hubSpotLeads, setHubSpotQueryParams, hubSpotQueryParams, salesForceContactsQueryParams, setSalesForceContactsQueryParams, setViewType, viewType, leadsTotal, contactsTotal}) => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
 	const [isAddLeadOpen, setIsAddLeadOpen] = useState<boolean>(false);
-	const [viewType, setViewType] = useState<string>('leads')
+
 	const [crmPlatform, setCrmPlatform] = useState<string>('salesforce');
 
 	const instanceUrl = Cookies.get("__sf_instanceUrl");
@@ -103,16 +108,6 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 		}
 	};
 
-	const handleBulkDelete = () => {
-		// setLeads(prev => prev.filter(lead => !selectedLeads.has(lead.id)));
-		// setSelectedLeads(new Set());
-		// addToast({ title: "Bulk Delete", description: `Deleted ${selectedLeads.size} leads.`, variant: "solid" });
-	};
-
-	const handleBulkAddToCampaign = () => {
-		addToast({ title: "Add to Campaign", description: `Functionality to add ${selectedLeads.size} leads to a campaign is not yet implemented.` });
-	};
-
 	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>)=>{
 		setQueryParams({
 			...queryParams,
@@ -166,15 +161,17 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 			  leadsLoading={leadsLoading}
 			  isSalesForceIntegrated={isSalesForceIntegrated}
 			  loading={loading}
-			  selectedLeads={selectedLeads}
-			  handleBulkAddToCampaign={handleBulkAddToCampaign}
-			  handleBulkDelete={handleBulkDelete}
 			  setIsAddLeadOpen={setIsAddLeadOpen}
 			  leads={leads}
 			  contacts={contacts}
 			  queryParams={queryParams}
 			  handleSearch={handleSearch}
 			  crmPlatform={crmPlatform}
+			  setQueryParams={setQueryParams}
+			  salesForceContactsQueryParams={salesForceContactsQueryParams}
+			  setSalesForceContactsQueryParams={setSalesForceContactsQueryParams}
+			  leadsTotal={leadsTotal}
+			  contactsTotal={contactsTotal}
 			/>
 		  ) : (
 			<HubSpotView

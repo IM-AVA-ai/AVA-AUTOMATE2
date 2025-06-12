@@ -12,7 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const instanceUrl = req.query.instanceUrl as string;
     const limit = parseInt(req.query.limit as string) || 10;
     const search = req.query.search as string;
-    const page = parseInt(req.query.page as string) || 1;
+    const offset = parseInt(req.query.offset as string) || 0;
+    const contactOffset = parseInt(req.query.contactsOffset as string) || 0;
+    const contactsLimit = parseInt(req.query.contactsLimit as string) || 10;
 
     if (!accessToken) return res.status(401).json({ error: 'Not authenticated' });
 
@@ -22,29 +24,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             accessToken: accessToken
         });
 
-        const offset = (page - 1) * limit;
-
         const baseLeadQuery = `SELECT Id, Name, Email, Phone,Status, CreatedDate FROM Lead`;
         const baseContactQuery = `SELECT Id, Name, Email, Phone,LeadSource, CreatedDate FROM Contact`;
 
         const searchCondition = search ? ` WHERE Name LIKE '%${search}%'` : '';
         const orderBy = ` ORDER BY CreatedDate DESC`;
-        const limitClause = ` LIMIT ${limit} OFFSET ${offset}`;
+        const leadsLimitClause = ` LIMIT ${limit} OFFSET ${offset}`;
+        const contactsLimitClause = ` LIMIT ${contactsLimit} OFFSET ${contactOffset}`;
 
-        const leadsQuery = `${baseLeadQuery}${searchCondition}${orderBy}${limitClause}`;
-        const contactsQuery = `${baseContactQuery}${searchCondition}${orderBy}${limitClause}`;
+        const leadsQuery = `${baseLeadQuery}${searchCondition}${orderBy}${leadsLimitClause}`;
+        const contactsQuery = `${baseContactQuery}${searchCondition}${orderBy}${contactsLimitClause}`;
 
-        const [leadsResult, contactsResult] = await Promise.all([
+        const leadsCountQuery = `SELECT COUNT() FROM Lead${searchCondition}`;
+        const contactsCountQuery = `SELECT COUNT() FROM Contact${searchCondition}`;
+
+        const [leadsResult, contactsResult, leadsTotal, contactsTotal] = await Promise.all([
             connection.query(leadsQuery),
             connection.query(contactsQuery),
-
+            connection.query(leadsCountQuery),
+            connection.query(contactsCountQuery)
         ]);
 
         return res.status(200).json({
-            page,
-            limit,
             leads: leadsResult,
-            contacts: contactsResult
+            contacts: contactsResult,
+            leadsTotalCount: leadsTotal.totalSize,
+            contactsTotalCount: contactsTotal.totalSize
         });
     } catch (error) {
         console.error(error, "error");

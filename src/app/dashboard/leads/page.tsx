@@ -20,7 +20,7 @@ import { makeQueryParams } from '@/services/helpers';
 
 // types  
 import { IHubSpotContactsResponse, ISalesForceLeadsResponse } from '@/types/apiResponse';
-import { IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType } from '@/types/apiRequest';
+import { IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from '@/types/apiRequest';
 
 
 export default function LeadsPage() {
@@ -38,6 +38,8 @@ export default function LeadsPage() {
   const [queryParams, setQueryParams] = useState<IFetchLeadsQueryParamsType>(({
     search: '',
     nextRecordUrl: '',
+    limit: 10,
+    offset: 0,
   }))
   const [hubSpotContacts, setHubSpotContacts] = useState<IHubSpotContactsResponse[]>([]);
   const [hubSpotLeads, setHubSpotLeads] = useState<[]>([]);
@@ -45,15 +47,27 @@ export default function LeadsPage() {
   const [hubSpotQueryParams, setHubSpotQueryParams] = useState<IFetchHubSpotContactsQueryParamsType>(({
     contactSearch: '',
   }))
+  const [viewType, setViewType] = useState<string>('leads')
+  const [salesForceContactsQueryParams, setSalesForceContactsQueryParams] = useState<IFetchSalesForceContactsQueryParamsType>(({
+    contactsSearch: '',
+    contactsLimit: 10,
+    contactsOffset: 0,
+  }))
+  const [leadsTotal, setLeadsTotal] = useState<number>(0);
+  const [contactsTotal, setContactsTotal] = useState<number>(0);
+
   const debouncedSearchTerm = useDebounce(queryParams.search);
   const hubSpotDebouncedSearchTerm = useDebounce(hubSpotQueryParams.contactSearch as string);
   
   const fetchAllLeads = async () => {
       try {
-        const leads = await fetch(`/api/salesforce/leads?accessToken=${accessToken}&instanceUrl=${instanceUrl}${makeQueryParams(queryParams)}`);
-        const leadsJson = await leads.json();
-        setLeads(leadsJson.leads.records);
-        setContacts(leadsJson.contacts.records);
+        const result = await fetch(`/api/salesforce/leads?accessToken=${accessToken}&instanceUrl=${instanceUrl}${makeQueryParams(viewType === "leads" ? queryParams : salesForceContactsQueryParams)}`);
+        const resultJson = await result.json();
+        const {leads,contacts,leadsTotalCount,contactsTotalCount} = resultJson;
+        setLeads(leads.records);
+        setContacts(contacts.records);
+        setLeadsTotal(leadsTotalCount);
+        setContactsTotal(contactsTotalCount);
       } catch (err) {
         addToast({ title: "Failed to Fetch Leads", description: err instanceof Error ? err.message : "An unknown error occurred.", variant: "solid" });
       } finally {
@@ -85,7 +99,7 @@ export default function LeadsPage() {
       setIsSalesForceIntegrated(false);
       setLoading(false);
     }
-  },[accessToken, instanceUrl, debouncedSearchTerm, queryParams.nextRecordUrl]);
+  },[accessToken, instanceUrl, debouncedSearchTerm, queryParams, salesForceContactsQueryParams]);
   
   useEffect(() => { 
     if (hubSpotAccessToken){ 
@@ -99,6 +113,6 @@ export default function LeadsPage() {
   },[hubSpotAccessToken, hubSpotDebouncedSearchTerm]);
 
   return (
-    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads} isSalesForceIntegrated={isSalesForceIntegrated} setQueryParams={setQueryParams} queryParams={queryParams} isHubSpotIntegrated={isHubSpotIntegrated} hubSpotContacts={hubSpotContacts} hubSpotLeads={hubSpotLeads} hubSpotQueryParams={hubSpotQueryParams} setHubSpotQueryParams={setHubSpotQueryParams}/>
+    <LeadsTableClient leads={leads} leadsLoading={loading} contacts={contacts} fetchAllLeads={fetchAllLeads} isSalesForceIntegrated={isSalesForceIntegrated} setQueryParams={setQueryParams} queryParams={queryParams} isHubSpotIntegrated={isHubSpotIntegrated} hubSpotContacts={hubSpotContacts} hubSpotLeads={hubSpotLeads} hubSpotQueryParams={hubSpotQueryParams} setHubSpotQueryParams={setHubSpotQueryParams} salesForceContactsQueryParams={salesForceContactsQueryParams} setSalesForceContactsQueryParams={setSalesForceContactsQueryParams} setViewType={setViewType} viewType={viewType} leadsTotal={leadsTotal} contactsTotal={contactsTotal}/>
   );
 }

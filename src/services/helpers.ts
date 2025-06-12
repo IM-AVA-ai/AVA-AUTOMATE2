@@ -1,6 +1,6 @@
 // This file contains the handler for the create contacts route.
 
-import { IFetchHubSpotContactsQueryParamsType, IFetchHubSpotQueryParamsType, IFetchLeadsQueryParamsType } from "@/types/apiRequest";
+import { IFetchHubSpotContactsQueryParamsType, IFetchHubSpotQueryParamsType, IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from "@/types/apiRequest";
 
 /**
  * Takes an object and returns a query string representing the object.
@@ -11,7 +11,7 @@ import { IFetchHubSpotContactsQueryParamsType, IFetchHubSpotQueryParamsType, IFe
  * @returns The query string
  */
 export const makeQueryParams = (
-    obj: IFetchLeadsQueryParamsType | IFetchHubSpotContactsQueryParamsType
+    obj: IFetchLeadsQueryParamsType | IFetchHubSpotContactsQueryParamsType | IFetchSalesForceContactsQueryParamsType
 ): string => {
     const queryString = Object.entries(obj)
         .filter(

@@ -82,11 +82,21 @@ export type CreateNewContactFormType = {
 export type IFetchLeadsQueryParamsType = {
     search: string;
     nextRecordUrl: string;
+    limit?: number
+    offset?: number
 }
 export type IFetchHubSpotContactsQueryParamsType = {
     contactSearch?: string;
     leadSearch?: string;
+    limit?: number
+    offset?: number
 }
 export type IFetchHubSpotQueryParamsType = {
     query?: string;
+}
+
+export type IFetchSalesForceContactsQueryParamsType = {
+    contactsSearch: string;
+    contactsLimit?: number
+    contactsOffset?: number
 }
