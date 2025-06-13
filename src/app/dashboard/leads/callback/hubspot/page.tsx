@@ -27,7 +27,6 @@ export default function HubSpotCallbackPage() {
         throw new Error('Failed to validate code');
       }
       const responseJson = await response.json();
-      console.log(responseJson,"responseJson");
       Cookies.set('__hs_accessToken', responseJson.access_token, {
         expires: responseJson.expires_in / 86400
       });

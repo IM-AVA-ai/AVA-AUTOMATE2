@@ -57,6 +57,7 @@ export default function LeadsPage() {
   const [contactsTotal, setContactsTotal] = useState<number>(0);
 
   const debouncedSearchTerm = useDebounce(queryParams.search);
+  const contactDebouncedSearchTerm = useDebounce(salesForceContactsQueryParams.contactsSearch);
   const hubSpotDebouncedSearchTerm = useDebounce(hubSpotQueryParams.contactSearch as string);
   
   const fetchAllLeads = async () => {
@@ -76,7 +77,6 @@ export default function LeadsPage() {
 	}
 
   const fetchAllHubSpotLeads = async () => {
-    console.log(`/api/hubspot/leads?accessToken=${hubSpotAccessToken}${makeQueryParams(queryParams)}`,"Query...")
       try {
         const hubSpotLeads = await fetch(`/api/hubspot/leads?accessToken=${hubSpotAccessToken}${makeQueryParams(hubSpotQueryParams)}`);
         const hubSpotLeadsJson = await hubSpotLeads.json();
@@ -99,7 +99,7 @@ export default function LeadsPage() {
       setIsSalesForceIntegrated(false);
       setLoading(false);
     }
-  },[accessToken, instanceUrl, debouncedSearchTerm, queryParams, salesForceContactsQueryParams]);
+  },[accessToken, instanceUrl, debouncedSearchTerm, queryParams, salesForceContactsQueryParams,contactDebouncedSearchTerm]);
   
   useEffect(() => { 
     if (hubSpotAccessToken){ 

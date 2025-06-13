@@ -109,10 +109,18 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 	};
 
 	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>)=>{
-		setQueryParams({
-			...queryParams,
-			search: event.target.value,
-		  });
+		if (viewType === 'leads') {
+			setQueryParams({
+				...queryParams,
+				search: event.target.value,
+			  });
+		}
+		else{
+			setSalesForceContactsQueryParams({
+				...queryParams,
+				contactsSearch: event.target.value,
+			  });
+		}
 	}
 	const handleHubSpotSearch = (event: React.ChangeEvent<HTMLInputElement>)=>{
 		setHubSpotQueryParams({
