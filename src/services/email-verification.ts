@@ -1,7 +1,6 @@
 // src/services/email-verification.ts
 import { getAuth, sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { app } from '@/firebase/config';
-import BasicToaster from '@/components/BasicToaster';
 
 export const sendEmailVerification = async () => {
   const auth = getAuth(app);

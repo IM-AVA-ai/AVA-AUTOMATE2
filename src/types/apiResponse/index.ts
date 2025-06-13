@@ -1,0 +1,30 @@
+// This file contains the types for the API response.
+
+type ISalesForceLeadsAttributes = {
+    type: string;
+    url: string
+}
+
+export type ISalesForceLeadsResponse = {
+    Email: string;
+    Id: string;
+    Name: string;
+    Phone: string
+    attributes: ISalesForceLeadsAttributes;
+    Status: string;
+    LeadSource?: string
+    nextRecordsUrl?: string
+}
+
+export type IHubSpotContactsResponse = {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    properties: {
+        email: string;
+        firstname: string;
+        lastname: string;
+        hs_object_id: string;
+    },
+    archived: boolean
+}
