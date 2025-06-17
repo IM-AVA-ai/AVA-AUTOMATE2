@@ -28,3 +28,19 @@ export type IHubSpotContactsResponse = {
     },
     archived: boolean
 }
+
+export type ISalesForceLeadsAPIResponse = {
+    leads: {
+        records: ISalesForceLeadsResponse[],
+    },
+    leadsTotalCount: number
+    contacts: {
+        records: ISalesForceLeadsResponse[],
+    },
+    contactsTotalCount: number
+}
+
+export type IHubSpotContactsAPIResponse = {
+    contacts: IHubSpotContactsResponse[],
+    leads: []
+}

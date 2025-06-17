@@ -19,8 +19,10 @@ import Cookies from 'js-cookie';
 import { makeQueryParams } from '@/services/helpers';
 
 // types  
-import { IHubSpotContactsResponse, ISalesForceLeadsResponse } from '@/types/apiResponse';
+import { IHubSpotContactsAPIResponse, IHubSpotContactsResponse, ISalesForceLeadsAPIResponse, ISalesForceLeadsResponse } from '@/types/apiResponse';
 import { IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from '@/types/apiRequest';
+import { apiEndpoints } from '@/constants/endPoints';
+import { apiService } from '@/services/apiServices';
 
 
 export default function LeadsPage() {
@@ -62,8 +64,7 @@ export default function LeadsPage() {
   
   const fetchAllLeads = async () => {
       try {
-        const result = await fetch(`/api/salesforce/leads?accessToken=${accessToken}&instanceUrl=${instanceUrl}${makeQueryParams(viewType === "leads" ? queryParams : salesForceContactsQueryParams)}`);
-        const resultJson = await result.json();
+        const resultJson = await apiService<ISalesForceLeadsAPIResponse>(`${apiEndpoints.salesforceLeads}?accessToken=${accessToken}&instanceUrl=${instanceUrl}${makeQueryParams(viewType === "leads" ? queryParams : salesForceContactsQueryParams)}`);
         const {leads,contacts,leadsTotalCount,contactsTotalCount} = resultJson;
         setLeads(leads.records);
         setContacts(contacts.records);
@@ -78,8 +79,7 @@ export default function LeadsPage() {
 
   const fetchAllHubSpotLeads = async () => {
       try {
-        const hubSpotLeads = await fetch(`/api/hubspot/leads?accessToken=${hubSpotAccessToken}${makeQueryParams(hubSpotQueryParams)}`);
-        const hubSpotLeadsJson = await hubSpotLeads.json();
+        const hubSpotLeadsJson = await apiService<IHubSpotContactsAPIResponse>(`${apiEndpoints.hubspotContacts}?accessToken=${hubSpotAccessToken}${makeQueryParams(hubSpotQueryParams)}`);
         const {contacts,leads} = hubSpotLeadsJson;
         setHubSpotContacts(contacts);
         setHubSpotLeads(leads);

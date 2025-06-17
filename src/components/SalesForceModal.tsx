@@ -1,8 +1,7 @@
 
 // custom components
-import { Input} from "../components/ui/input";
-import { Button} from "../components/ui/button";
-import { Modal} from "../components/ui/modal";
+import { Input } from '@/components/ui/input';
+import { Modal} from "@/components/ui/modal";
 
 // Third party imports
 import PhoneInput from "react-phone-input-2";

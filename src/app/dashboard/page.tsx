@@ -30,13 +30,17 @@ import { useToast } from "@/hooks/use-toast";
 import { useDebounce } from '@/hooks/useDebounce';
 
 // custom components
-import { Conversation } from '@/services/conversations'; // Import types from DashboardContent
+import { Conversation } from '@/services/conversations';
 import { Campaign } from '@/services/campaigns'; 
 import { Lead } from '@/services/leads'; 
+import { apiService } from '@/services/apiServices';
 
 // firebase imports
 import { collection, query, orderBy, limit, onSnapshot, QuerySnapshot, DocumentData } from "firebase/firestore";
 import { db } from "@/firebase/config"; 
+
+// constants
+import { apiEndpoints } from '@/constants/endPoints';
 
 
 interface FirestoreMessage {
@@ -88,6 +92,16 @@ interface ICalendarEvents {
   status: string;
   summary: string;
   updated: string;
+}
+
+interface ILoginUrlResponse {
+  data: string;
+}
+
+interface IGoogleCalendarEventsResponse {
+  items : ICalendarEvents[]
+  nextPageToken : string;
+  kind:string
 }
 
 export const CommunicationsLogCard = () => {
@@ -258,9 +272,8 @@ const DashboardPage = () => {
   const getGoogleAuthUrl = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/google/login');
-      const json = await res.json();
-      const googleAuthUrl = json.data;
+      const responseJson = await apiService<ILoginUrlResponse>(apiEndpoints.googleLoginUrl)
+      const googleAuthUrl = responseJson.data;
       window.open(googleAuthUrl, '_self');
     } catch (err) {
       console.error('Error fetching Google Auth URL:', err);
@@ -275,10 +288,10 @@ const DashboardPage = () => {
       const params = new URLSearchParams();
       if (searchQuery) params.set('q', searchQuery);
       if (token) params.set('pageToken', token);
-      
-      const response = await fetch(`/api/calendar/events?accessToken=${accessToken}&${params.toString()}`);
-      const data = await response.json();
 
+      const data = await apiService<IGoogleCalendarEventsResponse>(
+        `${apiEndpoints.googleCalendarEvents}?accessToken=${accessToken}&${params.toString()}`,
+      )
       if (isNewSearch) {
         setAllCalendarEvents(data.items || []);
       } else {
@@ -296,9 +309,8 @@ const DashboardPage = () => {
   const getSalesForceAuthUrl = async () => {
     setSalesForceLoading(true);
       try {
-        const res = await fetch('/api/auth/salesforce/login');
-        const json = await res.json();
-        const salesforceAuthUrl = json.data;
+        const responseJson = await apiService<ILoginUrlResponse>(apiEndpoints.salesforceLoginUrl);
+        const salesforceAuthUrl = responseJson.data;
         window.open(salesforceAuthUrl, '_self');
       } catch (err) {
         console.error('Error fetching Salesforce Auth URL:', err);
@@ -309,9 +321,8 @@ const DashboardPage = () => {
   const getHubSpotAuthUrl = async () => {
     setHubSpotLoading(true);
       try {
-        const res = await fetch('/api/auth/hubspot/login');
-        const json = await res.json();
-        const hubSpotAuthUrl = json.data;
+        const responseJson = await apiService<ILoginUrlResponse>(apiEndpoints.hubspotLoginUrl);
+        const hubSpotAuthUrl = responseJson.data;
         window.open(hubSpotAuthUrl, '_self');
       } catch (err) {
         console.error('Error fetching HubSpot Auth URL:', err);
@@ -395,7 +406,7 @@ const DashboardPage = () => {
               ) : (
                 <>
                   <Link2Icon className="mr-2 h-4 w-4" />
-                  Fetch Leads
+                  Fetch SalesForce Leads
                 </>
               )}
             </Button>

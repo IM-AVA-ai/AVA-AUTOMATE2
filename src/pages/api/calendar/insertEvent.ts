@@ -10,7 +10,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const { payload } = req.body;
+        const payload = req.body;
         const accessToken = payload.accessToken;
 
         oauth2Client.setCredentials({ access_token: accessToken });

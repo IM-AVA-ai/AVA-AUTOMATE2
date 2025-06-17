@@ -11,7 +11,13 @@ import Cookies from 'js-cookie'
 
 // common components
 import { Card } from '@/components/ui/card';
+import { apiEndpoints } from '@/constants/endPoints';
+import { apiService } from '@/services/apiServices';
 
+interface IHubSpotCallbackResponse {
+  access_token: string;
+  expires_in: number;
+}
 
 export default function HubSpotCallbackPage() {
   const router = useRouter();
@@ -22,11 +28,7 @@ export default function HubSpotCallbackPage() {
 
   const handleCallback = async () => {
     try {
-      const response = await fetch(`/api/auth/hubspot/callback?code=${code}`);
-      if (!response.ok) {
-        throw new Error('Failed to validate code');
-      }
-      const responseJson = await response.json();
+      const responseJson = await apiService<IHubSpotCallbackResponse>(`${apiEndpoints.hubSpotCallbackUrl}?code=${code}`); 
       Cookies.set('__hs_accessToken', responseJson.access_token, {
         expires: responseJson.expires_in / 86400
       });

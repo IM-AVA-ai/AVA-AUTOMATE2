@@ -12,7 +12,9 @@ import ReactQuill from "react-quill";
 import Cookies from 'js-cookie'
 
 // constants imports
+import { DatePickerDemo } from "@/components/DatePicker"; 
 import { validateEmail } from "@/constants/regExp";
+import { Input } from "@/components/ui/input";
 
 // types imports
 import { CreateCalendarEventType,CreateCalendarEventFormType } from "@/types/apiRequest";
@@ -21,11 +23,16 @@ import { CreateCalendarEventType,CreateCalendarEventFormType } from "@/types/api
 import "react-datepicker/dist/react-datepicker.css";
 import "react-quill/dist/quill.snow.css";
 import { Bell, Calendar, Clock, MapPin, Users, Video, X } from "lucide-react";
-import { Input } from "./ui/input";
+import { apiService } from "@/services/apiServices";
+import { apiEndpoints } from "@/constants/endPoints";
 
 interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface ICreateCalendarEventsType {
+
 }
 
 export const EventModal:React.FC<EventModalProps> = ({
@@ -109,15 +116,13 @@ export const EventModal:React.FC<EventModalProps> = ({
     };
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/calendar/insertEvent`,{
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ payload }),
-      });
-      const data = await response.json();
-      console.log('Event created:', data);
+      await apiService(
+        apiEndpoints.googleCalendarInsertEvent,
+        {
+          method: 'POST',
+          data: payload,
+        }
+      )
       onClose();
     } catch (error) {
       console.error('Error creating event:', error);
@@ -170,19 +175,24 @@ export const EventModal:React.FC<EventModalProps> = ({
                   name="start"
                   rules={{ required: "Start time is required" }}
                   render={({ field }) => (
-                    <DatePicker
-                      selected={field.value}
-                      // onChange={(date: Date | null) => field.onChange(date)}
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={15}
-                      dateFormat="Pp"
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      minDate={now}
-                      minTime={field.value.getDate() === now.getDate() ? now : new Date(0, 0, 0, 0, 0)}
-                      maxTime={new Date(0, 0, 0, 23, 45)}
+                    <DatePickerDemo
+                      value={field.value}
+                      onChange={(date) => {
+                        field.onChange(date);
+                      }}
+                      />
+                  //   <DatePicker
+                  //     selected={field.value}
+                  //     showTimeSelect
+                  //     timeFormat="HH:mm"
+                  //     timeIntervals={15}
+                  //     dateFormat="Pp"
+                  //     className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  //     minDate={now}
+                  //     minTime={field.value.getDate() === now.getDate() ? now : new Date(0, 0, 0, 0, 0)}
+                  //     maxTime={new Date(0, 0, 0, 23, 45)}
                   
-                  />
+                  // />
                   )}
                 />
               </div>

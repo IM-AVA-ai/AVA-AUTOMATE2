@@ -11,6 +11,14 @@ import Cookies from 'js-cookie'
 
 // common components
 import { Card } from '@/components/ui/card';
+import { apiService } from '@/services/apiServices';
+import { apiEndpoints } from '@/constants/endPoints';
+
+interface ISalesForceCallbackResponse {
+  accessToken: string;
+  instanceUrl: string;
+  refreshToken: string;
+}
 
 
 export default function CallbackPage() {
@@ -22,11 +30,9 @@ export default function CallbackPage() {
 
   const handleCallback = async () => {
     try {
-      const response = await fetch(`/api/auth/salesforce/callback?code=${code}`);
-      if (!response.ok) {
-        throw new Error('Failed to validate code');
-      }
-      const responseJson = await response.json();
+      const responseJson = await apiService<ISalesForceCallbackResponse>(
+        `${apiEndpoints.salesforceCallback}?code=${code}`,
+      )
       Cookies.set('__sf_accessToken', responseJson.accessToken,{
       });
       Cookies.set('__sf_instanceUrl', responseJson.instanceUrl,{

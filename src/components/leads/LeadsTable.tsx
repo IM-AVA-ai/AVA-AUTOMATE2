@@ -9,10 +9,10 @@ import { useForm } from "react-hook-form";
 import Cookies from 'js-cookie'
 
 // custom components
-import { Button } from "../ui/button";
-import { SalesForceModal } from "../SalesForceModal";
-import { SalesforceView } from "./SalesForceView";
-import { HubSpotView } from "./HubSpotView";
+import { Button } from "@/components/ui/button"
+import { SalesForceModal } from "@/components/SalesForceModal";
+import { SalesforceView } from "@/components/leads/SalesForceView";
+import { HubSpotView } from "@/components/leads/HubSpotView";
 
 // types
 import { IHubSpotContactsResponse, ISalesForceLeadsResponse } from "@/types/apiResponse";
@@ -20,6 +20,8 @@ import { CreateNewContactFormType, CreateNewLeadFormType, IFetchHubSpotContactsQ
 
 // css
 import "react-phone-input-2/lib/style.css";
+import { apiEndpoints } from "@/constants/endPoints";
+import { apiService } from "@/services/apiServices";
 
 interface LeadsTableClientProps {
 	leads: ISalesForceLeadsResponse[];
@@ -77,27 +79,17 @@ const LeadsTable: React.FC<LeadsTableClientProps> = ({ leads,contacts ,leadsLoad
 			return;
 		}
 		setLoading(true);
-		let response
 		try{
-			if (viewType === 'leads') {
-				response = await fetch(`/api/salesforce/createLeads`,{
+			const endpoint = viewType === 'leads' 
+			? apiEndpoints.createSalesForceLeads
+			: apiEndpoints.createSalesForceContacts;
+			const response = await apiService(
+				endpoint,
+				{
 					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({payload}),
-				})
-			}
-			else {
-				response = await fetch(`/api/salesforce/createContacts`,{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({payload}),
-				})
-			}
-			const data = await response.json();
+					data: payload
+				}
+			)
 			addToast({ title: "Success", description: "Leads created successfully", variant: "solid" });
 		}catch(err){
 			addToast({ title: "Error", description: "Something went wrong", variant: "solid" });

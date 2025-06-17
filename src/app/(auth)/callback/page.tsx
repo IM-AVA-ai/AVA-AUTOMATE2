@@ -6,22 +6,29 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react'; // Assuming you're using lucide-react icons
 import { Card } from '@/components/ui/card'; // Using your Card component from reference
 import Cookies from 'js-cookie'
+import { apiService } from '@/services/apiServices';
+import { apiEndpoints } from '@/constants/endPoints';
 
+interface IGoogleCallbackResponse  {
+  access_token: string;
+  refresh_token: string;
+  expiry_date: number;
+  refresh_token_expires_in: number;
+}
 
 export default function CallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams?.get('code');
   const error = searchParams?.get('error');
+  
 
 
   const handleCallback = async () => {
     try {
-      const response = await fetch(`/api/auth/google/callback?code=${code}`);
-      if (!response.ok) {
-        throw new Error('Failed to validate code');
-      }
-      const responseJson = await response.json();
+      const responseJson = await apiService<IGoogleCallbackResponse>(
+        `${apiEndpoints.googleCallback}?code=${code}`,
+      )
       Cookies.set('__gc_accessToken', responseJson.access_token,{
         expires : new Date(responseJson.expiry_date)
       });

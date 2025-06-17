@@ -5,8 +5,10 @@
 import { AlertCircle, Loader2, Search } from "lucide-react";
 
 // Custom components
-import { Input } from "./input";
-import { PaginationControls } from "./leadsPagination";
+import { Input } from '@/components/ui/input';
+import { PaginationControls } from "@/components/ui/leadsPagination";
+
+// types
 import { IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from "@/types/apiRequest";
 
 interface DataTableProps {

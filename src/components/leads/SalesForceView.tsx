@@ -1,11 +1,15 @@
 // This file contains the code for the salesforce view component.
 
-import { AlertCircle, Loader2, Lock, Plus, Search, Send, Trash2 } from "lucide-react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+// Third party imports
+import { Lock, Plus } from "lucide-react";
+
+// custom components
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/leadsTable";
+
+// types 
 import { ISalesForceLeadsResponse } from "@/types/apiResponse";
-import { IFetchHubSpotContactsQueryParamsType, IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from "@/types/apiRequest";
-import { DataTable } from "../ui/leadsTable";
+import { IFetchLeadsQueryParamsType, IFetchSalesForceContactsQueryParamsType } from "@/types/apiRequest";
 
 interface SalesforceViewProps {
     viewType: string;

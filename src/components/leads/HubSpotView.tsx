@@ -4,8 +4,9 @@
 import { AlertCircle, Loader2, Lock, Plus, Search } from "lucide-react";
 
 // custom components
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+
 
 // types
 import { IFetchHubSpotContactsQueryParamsType } from "@/types/apiRequest";
